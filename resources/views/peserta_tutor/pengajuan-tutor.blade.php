@@ -394,74 +394,7 @@
   </style>
 </head>
 <body>
-
-  <!-- ==================== SIDEBAR ==================== -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">E</div>
-      <div>
-        <div class="brand-text">E-Tutor</div>
-        <div class="brand-sub">Sistem Tutoring</div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-
-      <a class="nav-item nav-home" href="#page-home">
-        <span class="nav-icon">🏠</span> Home
-      </a>
-
-      <div class="nav-separator"></div>
-
-      <!-- Layanan Tutor — default TUTUP -->
-      <details class="nav-parent layanan">
-        <summary>
-          <span class="nav-icon">📚</span> Layanan Tutor
-          <span class="chevron">▶</span>
-        </summary>
-        <div class="nav-children">
-          <a class="nav-child nav-info" href="/informasi-kelas">Informasi Kelas</a>
-          <a class="nav-child nav-daftar" href="/pendaftaran-kelas">Pendaftaran Kelas</a>
-        </div>
-      </details>
-
-      <!-- Pengajuan Tutor — default TERBUKA -->
-      <details class="nav-parent pengajuan" open>
-        <summary>
-          <span class="nav-icon">✍️</span> Pengajuan Tutor
-          <span class="chevron">▶</span>
-        </summary>
-        <div class="nav-children">
-          <a class="nav-child nav-pengajuan" href="/pengajuan-tutor">Halaman Pengajuan</a>
-          <a class="nav-child nav-status" href="/status-pengajuan">Status Pengajuan</a>
-          <a class="nav-child nav-jadwal" href="/jadwal-tutor">Jadwal Tutor</a>
-          <a class="nav-child nav-list" href="/list-pendaftar">List Pendaftar</a>
-          <a class="nav-child nav-achievement" href="#page-achievement">Achievement</a>
-        </div>
-      </details>
-
-      <div class="nav-separator"></div>
-
-      <a class="nav-item nav-template" href="#page-template">
-        <span class="nav-icon">📄</span> Template
-      </a>
-      <a class="nav-item nav-notif" href="/notifikasi">
-        <span class="nav-icon">🔔</span> Notifikasi
-        <span class="notif-badge">4</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar">AP</div>
-        <div class="user-info">
-          <div class="user-name">R.A Hikmah</div>
-          <div class="user-role">Mahasiswa - MI</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-
+<x-sidebar />
   <!-- ==================== MAIN ==================== -->
   <div class="main-content">
 
@@ -508,7 +441,6 @@
         </div>
         <div class="topbar-right">
           <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
-          <button class="topbar-btn">❓</button>
         </div>
       </div>
 
@@ -522,8 +454,8 @@
               <p>Ajukan diri Anda sebagai E-Tutor kepada Kaprodi. Pengajuan akan diverifikasi sebelum Anda dapat membuka kelas.</p>
             </div>
 
-            <form action="#" method="post" enctype="multipart/form-data">
-
+            <form action="/pengajuan-tutor" method="post" enctype="multipart/form-data">
+            @csrf
               <!-- NAMA -->
               <div class="form-group">
                 <label class="form-label" for="aj-nama">
@@ -569,7 +501,7 @@
                   <span class="required-badge">R</span>
                 </label>
                 <div class="upload-zone">
-                  <input type="file" name="bukti" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                  <input type="file" name="bukti_memenuhi" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
                   <div class="upload-zone-content">
                     <div class="upload-icon-circle">📎</div>
                     <div class="upload-text-main">
@@ -585,7 +517,21 @@
                 </div>
                 <div class="form-helper">File akan divalidasi dan diverifikasi oleh Kaprodi</div>
               </div>
+              <script>
+    const fileInput = document.querySelector('input[name="bukti_memenuhi"]');
+    const uploadText = document.querySelector('.upload-text-main');
 
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            // Ambil nama file yang dipilih
+            const fileName = this.files[0].name;
+            // Ubah teks instruksi menjadi nama file
+            uploadText.innerHTML = `<strong>✅ File terpilih:</strong> ${fileName}`;
+            // Opsional: ganti warna border zona upload agar terlihat beda
+            document.querySelector('.upload-zone').style.borderColor = '#4ade80'; 
+        }
+    });
+</script>
               <!-- DESKRIPSI JOB -->
               <div class="form-group">
                 <label class="form-label" for="aj-deskripsi">
@@ -612,9 +558,9 @@
                 AJUKAN
                 <span class="btn-arrow">→</span>
               </button>
-
-            </form>
-
+              
+          
+              </form>
             <div class="form-footer-note">
               Pengajuan akan dikirim kepada Kaprodi untuk diverifikasi.<br>
               Pastikan semua data dan bukti yang diisi sudah benar.

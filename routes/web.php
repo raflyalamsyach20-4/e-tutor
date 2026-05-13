@@ -1,8 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PendaftaranKelasController;
+use App\Http\Controllers\PengajuanTutorController;
+use App\Http\Controllers\AccPengajuanController;
+use App\Http\Controllers\JadwalTutorController;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -10,42 +14,43 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/login');
+})->name('logout');
 
 Route::get('/informasi-kelas', function () {
-    return view('informasi-kelas');
+    return view('peserta_tutor.informasi-kelas');
 })->middleware('auth');
-
-use App\Http\Controllers\PendaftaranKelasController;
 
 Route::post('/pendaftaran-kelas', [PendaftaranKelasController::class, 'store']);
 
 Route::get('/informasi-kelas', function () {
-    return view('informasi-kelas');
-});
+    return view('peserta_tutor.informasi-kelas');
+})->middleware('auth');
 
 Route::get('/pendaftaran-kelas', function () {
-    return view('pendaftaran-kelas');
+    return view('peserta_tutor.pendaftaran-kelas');
 });
 
 Route::get('/pengajuan-tutor', function () {
-    return view('pengajuan-tutor');
+    return view('peserta_tutor.pengajuan-tutor');
 });
 
 Route::get('/status-pengajuan', function () {
-    return view('status-pengajuan');
+    return view('peserta_tutor.status-pengajuan');
 });
 
 Route::get('/jadwal-tutor', function () {
-    return view('jadwal-tutor');
+    return view('peserta_tutor.jadwal-tutor');
 });
 
 Route::get('/list-pendaftar', function () {
-    return view('list-pendaftar');
+    return view('peserta_tutor.list-pendaftar');
 });
 
 Route::get('/notifikasi', function () {
-    return view('notifikasi');
+    return view('peserta_tutor.notifikasi');
 });
 
 Route::get('/registrasi', function () {
@@ -54,4 +59,28 @@ Route::get('/registrasi', function () {
 
 Route::get('/login', function () {
     return view('login');
+});
+
+Route::get('/aktivitas-peserta', function () {
+    return view('peserta_tutor.aktivitas-peserta');
+});
+
+Route::get('/acc-pengajuan', function () {
+    return view('kaprodi.acc-pengajuan');
+});
+
+Route::middleware('auth')->group(function () {
+    // Tutor
+    Route::get('/pengajuan-tutor', [PengajuanTutorController::class, 'create']);
+    Route::post('/pengajuan-tutor', [PengajuanTutorController::class, 'store']);
+    Route::get('/status-pengajuan', [PengajuanTutorController::class, 'status']);
+
+    // Kaprodi
+    Route::get('/acc-pengajuan', [AccPengajuanController::class, 'index']);
+    Route::post('/acc-pengajuan/{id}/approve', [AccPengajuanController::class, 'approve']);
+    Route::post('/acc-pengajuan/{id}/reject', [AccPengajuanController::class, 'reject']);
+
+    // Jadwal
+    Route::get('/jadwal', [JadwalTutorController::class, 'index']);
+    Route::post('/jadwal', [JadwalTutorController::class, 'store']);
 });

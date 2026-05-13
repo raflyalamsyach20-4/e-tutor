@@ -376,95 +376,30 @@
   </style>
 </head>
 <body>
-
-  <!-- ==================== SIDEBAR ==================== -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">E</div>
-      <div><div class="brand-text">E-Tutor</div><div class="brand-sub">Sistem Tutoring</div></div>
-    </div>
-    <nav class="sidebar-nav">
-      <a class="nav-item nav-home" href="#page-home"><span class="nav-icon">🏠</span> Home</a>
-      <div class="nav-separator"></div>
-      <details class="nav-parent layanan">
-        <summary><span class="nav-icon">📚</span> Layanan Tutor <span class="chevron">▶</span></summary>
-        <div class="nav-children">
-          <a class="nav-child nav-info" href="/informasi-kelas">Informasi Kelas</a>
-          <a class="nav-child nav-daftar" href="/pendaftaran-kelas">Pendaftaran Kelas</a>
-        </div>
-      </details>
-      <details class="nav-parent pengajuan" open>
-        <summary><span class="nav-icon">✍️</span> Pengajuan Tutor <span class="chevron">▶</span></summary>
-        <div class="nav-children">
-          <a class="nav-child nav-pengajuan" href="/pengajuan-tutor">Halaman Pengajuan</a>
-          <a class="nav-child nav-status" href="/status-pengajuan">Status Pengajuan</a>
-          <a class="nav-child nav-jadwal" href="/jadwal-tutor">Jadwal Tutor</a>
-          <a class="nav-child nav-list" href="/list-pendaftar">List Pendaftar</a>
-          <a class="nav-child nav-achievement" href="#page-achievement">Achievement</a>
-        </div>
-      </details>
-      <div class="nav-separator"></div>
-      <a class="nav-item nav-template" href="#page-template"><span class="nav-icon">📄</span> Template</a>
-      <a class="nav-item nav-notif" href="/notifikasi">
-        <span class="nav-icon">🔔</span> Notifikasi
-        <span class="notif-badge">4</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar">AP</div>
-        <div class="user-info"><div class="user-name">Ahmad Pratama</div><div class="user-role">Mahasiswa - MI</div></div>
-      </div>
-    </div>
-  </aside>
-
-
+<x-sidebar />
   <!-- ==================== MAIN ==================== -->
   <div class="main-content">
-
-    <!-- Placeholder pages -->
-    <div class="page-wrapper" id="page-home">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><span>Home</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏠</div><h2>Home</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-status">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Status Pengajuan</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🔍</div><h2>Status Pengajuan</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-list">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>List Pendaftar</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📋</div><h2>List Pendaftar</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-achievement">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Achievement</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏆</div><h2>Achievement</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-template">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Template</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📄</div><h2>Template</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-
 
     <!-- ====================================================================
          ✅ HALAMAN JADWAL TUTOR — DEFAULT PAGE
          ==================================================================== -->
-    <div class="page-wrapper" id="page-jadwal">
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="breadcrumb">
-            <a href="#page-home">Home</a>
-            <span class="sep">/</span>
-            <span>Pengajuan Tutor</span>
-            <span class="sep">/</span>
-            <span>Jadwal Tutor</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
-          <button class="topbar-btn">❓</button>
+         <div class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb">
+          <a href="#">Home</a>
+          <span class="sep">/</span>
+          <a href="#">Layanan Tutor</a>
+          <span class="sep">/</span>
+          <span>Jadwal Tutor</span>
         </div>
       </div>
-
+      <div class="topbar-right">
+        <button class="topbar-btn">
+          🔔 <span class="notif-dot"></span>
+        </button>
+      </div>
+    </div>
+    
       <div class="jadwal-page">
         <div class="jadwal-card">
           <div class="jadwal-inner">
@@ -476,10 +411,23 @@
             </div>
 
             <!-- Tombol Add -->
-            <a href="#page-jadwal-add" class="btn-add">
-              <span class="add-icon">➕</span> Tambah Jadwal
-            </a>
+            @if(isset($application) && $application->status == 'approved')
 
+<a href="#page-jadwal-add" class="btn-add">
+    <span class="add-icon">➕</span> Tambah Jadwal
+</a>
+
+@else
+
+<button type="button" class="btn-add" disabled>
+    <span class="add-icon">➕</span> Tambah Jadwal
+</button>
+
+<p style="color:red; margin-top:10px;">
+    Anda belum disetujui sebagai tutor.
+</p>
+
+@endif
             <!-- Tabel Jadwal -->
             <div class="jadwal-table-wrap">
               <div class="jadwal-table-scroll">
@@ -552,7 +500,7 @@
         </div>
         <div class="topbar-right">
           <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
-          <button class="topbar-btn">❓</button>
+          
         </div>
       </div>
 

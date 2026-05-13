@@ -905,98 +905,27 @@
   </style>
 </head>
 <body>
-
-  <!-- ========== SIDEBAR ========== -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">E</div>
-      <div>
-        <div class="brand-text">E-Tutor</div>
-        <div class="brand-sub">Sistem Tutoring</div>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-
-      <!-- Home -->
-      <a class="nav-item" href="#">
-        <span class="nav-icon">🏠</span> Home
-      </a>
-
-      <div class="nav-separator"></div>
-
-      <!-- Layanan Tutor (Parent) — default open karena halaman ini anaknya -->
-      <details class="nav-parent" open>
-        <summary>
-          <span class="nav-icon">📚</span> Layanan Tutor
-          <span class="chevron">▶</span>
-        </summary>
-        <div class="nav-children">
-          <a class="nav-child active" href="/informasi-kelas">Informasi Kelas</a>
-          <a class="nav-child" href="/pendaftaran-kelas">Pendaftaran Kelas</a>
-        </div>
-      </details>
-
-      <!-- Pengajuan E-Tutor (Parent) -->
-      <details class="nav-parent">
-        <summary>
-          <span class="nav-icon">✍️</span> Pengajuan E-Tutor
-          <span class="chevron">▶</span>
-        </summary>
-        <div class="nav-children">
-          <a class="nav-child" href="/pengajuan-tutor">Halaman Pengajuan</a>
-          <a class="nav-child" href="/status-pengajuan">Status Pengajuan</a>
-          <a class="nav-child" href="/jadwal-tutor">Jadwal Tutor</a>
-          <a class="nav-child" href="/list-pendaftar">List Pendaftar</a>
-          <a class="nav-child" href="#">Achievement</a>
-        </div>
-      </details>
-
-      <div class="nav-separator"></div>
-
-      <!-- Template -->
-      <a class="nav-item" href="#">
-        <span class="nav-icon">📄</span> Template
-      </a>
-      <a class="nav-item nav-notif" href="/notifikasi">
-        <span class="nav-icon">🔔</span> Notifikasi
-        <span class="notif-badge">4</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar">AP</div>
-        <div class="user-info">
-          <div class="user-name">Ahmad Pratama</div>
-          <div class="user-role">Mahasiswa - MI</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
+<x-sidebar />
   <!-- ========== MAIN CONTENT ========== -->
   <div class="main-content">
 
     <!-- Top Bar -->
     <div class="topbar">
-  <div class="topbar-left">
-    <div class="breadcrumb">
-      <a href="#">Home</a>
-      <span class="sep">/</span>
-      <a href="#">Layanan Tutor</a>
-      <span class="sep">/</span>
-      <span>Informasi Kelas</span>
+      <div class="topbar-left">
+        <div class="breadcrumb">
+          <a href="#">Home</a>
+          <span class="sep">/</span>
+          <a href="#">Layanan Tutor</a>
+          <span class="sep">/</span>
+          <span>Informasi Kelas</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn">
+          🔔 <span class="notif-dot"></span>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="topbar-right">
-    <span>Selamat datang, {{ Auth::user()->name }}</span>
-    <form action="/logout" method="POST" style="display: inline;">
-      @csrf
-      <button type="submit" class="topbar-btn">Logout</button>
-    </form>
-  </div>
-</div>
 
     <!-- Page Header -->
     <div class="page-header">
@@ -1106,9 +1035,7 @@
                         <div class="participant-bar-fill low" style="width: 25%"></div>
                       </div>
                     </div>
-                    <a href="/pendaftaran-kelas" class="btn-daftar available">
-                      <span class="btn-icon">➕</span> Daftar
-                    </a>
+                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
                   </div>
                 </td>
                 <td><span class="status-badge open"><span class="status-dot"></span> Tersedia</span></td>
