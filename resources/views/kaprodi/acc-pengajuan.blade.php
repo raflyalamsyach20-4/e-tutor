@@ -480,9 +480,9 @@
           <p>Periksa dan verifikasi pengajuan dari mahasiswa yang ingin menjadi E-Tutor. Pastikan bukti dan deskripsi sudah memenuhi syarat.</p>
         </div>
         <div class="header-stats">
-          <div class="header-stat"><div class="stat-num">5</div><div class="stat-label">Total Pengajuan</div></div>
-          <div class="header-stat"><div class="stat-num" style="color:#86efac">2</div><div class="stat-label">Disetujui</div></div>
-          <div class="header-stat"><div class="stat-num" style="color:#fde047">3</div><div class="stat-label">Menunggu</div></div>
+          <div class="header-stat"><div class="stat-num">{{ $stats['total'] }}</div><div class="stat-label">Total Pengajuan</div></div>
+          <div class="header-stat"><div class="stat-num" style="color:#86efac">{{ $stats['approved'] }}</div><div class="stat-label">Disetujui</div></div>
+          <div class="header-stat"><div class="stat-num" style="color:#fde047">{{ $stats['pending'] }}</div><div class="stat-label">Menunggu</div></div>
         </div>
       </div>
     </div>

@@ -8,8 +8,15 @@ class AccPengajuanController extends Controller
 {
     public function index()
     {
-        $applications = PengajuanTutor::all();
-        return view('kaprodi.acc-pengajuan', compact('applications'));
+        $applications = PengajuanTutor::latest()->get();
+
+        $stats = [
+            'total' => $applications->count(),
+            'approved' => $applications->where('status', 'approved')->count(),
+            'pending' => $applications->where('status', 'pending')->count(),
+        ];
+
+        return view('kaprodi.acc-pengajuan', compact('applications', 'stats'));
     }
 
     public function approve($id)
