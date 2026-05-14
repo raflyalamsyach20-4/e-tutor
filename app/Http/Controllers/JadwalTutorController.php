@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\JadwalTutor;
+use App\Models\TeachingSchedule;
 use App\Models\PengajuanTutor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,28 +11,33 @@ class JadwalTutorController extends Controller
     public function index()
     {
         $application = PengajuanTutor::where('user_id', Auth::id())->first();
+        $schedules = TeachingSchedule::where('user_id', Auth::id())->orderBy('tanggal', 'desc')->get();
 
-        $schedules = JadwalTutor::where('user_id', Auth::id())->get();
-
-        return view('jadwal-tutor', compact('application', 'schedules'));
+        return view('peserta_tutor.jadwal-tutor', compact('application', 'schedules'));
     }
+
     public function store(Request $request)
     {
+        $application = PengajuanTutor::where('user_id', Auth::id())->first();
+        
+        if (!$application || $application->status !== 'approved') {
+            return redirect()->back()->with('error', 'Anda belum disetujui sebagai tutor.');
+        }
+
         $request->validate([
-            'mata_kuliah' => 'required|string',
             'hari' => 'required|string',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
-            'ruangan' => 'required|string',
+            'tanggal' => 'required|date',
+            'topik' => 'required|string',
+            'waktu_mulai' => 'required',
+            'waktu_selesai' => 'required',
         ]);
 
-        JadwalTutor::create([
+        TeachingSchedule::create([
             'user_id' => Auth::id(),
-            'mata_kuliah' => $request->mata_kuliah,
             'hari' => $request->hari,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
-            'ruangan' => $request->ruangan,
+            'tanggal' => $request->tanggal,
+            'topik_pembahasan' => $request->topik,
+            'waktu' => $request->waktu_mulai . ' - ' . $request->waktu_selesai,
         ]);
 
         return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan.');

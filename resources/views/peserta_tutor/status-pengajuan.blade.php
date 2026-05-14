@@ -476,123 +476,46 @@
                     <th>Status</th>
                   </thead>
                   <tbody>
-
-                    <!-- Row 1 — Menunggu -->
+                    @if($application)
                     <tr>
                       <td class="st-no">1</td>
-                      <td class="st-nama">Ahmad Pratama</td>
-                      <td class="st-nim">2023010001</td>
+                      <td class="st-nama">{{ $application->nama }}</td>
+                      <td class="st-nim">{{ $application->nim }}</td>
                       <td>
                         <div class="st-topik">
-                          <span class="st-topik-tag tag-stat">STAT</span>
-                          Distribusi Normal dan Aplikasinya
+                          {{ $application->topik_pembahasan }}
                         </div>
                       </td>
-                      <td class="stat-desc">Distribusi Normal, standar deviasi, contoh soal ujian</td>
+                      <td class="st-desc">{{ $application->deskripsi_job }}</td>
                       <td>
                         <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="#" onclick="return false;">
+                          <a class="st-bukti-link" href="{{ Storage::url($application->bukti_memenuhi) }}" target="_blank">
                             <span class="st-bukti-icon">📄</span> Lihat
                           </a>
                         </div>
                       </td>
                       <td>
-                        <span class="status-badge menunggu"><span class="sb-dot"></span> Menunggu</span></td>
+                        @if($application->status === 'pending')
+                        <span class="status-badge menunggu"><span class="sb-dot"></span> Menunggu Persetujuan</span>
+                        @elseif($application->status === 'approved')
+                        <span class="status-badge disetujui"><span class="sb-dot"></span> Disetujui</span>
+                        @else
+                        <span class="status-badge ditolak"><span class="sb-dot"></span> Ditolak</span>
+                        @endif
+                      </td>
                     </tr>
-
-                    <!-- Row 2 — Disetujui -->
+                    @else
                     <tr>
-                      <td class="st-no">2</td>
-                      <td class="st-nama">Rina Safitri</td>
-                      <td class="st-nim">2023001001</td>
-                      <td>
-                        <div class="st-topik">
-                          <span class="st-topik-tag tag-prog">PROG</span>
-                          CRUD dengan PHP & MySQL
-                        </div>
-                      </td>
-                      <td class="stat-desc">Pengembangan CRUD, input form, validasi data, relasional database</td>
-                      <td>
-                        <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="#" onclick="return false;">
-                            <span class="st-bukti-icon">📄</span> Lihat
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge disetujui"><span class="sb-dot"></span> Disetujui</span></td>
+                      <td colspan="7" style="text-align: center; padding: 20px;">Anda belum mengajukan pendaftaran tutor.</td>
                     </tr>
-
-                    <!-- Row 3 — Ditolak -->
-                    <tr>
-                      <td class="no">3</td>
-                      <td class="st-n">Dewi Anggraeni</td>
-                      <td class="st-nim">2023030023</td>
-                      <td>
-                        <div class="topik-tag tag-db">DB</div>
-                        Normalisasi Database (1NF - 3NF)
-                      </td>
-                      <td class="stat-desc">Bukan memenuhi syarat sebagai E-Tutor</td>
-                      <td>
-                        <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="#" onclick="return false;">
-                            <span class="st-bukti-icon">📄</span> Lihat
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge ditolak"><span class="sb-dot"></span> Ditolak</span></td>
-                    </tr>
-
-                    <!-- Row 4 — Menunggu -->
-                    <tr>
-                      <td class="st-no">4</td>
-                      <td class="st-nama">Firman Maulana</td>
-                      <td class="st-nim">2023010045</td>
-                      <td>
-                        <div class="topik-tag tag-ml">ML</div>
-                        Algoritma Pembelajaran Mesin
-                      </td>
-                      <td class="stat-desc">Metode supervised vs unsupervised learning</td>
-                      <td>
-                        <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="#" onclick="return false;">
-                            <span class="st-bukti-icon">📄</span> Lihat
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge menunggu"><span class="sb-dot"></span> Menunggu</span></td>
-                    </tr>
-
-                    <!-- Row 5 — Disetujui -->
-                    <tr>
-                      <td class="no">5</td>
-                      <td class="st-n">Galih Prasetyo</td>
-                      <td class="st-nim">2023040067</td>
-                      <td>
-                        <div class="topik-tag tag-ai">AI</div>
-                        Algoritma Pembelajaran Mesin
-                      </td>
-                      <td class="stat-desc">Tensorflow, neural networks, deep learning</td>
-                      <td>
-                        <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="#" onclick="return false;">
-                            <span class="st-bukti-icon">📄</span> Lihat
-                          </a>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge disetujui"><span class="sb-dot"></span> Disetujui</span></td>
-                    </tr>
-
+                    @endif
                   </tbody>
                 </table>
               </div>
             </div>
 
             <div class="status-footer">
-              Status <strong style="Disetujui</strong> berarti pengajuan Anda sudah diterima oleh Kaprodi dan Anda bisa mulai mengajar.
+              Status <strong style="color: #4ade80;">Disetujui</strong> berarti pengajuan Anda sudah diterima oleh Kaprodi dan Anda bisa mulai mengajar.
             </div>
 
           </div>

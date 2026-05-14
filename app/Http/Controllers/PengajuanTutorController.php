@@ -14,24 +14,24 @@ class PengajuanTutorController extends Controller
 
     public function store(Request $request)
     {
-       /* $request->validate([
+        $request->validate([
             'nama' => 'required|string',
             'nim' => 'required|string',
-            'topik_pembahasan' => 'required|string',
-            'deskripsi_job' => 'required|string',
-            'bukti_memenuhi' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'topik' => 'required|string',
+            'deskripsi' => 'required|string',
+            'bukti_memenuhi' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
         ]);
-*/
+
         $path = $request->file('bukti_memenuhi')->store('bukti', 'public');
 
         PengajuanTutor::create([
             'user_id' => Auth::id(),
             'nama' => $request->nama,
             'nim' => $request->nim,
-            'topik_pembahasan' => $request->topik_pembahasan,
-            'deskripsi_job' => $request->deskripsi_job,
+            'topik_pembahasan' => $request->topik,
+            'deskripsi_job' => $request->deskripsi,
             'bukti_memenuhi' => $path,
-            'status'         => 'Menunggu',
+            'status'         => 'pending',
         ]);
 
         return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');

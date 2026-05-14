@@ -17,7 +17,6 @@ class PengajuanTutor extends Model
         'bukti_memenuhi',
         'deskripsi_job',
         'status',
-        
     ];
 
     public function user()

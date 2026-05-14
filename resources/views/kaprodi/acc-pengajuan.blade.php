@@ -509,135 +509,53 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Row 1 — Menunggu -->
-              <tr id="row-1">
-                <td class="col-no">1</td>
+              @forelse($applications as $index => $app)
+              <tr id="row-{{ $app->id }}">
+                <td class="col-no">{{ $index + 1 }}</td>
                 <td class="nama-cell">
-                  <div class="nama-text">Rizky Firmansyah</div>
-                  <div class="nim-text">2023015</div>
+                  <div class="nama-text">{{ $app->nama }}</div>
+                  <div class="nim-text">{{ $app->nim }}</div>
                 </td>
                 <td class="topik-cell">
-                  <div class="topik-text">Teori Graf & Pohon (Tree)</div>
+                  <div class="topik-text">{{ $app->topik_pembahasan }}</div>
                 </td>
                 <td class="bukti-cell">
-
-                  <button class="btn-bukti" onclick="openPdf('Rizky Firmansyah','bukti_rizky_firmansyah.pdf','2023015')">
+                  <a href="{{ Storage::url($app->bukti_memenuhi) }}" target="_blank" class="btn-bukti">
                     <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
+                  </a>
                 </td>
                 <td class="deskripsi-cell">
-                  <div class="deskripsi-text">Mahasiswa semester 6 dengan IPK 3.78. Pernah menjadi asisten praktikum Struktur Data selama 2 semester. Mampu menjelaskan konsep graf, BFS, DFS, dan pohon biner dengan metode visualisasi.</div>
+                  <div class="deskripsi-text">{{ $app->deskripsi_job }}</div>
                 </td>
                 <td class="status-cell">
+                  @if($app->status === 'pending')
                   <div class="status-approve-group">
-                    <button class="btn-approve acc" onclick="openConfirm('acc',1,'Rizky Firmansyah')">✓ Setujui</button>
-                    <button class="btn-approve rej" onclick="openConfirm('rej',1,'Rizky Firmansyah')">✗ Tolak</button>
+                    <form action="/acc-pengajuan/{{ $app->id }}/approve" method="POST" style="display:inline;">
+                      @csrf
+                      <button type="submit" class="btn-approve acc">✓ Setujui</button>
+                    </form>
+                    <form action="/acc-pengajuan/{{ $app->id }}/reject" method="POST" style="display:inline;">
+                      @csrf
+                      <button type="submit" class="btn-approve rej">✗ Tolak</button>
+                    </form>
                   </div>
-                </td>
-              </tr>
-
-              <!-- Row 2 — Menunggu -->
-              <tr id="row-2">
-                <td class="col-no">2</td>
-                <td class="nama-cell">
-                  <div class="nama-text">Siti Aminah</div>
-                  <div class="nim-text">2023023</div>
-                </td>
-                <td class="topik-cell">
-                  <div class="topik-text">CRUD dengan PHP & MySQL</div>
-                </td>
-                <td class="bukti-cell">
-                  <button class="btn-bukti" onclick="openPdf('Siti Aminah','bukti_siti_aminah.pdf','2023023')">
-                    <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
-                </td>
-                <td class="deskripsi-cell">
-                  <div class="deskripsi-text">Mahasiswa semester 5, juara 2 Hackathon Internal 2025. Pengalaman membangun 3 project web full-stack dengan PHP native dan Laravel. Aktif di komunitas developer kampus.</div>
-                </td>
-                <td class="status-cell">
-                  <div class="status-approve-group">
-                    <button class="btn-approve acc" onclick="openConfirm('acc',2,'Siti Aminah')">✓ Setujui</button>
-                    <button class="btn-approve rej" onclick="openConfirm('rej',2,'Siti Aminah')">✗ Tolak</button>
-                  </div>
-                </td>
-              </tr>
-
-              <!-- Row 3 — Disetujui -->
-              <tr id="row-3">
-                <td class="col-no">3</td>
-                <td class="nama-cell">
-                  <div class="nama-text">Udin Saputra</div>
-                  <div class="nim-text">2022008</div>
-                </td>
-                <td class="topik-cell">
-                  <div class="topik-text">Distribusi Normal & Aplikasinya</div>
-                </td>
-                <td class="bukti-cell">
-                  <button class="btn-bukti" onclick="openPdf('Udin Saputra','bukti_udin_saputra.pdf','2022008')">
-                    <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
-                </td>
-                <td class="deskripsi-cell">
-                  <div class="deskripsi-text">Mahasiswa semester 8, asisten statistika selama 3 semester. IPK 3.85. Sudah pernah mengajar matematika dasar di bimbel luar kampus selama 1 tahun.</div>
-                </td>
-                <td class="status-cell">
+                  @elseif($app->status === 'approved')
                   <span class="status-final approved">✓ Disetujui</span>
+                  @else
+                  <span class="status-final rejected">✗ Ditolak</span>
+                  @endif
                 </td>
               </tr>
-
-              <!-- Row 4 — Menunggu -->
-              <tr id="row-4">
-                <td class="col-no">4</td>
-                <td class="nama-cell">
-                  <div class="nama-text">Dewi Lestari</div>
-                  <div class="nim-text">2023031</div>
-                </td>
-                <td class="topik-cell">
-                  <div class="topik-text">Normalisasi Database (1NF–3NF)</div>
-                </td>
-                <td class="bukti-cell">
-                  <button class="btn-bukti" onclick="openPdf('Dewi Lestari','bukti_dewi_lestari.pdf','2023031')">
-                    <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
-                </td>
-                <td class="deskripsi-cell">
-                  <div class="deskripsi-text">Mahasiswa semester 5 jurusan SI. Nilai A di mata kuliah Basis Data I dan II. Pernah magang di perusahaan sebagai database administrator selama 3 bulan.</div>
-                </td>
-                <td class="status-cell">
-                  <div class="status-approve-group">
-                    <button class="btn-approve acc" onclick="openConfirm('acc',4,'Dewi Lestari')">✓ Setujui</button>
-                    <button class="btn-approve rej" onclick="openConfirm('rej',4,'Dewi Lestari')">✗ Tolak</button>
-                  </div>
-                </td>
+              @empty
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada pengajuan tutor.</td>
               </tr>
-
-              <!-- Row 5 — Disetujui -->
-              <tr id="row-5">
-                <td class="col-no">5</td>
-                <td class="nama-cell">
-                  <div class="nama-text">Fajar Nugroho</div>
-                  <div class="nim-text">2022019</div>
-                </td>
-                <td class="topik-cell">
-                  <div class="topik-text">Algoritma Pembelajaran Mesin</div>
-                </td>
-                <td class="bukti-cell">
-                  <button class="btn-bukti" onclick="openPdf('Fajar Nugroho','bukti_fajar_nugroho.pdf','2022019')">
-                    <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
-                </td>
-                <td class="deskripsi-cell">
-                  <div class="deskripsi-text">Mahasiswa semester 8, aktif di laboratorium AI kampus. Mempunyai sertifikasi TensorFlow Developer. Sudah mempublikasikan 1 paper di jurnal nasional terkait klasifikasi gambar.</div>
-                </td>
-                <td class="status-cell">
-                  <span class="status-final approved">✓ Disetujui</span>
-                </td>
-              </tr>
+              @endforelse
             </tbody>
           </table>
         </div>
         <div class="table-footer">
-          <div class="table-footer-info">Menampilkan <strong>1–5</strong> dari <strong>5</strong> pengajuan</div>
+          <div class="table-footer-info">Menampilkan <strong>{{ $applications->count() }}</strong> pengajuan</div>
         </div>
       </div>
     </div>

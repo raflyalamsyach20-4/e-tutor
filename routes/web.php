@@ -33,18 +33,6 @@ Route::get('/pendaftaran-kelas', function () {
     return view('peserta_tutor.pendaftaran-kelas');
 });
 
-Route::get('/pengajuan-tutor', function () {
-    return view('peserta_tutor.pengajuan-tutor');
-});
-
-Route::get('/status-pengajuan', function () {
-    return view('peserta_tutor.status-pengajuan');
-});
-
-Route::get('/jadwal-tutor', function () {
-    return view('peserta_tutor.jadwal-tutor');
-});
-
 Route::get('/list-pendaftar', function () {
     return view('peserta_tutor.list-pendaftar');
 });
@@ -65,10 +53,6 @@ Route::get('/aktivitas-peserta', function () {
     return view('peserta_tutor.aktivitas-peserta');
 });
 
-Route::get('/acc-pengajuan', function () {
-    return view('kaprodi.acc-pengajuan');
-});
-
 Route::middleware('auth')->group(function () {
     // Tutor
     Route::get('/pengajuan-tutor', [PengajuanTutorController::class, 'create']);
@@ -81,6 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/acc-pengajuan/{id}/reject', [AccPengajuanController::class, 'reject']);
 
     // Jadwal
-    Route::get('/jadwal', [JadwalTutorController::class, 'index']);
-    Route::post('/jadwal', [JadwalTutorController::class, 'store']);
+    Route::get('/jadwal-tutor', [JadwalTutorController::class, 'index']);
+    Route::post('/jadwal-tutor', [JadwalTutorController::class, 'store']);
 });

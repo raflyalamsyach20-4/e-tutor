@@ -454,6 +454,22 @@
               <p>Ajukan diri Anda sebagai E-Tutor kepada Kaprodi. Pengajuan akan diverifikasi sebelum Anda dapat membuka kelas.</p>
             </div>
 
+            @if(session('success'))
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
+                <ul style="margin-left: 20px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <form action="/pengajuan-tutor" method="post" enctype="multipart/form-data">
             @csrf
               <!-- NAMA -->

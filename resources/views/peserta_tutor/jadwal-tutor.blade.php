@@ -443,30 +443,20 @@
                     </tr>
                   </thead>
                   <tbody>
+                    @forelse($schedules as $index => $schedule)
                     <tr>
-                      <td style="color:rgba(255,255,255,0.45); font-weight:600;">1</td>
-                      <td><span class="jt-day">Kamis</span></td>
-                      <td><span class="jt-date">22 Februari 2026</span></td>
-                      <td><span class="jt-topic">Distribusi Normal dan Aplikasinya</span></td>
-                      <td><span class="jt-time">08:00 - 10:00</span></td>
+                      <td style="color:rgba(255,255,255,0.45); font-weight:600;">{{ $index + 1 }}</td>
+                      <td><span class="jt-day">{{ ucfirst($schedule->hari) }}</span></td>
+                      <td><span class="jt-date">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d F Y') }}</span></td>
+                      <td><span class="jt-topic">{{ $schedule->topik_pembahasan }}</span></td>
+                      <td><span class="jt-time">{{ $schedule->waktu }}</span></td>
                       <td><a href="/informasi-kelas" class="btn-detail"><span class="detail-icon">👁️</span> Detail</a></td>
                     </tr>
+                    @empty
                     <tr>
-                      <td style="color:rgba(255,255,255,0.45); font-weight:600;">2</td>
-                      <td><span class="jt-day">Senin</span></td>
-                      <td><span class="jt-date">2 Maret 2026</span></td>
-                      <td><span class="jt-topic">Normalisasi Database (1NF - 3NF)</span></td>
-                      <td><span class="jt-time">10:00 - 12:00</span></td>
-                      <td><a href="/informasi-kelas" class="btn-detail"><span class="detail-icon">👁️</span> Detail</a></td>
+                      <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal yang ditambahkan.</td>
                     </tr>
-                    <tr>
-                      <td style="color:rgba(255,255,255,0.45); font-weight:600;">3</td>
-                      <td><span class="jt-day">Rabu</span></td>
-                      <td><span class="jt-date">4 Maret 2026</span></td>
-                      <td><span class="jt-topic">Regresi Linier Berganda</span></td>
-                      <td><span class="jt-time">14:00 - 16:00</span></td>
-                      <td><a href="/informasi-kelas" class="btn-detail"><span class="detail-icon">👁️</span> Detail</a></td>
-                    </tr>
+                    @endforelse
                   </tbody>
                 </table>
               </div>
@@ -518,7 +508,20 @@
               <p>Buat jadwal baru untuk kelas tutoring Anda. Jadwal akan ditampilkan di halaman Informasi Kelas.</p>
             </div>
 
-            <form action="#" method="post">
+            @if(session('success'))
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            <form action="/jadwal-tutor" method="post">
+              @csrf
 
               <!-- Hari -->
               <div class="form-group">

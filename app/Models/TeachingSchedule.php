@@ -8,13 +8,14 @@ class TeachingSchedule extends Model
 {
     use HasFactory;
 
+    protected $table = 'teaching_schedules';
+
     protected $fillable = [
         'user_id',
-        'mata_kuliah',
         'hari',
-        'jam_mulai',
-        'jam_selesai',
-        'ruangan',
+        'tanggal',
+        'topik_pembahasan',
+        'waktu',
     ];
 
     public function user()
