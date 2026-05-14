@@ -602,9 +602,9 @@
         </div>
       </div>
       <div class="topbar-right">
-        <button class="topbar-btn">
-          🔔 <span class="notif-dot"></span>
-        </button>
+        <a href="{{ route('notifications.index') }}" class="topbar-btn">
+          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+        </a>
       </div>
     </div>
     <!-- Page Header -->
@@ -616,15 +616,15 @@
         </div>
         <div class="header-stats">
           <div class="header-stat">
-            <div class="stat-num">2</div>
+            <div class="stat-num">{{ $stats['total'] }}</div>
             <div class="stat-label">Kelas Diajukan</div>
           </div>
           <div class="header-stat">
-            <div class="stat-num" style="color:#86efac">1</div>
+            <div class="stat-num" style="color:#86efac">{{ $stats['approved'] }}</div>
             <div class="stat-label">Disetujui</div>
           </div>
           <div class="header-stat">
-            <div class="stat-num" style="color:#fde047">1</div>
+            <div class="stat-num" style="color:#fde047">{{ $stats['pending'] }}</div>
             <div class="stat-label">Menunggu</div>
           </div>
         </div>
@@ -672,8 +672,8 @@
       <div class="section-label">
         <span class="le">📚</span> Kelas yang Kamu Ajukan
         <span class="section-date">
-          Pendaftaran 20 Feb 2026
-          <span class="section-date-badge">Kemarin</span>
+          Status pendaftaran terbaru
+          <span class="section-date-badge">Live</span>
         </span>
       </div>
 
@@ -735,7 +735,7 @@
         <div class="status-footer-info">ℹ️ Status diperbarui secara real-time oleh tutor</div>
         <div class="status-footer-live">
           <span class="live-dot"></span>
-          Terakhir diperbarui: 21 Feb 2026, 16:45 WIB
+          Terakhir diperbarui: {{ now()->translatedFormat('d M Y, H:i') }} WIB
         </div>
       </div>
 

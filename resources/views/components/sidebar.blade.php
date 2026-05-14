@@ -7,30 +7,52 @@
         </div>
     </div>
     <nav class="sidebar-nav">
-        
-        <details class="nav-parent layanan">
-            <summary><span class="nav-icon">📚</span> Layanan Tutor <span class="chevron">▶</span></summary>
-            <div class="nav-children">
-                <a class="nav-child nav-info" href="/informasi-kelas">Informasi Kelas</a>
-                <a class="nav-child nav-daftar" href="/pendaftaran-kelas">Pendaftaran Kelas</a>
-                <a class="nav-child nav-daftar" href="/aktivitas-peserta">Aktivitas Peserta</a>
-            </div>
-        </details>
-        <details class="nav-parent pengajuan" open>
-            <summary><span class="nav-icon">✍️</span> Pengajuan Tutor <span class="chevron">▶</span></summary>
-            <div class="nav-children">
-                <a class="nav-child nav-pengajuan" href="/pengajuan-tutor">Halaman Pengajuan</a>
-                <a class="nav-child nav-status" href="/status-pengajuan">Status Pengajuan</a>
-                <a class="nav-child nav-jadwal" href="/jadwal-tutor">Jadwal Tutor</a>
-                <a class="nav-child nav-list" href="/list-pendaftar">List Pendaftar</a>
-                <a class="nav-child nav-achievement" href="#page-achievement">Achievement</a>
-            </div>
-        </details>
+        @if(Auth::user()->role == 'admin')
+            <details class="nav-parent admin" open>
+                <summary><span class="nav-icon">⚙️</span> Menu Admin <span class="chevron">▶</span></summary>
+                <div class="nav-children">
+                    <a class="nav-child {{ request()->is('admin/acc-achievement') ? 'active' : '' }}" href="/admin/acc-achievement">Verifikasi Surat Skills</a>
+                </div>
+            </details>
+        @elseif(Auth::user()->role == 'kaprodi')
+            <details class="nav-parent kaprodi" open>
+                <summary><span class="nav-icon">🎓</span> Menu Kaprodi <span class="chevron">▶</span></summary>
+                <div class="nav-children">
+                    <a class="nav-child {{ request()->is('kaprodi/acc-pengajuan') ? 'active' : '' }}" href="/kaprodi/acc-pengajuan">ACC Pengajuan</a>
+                </div>
+            </details>
+        @else
+            <details class="nav-parent layanan">
+                <summary><span class="nav-icon">📚</span> Layanan Tutor <span class="chevron">▶</span></summary>
+                <div class="nav-children">
+                    <a class="nav-child nav-info" href="/informasi-kelas">Informasi Kelas</a>
+                    <a class="nav-child nav-daftar" href="/pendaftaran-kelas">Pendaftaran Kelas</a>
+                    <a class="nav-child nav-daftar" href="/aktivitas-peserta">Aktivitas Peserta</a>
+                </div>
+            </details>
+            <details class="nav-parent pengajuan" open>
+                <summary><span class="nav-icon">✍️</span> Pengajuan Tutor <span class="chevron">▶</span></summary>
+                <div class="nav-children">
+                    <a class="nav-child nav-pengajuan" href="/pengajuan-tutor">Halaman Pengajuan</a>
+                    <a class="nav-child nav-status" href="/status-pengajuan">Status Pengajuan</a>
+                    <a class="nav-child nav-jadwal" href="/jadwal-tutor">Jadwal Tutor</a>
+                    <a class="nav-child nav-list" href="/list-pendaftar">List Pendaftar</a>
+                    <a class="nav-child nav-achievement" href="/achievement">Achievement</a>
+                </div>
+            </details>
+            <div class="nav-separator"></div>
+            <a class="nav-item nav-template {{ request()->is('surat-rekomendasi*') ? 'active' : '' }}" href="/surat-rekomendasi"><span class="nav-icon">📄</span> Surat Rekomendasi</a>
+        @endif
+
         <div class="nav-separator"></div>
-        <a class="nav-item nav-template" href="#page-template"><span class="nav-icon">📄</span> Template</a>
-        <a class="nav-item nav-notif" href="/notifikasi">
+        <a class="nav-item nav-notif {{ request()->is('notifikasi*') ? 'active' : '' }}" href="/notifikasi">
             <span class="nav-icon">🔔</span> Notifikasi
-            <span class="notif-badge">4</span>
+            @php
+                $unreadCount = Auth::user()->notifications()->where('is_read', false)->count();
+            @endphp
+            @if($unreadCount > 0)
+                <span class="notif-badge">{{ $unreadCount }}</span>
+            @endif
         </a>
     </nav>
     <div class="sidebar-footer">
@@ -47,16 +69,5 @@
             <button type="submit" class="btn-logout">Logout</button>
         </form>
         @endauth
-
-        @guest
-        <div class="user-card">
-            <div class="user-avatar">?</div>
-            <div class="user-info">
-                <div class="user-name">Guest</div>
-                <div class="user-role">Silakan login</div>
-            </div>
-        </div>
-        <a href="/login" class="btn-login">Login</a>
-        @endguest
     </div>
 </aside>

@@ -424,7 +424,9 @@
           </div>
         </div>
         <div class="topbar-right">
-          <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
+          <a href="{{ route('notifications.index') }}" class="topbar-btn">
+            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+          </a>
         </div>
       </div>
 
@@ -445,19 +447,19 @@
             <!-- Stats -->
             <div class="status-stats">
               <div class="status-stat ss-total">
-                <div class="ss-num">5</div>
+                <div class="ss-num">{{ $stats['total'] }}</div>
                 <div class="ss-label">Total Pengajuan</div>
               </div>
               <div class="status-stat ss-menunggu">
-                <div class="ss-num">2</div>
+                <div class="ss-num">{{ $stats['pending'] }}</div>
                 <div class="ss-label">Menunggu</div>
               </div>
               <div class="status-stat ss-disetujui">
-                <div class="ss-num">2</div>
+                <div class="ss-num">{{ $stats['approved'] }}</div>
                 <div class="ss-label">Disetujui</div>
               </div>
               <div class="status-stat ss-ditolak">
-                <div class="ss-num">1</div>
+                <div class="ss-num">{{ $stats['rejected'] }}</div>
                 <div class="ss-label">Ditolak</div>
               </div>
             </div>
@@ -476,39 +478,42 @@
                     <th>Status</th>
                   </thead>
                   <tbody>
-                    @if($application)
+                    @forelse($applications as $index => $app)
                     <tr>
-                      <td class="st-no">1</td>
-                      <td class="st-nama">{{ $application->nama }}</td>
-                      <td class="st-nim">{{ $application->nim }}</td>
+                      <td class="st-no">{{ $index + 1 }}</td>
+                      <td class="st-nama">{{ $app->nama }}</td>
+                      <td class="st-nim">{{ $app->nim }}</td>
                       <td>
                         <div class="st-topik">
-                          {{ $application->topik_pembahasan }}
+                          {{ $app->topik_pembahasan }}
                         </div>
                       </td>
-                      <td class="st-desc">{{ $application->deskripsi_job }}</td>
+                      <td class="st-desc">{{ $app->deskripsi_job }}</td>
                       <td>
                         <div class="st-bukti-cell">
-                          <a class="st-bukti-link" href="{{ Storage::url($application->bukti_memenuhi) }}" target="_blank">
+                          <a class="st-bukti-link" href="{{ Storage::url($app->bukti_memenuhi) }}" target="_blank">
                             <span class="st-bukti-icon">📄</span> Lihat
                           </a>
                         </div>
                       </td>
                       <td>
-                        @if($application->status === 'pending')
+                        @if($app->status === 'pending')
                         <span class="status-badge menunggu"><span class="sb-dot"></span> Menunggu Persetujuan</span>
-                        @elseif($application->status === 'approved')
+                        @elseif($app->status === 'approved')
                         <span class="status-badge disetujui"><span class="sb-dot"></span> Disetujui</span>
                         @else
                         <span class="status-badge ditolak"><span class="sb-dot"></span> Ditolak</span>
                         @endif
                       </td>
                     </tr>
-                    @else
+                    @empty
                     <tr>
-                      <td colspan="7" style="text-align: center; padding: 20px;">Anda belum mengajukan pendaftaran tutor.</td>
+                      <td colspan="7" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
+                        <div style="font-size: 24px; margin-bottom: 10px;">📭</div>
+                        Anda belum mengajukan pendaftaran tutor.
+                      </td>
                     </tr>
-                    @endif
+                    @endforelse
                   </tbody>
                 </table>
               </div>

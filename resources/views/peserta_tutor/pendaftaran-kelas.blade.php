@@ -641,9 +641,9 @@
         </div>
       </div>
       <div class="topbar-right">
-        <button class="topbar-btn">
-          🔔 <span class="notif-dot"></span>
-        </button>
+        <a href="{{ route('notifications.index') }}" class="topbar-btn">
+          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+        </a>
       </div>
     </div>
 
@@ -694,10 +694,12 @@
               <div class="input-wrapper">
                 <input
                   class="form-input"
-                  type="number"
+                  type="text"
                   id="no_telepon"
+                  name="no_telepon"
                   value="{{ Auth::user()->no_telepon }}"
-                  disabled
+                  placeholder="Masukkan nomor telepon..."
+                  required
                 >
                 <span class="input-icon">✏️</span>
               </div>

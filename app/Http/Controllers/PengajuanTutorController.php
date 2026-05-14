@@ -39,7 +39,15 @@ class PengajuanTutorController extends Controller
 
     public function status()
     {
-        $application = PengajuanTutor::where('user_id', Auth::id())->first();
-        return view('peserta_tutor.status-pengajuan', compact('application'));
+        $applications = PengajuanTutor::where('user_id', Auth::id())->latest()->get();
+
+        $stats = [
+            'total' => $applications->count(),
+            'pending' => $applications->where('status', 'pending')->count(),
+            'approved' => $applications->where('status', 'approved')->count(),
+            'rejected' => $applications->where('status', 'rejected')->count(),
+        ];
+
+        return view('peserta_tutor.status-pengajuan', compact('applications', 'stats'));
     }
 }

@@ -562,7 +562,7 @@
 
               <!-- LIHAT STATUS PENGAJUAN -->
               <div class="form-group">
-                <a href="#page-status" class="btn-status">
+                <a href="/status-pengajuan" class="btn-status">
                   <span class="status-icon">🔍</span>
                   Lihat Status Pengajuan
                   <span class="status-arrow">→</span>

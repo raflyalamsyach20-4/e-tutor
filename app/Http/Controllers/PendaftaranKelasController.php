@@ -20,7 +20,14 @@ class PendaftaranKelasController extends Controller
     {
         $request->validate([
             'teaching_schedule_id' => 'required|exists:teaching_schedules,id',
+            'no_telepon' => 'required|string|max:20',
         ]);
+
+        // Update no telepon user jika berubah atau baru diisi
+        $user = Auth::user();
+        if ($request->no_telepon !== $user->no_telepon) {
+            $user->update(['no_telepon' => $request->no_telepon]);
+        }
 
         // Cek apakah sudah pernah mendaftar ke kelas ini
         $existing = PendaftaranKelas::where('user_id', Auth::id())

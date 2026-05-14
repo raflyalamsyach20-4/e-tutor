@@ -466,7 +466,9 @@
         </div>
       </a>
       <div class="topbar-right">
-        <button class="topbar-btn">🔔<span class="notif-dot"></span></button>
+        <a href="{{ route('notifications.index') }}" class="topbar-btn">
+          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+        </a>
       </div>
     </div>
 
@@ -525,9 +527,9 @@
                   <div class="topik-text">{{ $app->topik_pembahasan }}</div>
                 </td>
                 <td class="bukti-cell">
-                  <a href="{{ Storage::url($app->bukti_memenuhi) }}" target="_blank" class="btn-bukti">
+                  <button class="btn-bukti" onclick="openPdf('{{ $app->nama }}', '{{ Storage::url($app->bukti_memenuhi) }}', '{{ $app->nim }}')">
                     <span class="bukti-icon">📄</span> Lihat Berkas
-                  </a>
+                  </button>
                 </td>
                 <td class="deskripsi-cell">
                   <div class="deskripsi-text">{{ $app->deskripsi_job }}</div>
@@ -582,12 +584,11 @@
       </div>
       <button class="pdf-modal-close" onclick="closePdf()">✕</button>
     </div>
-    <div class="pdf-modal-body">
+    <div class="pdf-modal-body" id="pdfModalBody">
       <div class="pdf-placeholder" id="pdfPlaceholder">
         <div class="pdf-placeholder-icon">📄</div>
         <h3>Preview Berkas</h3>
-        <p>File PDF akan ditampilkan di sini saat terhubung ke backend</p>
-        <div class="pdf-filename" id="pdfFilename">📎 bukti_rizky_firmansyah.pdf</div>
+        <p>Sedang memuat berkas...</p>
       </div>
     </div>
     <div class="pdf-modal-footer">
@@ -624,11 +625,23 @@
   let currentRow = '';
 
   // ========== PDF MODAL ==========
-  function openPdf(name, filename, nim) {
-    document.getElementById('pdfTitle').textContent = 'Bukti Pengajuan — ' + name;
-    document.getElementById('pdfSubtitle').textContent = 'NIM: ' + nim;
-    document.getElementById('pdfFilename').textContent = '📎 ' + filename;
-    document.getElementById('pdfOverlay').classList.add('show');
+  function openPdf(name, url, nim) {
+    const title = document.getElementById('pdfTitle');
+    const subtitle = document.getElementById('pdfSubtitle');
+    const body = document.getElementById('pdfModalBody');
+    const overlay = document.getElementById('pdfOverlay');
+
+    title.textContent = 'Bukti Pengajuan — ' + name;
+    subtitle.textContent = 'NIM: ' + nim;
+
+    const extension = url.split('.').pop().toLowerCase();
+    if (extension === 'pdf') {
+      body.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
+    } else {
+      body.innerHTML = `<div style="padding:20px; text-align:center;"><img src="${url}" style="max-width:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>`;
+    }
+
+    overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
   }
 
