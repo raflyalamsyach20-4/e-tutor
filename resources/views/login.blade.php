@@ -523,38 +523,55 @@
       </div>
 
       <!-- Form -->
-      <form id="loginForm" action="/login" method="POST" novalidate>
+      <!-- Form -->
+<form id="loginForm" action="{{ route('login') }}" method="POST" novalidate>
   @csrf
-  <div class="form-group">
-    <label class="form-label" for="email">Email Address</label>
-    <div class="input-wrapper">
-      <input type="email" id="email" name="email" class="form-input" placeholder="contoh@email.com" autocomplete="email" required>
-      <span class="iconify input-icon" data-icon="lucide:mail"></span>
-    </div>
-    @error('email')
-      <small style="color: red;">{{ $message }}</small>
-    @enderror
-  </div>
 
-  <div class="form-group">
-    <label class="form-label" for="password">Password</label>
-    <div class="input-wrapper">
-      <input type="password" id="password" name="password" class="form-input has-toggle" placeholder="Masukkan password" autocomplete="current-password" required>
-      <span class="iconify input-icon" data-icon="lucide:lock"></span>
-      <button type="button" class="toggle-password" onclick="togglePw('password', this)" aria-label="Toggle password">
-        <span class="iconify" data-icon="lucide:eye"></span>
-      </button>
+  @if ($errors->any())
+    <div style="color: red; margin-bottom: 10px;">
+      {{ $errors->first() }}
     </div>
-    @error('password')
-      <small style="color: red;">{{ $message }}</small>
-    @enderror
-  </div>
+  @endif
 
   @if(session('loginError'))
     <div style="color: red; margin-bottom: 10px;">{{ session('loginError') }}</div>
   @endif
 
-  <button type="submit" class="btn-login">LOGIN</button>
+  <div class="form-group">
+    <label class="form-label" for="email">Email</label>
+    <div class="input-wrapper">
+      <span class="iconify input-icon" data-icon="lucide:mail"></span>
+      <input type="email" id="email" name="email" class="form-input"
+             placeholder="nama@email.com" value="{{ old('email') }}" required>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="password">Password</label>
+    <div class="input-wrapper">
+      <span class="iconify input-icon" data-icon="lucide:lock"></span>
+      <input type="password" id="password" name="password"
+             class="form-input has-toggle" placeholder="••••••••" required>
+      <button type="button" class="toggle-password" onclick="togglePw('password', this)">
+        <span class="iconify" data-icon="lucide:eye"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Remember me + Forgot -->
+  <div class="form-row">
+    <label class="checkbox-wrapper">
+      <input type="checkbox" id="remember" name="remember">
+      <span class="custom-checkbox">
+        <span class="iconify" data-icon="lucide:check"></span>
+      </span>
+      <span class="checkbox-label">Ingat saya</span>
+    </label>
+    <a href="#" class="forgot-link">Lupa password?</a>
+  </div>
+
+  <button type="submit" class="btn-login">Login</button>
+
 </form>
 
         <!-- Remember me + Forgot -->

@@ -687,6 +687,22 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="form-label" for="no_telepon">
+                <span class="label-icon">👤</span> No telepon
+              </label>
+              <div class="input-wrapper">
+                <input
+                  class="form-input"
+                  type="number"
+                  id="no_telepon"
+                  value="{{ Auth::user()->no_telepon }}"
+                  disabled
+                >
+                <span class="input-icon">✏️</span>
+              </div>
+            </div>
+
             <!-- Kelas Tutor -->
             <div class="form-group">
               <label class="form-label" for="kelas-tutor">

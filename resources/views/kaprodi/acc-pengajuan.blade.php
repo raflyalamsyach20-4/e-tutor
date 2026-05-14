@@ -433,21 +433,26 @@
       <details class="nav-parent kaprodi" open>
         <summary><span class="nav-icon">🛡️</span> Menu Kaprodi <span class="chevron">▶</span></summary>
         <div class="nav-children">
-          <a class="nav-child active" href="#">Verifikasi Pengajuan</a>
+          <a class="nav-child active" href="acc-pengajuan">Verifikasi Pengajuan</a>
         </div>
       </details>
 
-    <div class="sidebar-footer">
+      <div class="sidebar-footer">
+      @auth
       <div class="user-card">
-        <div class="user-avatar">DR</div>
+        <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
         <div class="user-info">
-          <div class="user-name">Dr. Rina Susanti</div>
-          <div class="user-role">Kaprodi - MI</div>
+          <div class="user-name">{{ Auth::user()->name }}</div>
+          <div class="user-role">{{ Auth::user()->role }}</div>
         </div>
       </div>
-    </div>
-  </aside>
-
+      <form action="/logout" method="POST" style="margin-top: 10px;">
+        @csrf
+        <button type="submit" class="btn-logout">Logout</button>
+      </form>
+      @endauth
+    </div>  <!-- ✅ tutup sidebar-footer -->
+  </aside>  <!-- ✅ tutup aside sidebar -->
 
   <!-- ==================== MAIN CONTENT ==================== -->
   <main class="main-content">

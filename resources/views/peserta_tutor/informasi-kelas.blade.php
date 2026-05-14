@@ -940,15 +940,16 @@
             <div class="stat-label">Kelas Tersedia</div>
           </div>
           <div class="header-stat">
-            <div class="stat-num">3</div>
+            <div class="stat-num">{{ $schedules->where('tanggal', \Carbon\Carbon::today()->toDateString())->count() }}</div>
             <div class="stat-label">Hari Ini</div>
           </div>
           <div class="header-stat">
-            <div class="stat-num">12</div>
+            <div class="stat-num">{{ $schedules->pluck('user_id')->unique()->count() }}</div>
             <div class="stat-label">Tutor Aktif</div>
           </div>
         </div>
       </div>
+      
     </div>
 
     <!-- Table Section -->
@@ -981,16 +982,6 @@
             </thead>
             <tbody>
               @forelse($schedules as $index => $schedule)
-                @php
-                    $approvedCount = $schedule->pendaftaran->count(); // Already filtered to 'approved' in Controller
-                    $quota = 20;
-                    $percentage = ($approvedCount / $quota) * 100;
-                    $isFull = $approvedCount >= $quota;
-                    
-                    $barClass = 'low';
-                    if($percentage > 75) $barClass = 'high';
-                    elseif($percentage > 40) $barClass = 'mid';
-                @endphp
               <tr>
                 <td class="col-no">{{ $index + 1 }}</td>
                 <td>
@@ -1001,7 +992,7 @@
                 </td>
                 <td>
                   <div class="topic-cell">
-                    <div class="topic-text">{{ $schedule->topik_pembahasan }}</div>
+                    <div class="topic-text">{{ $schedule->topik }}</div>
                     <div class="topic-details-wrapper">
                       <details>
                         <summary class="topic-details-toggle">
@@ -1011,7 +1002,7 @@
                           <div class="detail-row">
                             <div class="detail-icon">👤</div>
                             <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">{{ $schedule->user->name }}</span>
+                            <span class="detail-value">{{ $schedule->user->name ?? 'Tidak diketahui' }}</span>
                           </div>
                           <div class="detail-row">
                             <div class="detail-icon">✅</div>
@@ -1027,38 +1018,41 @@
                   <div class="time-cell">
                     <div class="time-icon">🕐</div>
                     <div>
-                      <div class="time-text">{{ \Carbon\Carbon::parse($schedule->waktu_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->waktu_selesai)->format('H:i') }}</div>
+                      <div class="time-text">{{ \Carbon\Carbon::parse($schedule->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->jam_selesai)->format('H:i') }}</div>
+                      <div class="time-duration">
+                        {{ \Carbon\Carbon::parse($schedule->jam_mulai)->diffInHours(\Carbon\Carbon::parse($schedule->jam_selesai)) }} jam
+                      </div>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="participant-cell">
+                    @php
+                      $kuota_terisi = $schedule->pendaftaran->count();
+                      $kuota_total = $schedule->kuota;
+                      $percentage = $kuota_total > 0 ? ($kuota_terisi / $kuota_total) * 100 : 0;
+                      $fill_class = $percentage < 50 ? 'low' : ($percentage < 90 ? 'mid' : 'high');
+                      $status_class = $kuota_terisi >= $kuota_total ? 'closed' : ($percentage >= 80 ? 'almost-full' : 'open');
+                      $status_text = $kuota_terisi >= $kuota_total ? 'Penuh' : ($percentage >= 80 ? 'Hampir Penuh' : 'Tersedia');
+                    @endphp
                     <div class="participant-info">
-                      <span class="participant-text">{{ $approvedCount }} <span>/ {{ $quota }}</span></span>
+                      <span class="participant-text">{{ $kuota_terisi }} <span>/ {{ $kuota_total }}</span></span>
                       <div class="participant-bar-bg">
-                        <div class="participant-bar-fill {{ $barClass }}" style="width: {{ min(100, $percentage) }}%"></div>
+                        <div class="participant-bar-fill {{ $fill_class }}" style="width: {{ $percentage }}%"></div>
                       </div>
                     </div>
-                    @if($isFull)
+                    @if($kuota_terisi >= $kuota_total)
                       <button class="btn-daftar full" disabled><span class="btn-icon">🚫</span> Penuh</button>
                     @else
-                      <a href="/pendaftaran-kelas" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
+                      <a href="/pendaftaran-kelas?jadwal_id={{ $schedule->id }}" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
                     @endif
                   </div>
                 </td>
-                <td>
-                  @if($isFull)
-                    <span class="status-badge closed"><span class="status-dot"></span> Penuh</span>
-                  @elseif($percentage > 75)
-                    <span class="status-badge almost-full"><span class="status-dot"></span> Hampir Penuh</span>
-                  @else
-                    <span class="status-badge open"><span class="status-dot"></span> Tersedia</span>
-                  @endif
-                </td>
+                <td><span class="status-badge {{ $status_class }}"><span class="status-dot"></span> {{ $status_text }}</span></td>
               </tr>
               @empty
               <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal kelas yang tersedia.</td>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">Belum ada kelas yang ditambahkan oleh tutor.</td>
               </tr>
               @endforelse
             </tbody>
@@ -1068,13 +1062,6 @@
         <div class="table-footer">
           <div class="table-footer-info">
             Menampilkan <strong>{{ $schedules->count() }}</strong> kelas
-          </div>
-          <div class="pagination">
-            <button class="page-btn">◀</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">▶</button>
           </div>
         </div>
       </div>

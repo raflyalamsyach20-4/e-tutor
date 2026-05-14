@@ -8,14 +8,20 @@ use App\Models\TeachingSchedule;
 class InformasiKelasController extends Controller
 {
     public function index()
-    {
-        // Ambil semua jadwal yang tutor-nya sudah disetujui Kaprodi
-        $schedules = TeachingSchedule::with(['user.pengajuanTutor', 'pendaftaran' => function($q) {
-            $q->where('status', 'approved');
-        }])->whereHas('user.pengajuanTutor', function($q) {
-            $q->where('status', 'approved');
-        })->orderBy('tanggal', 'asc')->get();
+{
+    $schedules = TeachingSchedule::with(['user.pengajuanTutor', 'pendaftaran' => function($q) {
+        $q->where('status', 'approved');
+    }])->whereHas('user.pengajuanTutor', function($q) {
+        $q->where('status', 'approved');
+    })->orderBy('tanggal', 'asc')->get();
 
-        return view('peserta_tutor.informasi-kelas', compact('schedules'));
-    }
+    // ✅ Pastikan kuota tidak null
+    $schedules->each(function($schedule) {
+        if (!$schedule->kuota || $schedule->kuota == 0) {
+            $schedule->kuota = 20; // default kuota
+        }
+    });
+
+    return view('peserta_tutor.informasi-kelas', compact('schedules'));
+}
 }

@@ -389,15 +389,19 @@
       <a class="nav-item" href="#" style="color:#f87171;"><span class="nav-icon">🚪</span> Log Out</a>
     </nav>
     <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar">AD</div>
-        <div class="user-info">
-          <div class="user-name">Admin E-Tutor</div>
-          <div class="user-role">Administrator</div>
+        @auth
+        <div class="user-card">
+            <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
+            <div class="user-info">
+                <div class="user-name">{{ Auth::user()->name }}</div>
+                <div class="user-role">{{ Auth::user()->role }}</div>
+            </div>
         </div>
-      </div>
-    </div>
-  </aside>
+        <form action="/logout" method="POST" style="margin-top: 10px;">
+            @csrf
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+        @endauth
 
 
   <!-- ==================== MAIN CONTENT ==================== -->

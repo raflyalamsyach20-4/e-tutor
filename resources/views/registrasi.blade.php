@@ -494,7 +494,7 @@
         <p>Buat akun baru untuk mulai belajar</p>
       </div>
 
-      <<form id="registerForm" action="/register" method="POST" novalidate>
+      <form id="registerForm" action="/registrasi" method="POST" novalidate>
   @csrf
   <div class="form-group">
     <label class="form-label" for="name">Name</label>
@@ -531,7 +531,21 @@
       <small style="color: red;">{{ $message }}</small>
     @enderror
   </div>
-
+  <div class="form-group">
+  <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
+  <div class="input-wrapper">
+    <span class="iconify input-icon" data-icon="lucide:lock"></span>
+    <input type="password" 
+           id="password_confirmation" 
+           name="password_confirmation"
+           class="form-input has-toggle" 
+           placeholder="Ulangi password" 
+           required>
+    <button type="button" class="toggle-password" onclick="togglePw('password_confirmation', this)">
+      <span class="iconify" data-icon="lucide:eye"></span>
+    </button>
+  </div>
+</div>
   @if(session('success'))
     <div style="color: green; margin-bottom: 10px;">{{ session('success') }}</div>
   @endif
