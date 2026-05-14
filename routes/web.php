@@ -15,6 +15,23 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 // =====================
+// Root Redirect
+// =====================
+Route::get('/', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->role === 'peserta') {
+            return redirect('/informasi-kelas');
+        } elseif ($user->role === 'kaprodi') {
+            return redirect('/kaprodi/acc-pengajuan');
+        } elseif ($user->role === 'admin') {
+            return redirect('/admin/acc-achievement');
+        }
+    }
+    return redirect()->route('login');
+});
+
+// =====================
 // Auth Routes
 // =====================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

@@ -574,35 +574,6 @@
 
 </form>
 
-        <!-- Remember me + Forgot -->
-        <div class="form-row">
-          <label class="checkbox-wrapper">
-            <input type="checkbox" id="remember">
-            <span class="custom-checkbox">
-              <span class="iconify" data-icon="lucide:check"></span>
-            </span>
-            <span class="checkbox-label">Ingat saya</span>
-          </label>
-          <a href="#" class="forgot-link">Lupa password?</a>
-        </div>
-
-      </form>
-
-      <!-- Divider -->
-      <div class="divider"><span>atau</span></div>
-
-      <!-- Social -->
-      <div class="social-buttons">
-        <button type="button" class="btn-social">
-          <span class="iconify" data-icon="logos:google-icon"></span>
-          Google
-        </button>
-        <button type="button" class="btn-social">
-          <span class="iconify" data-icon="lucide:github"></span>
-          GitHub
-        </button>
-      </div>
-
       <!-- Register link -->
       <p class="register-link">Belum punya akun? <a href="/registrasi">Daftar di sini</a></p>
 
