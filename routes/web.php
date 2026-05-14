@@ -45,3 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/acc-pengajuan/{id}/approve', [AccPengajuanController::class, 'approve']);
     Route::post('/acc-pengajuan/{id}/reject', [AccPengajuanController::class, 'reject']);
 });
+
+Route::get('/acc-achievement', function () {
+    return view('admin.acc-achievement');
+})->name('admin.acc-achievement');

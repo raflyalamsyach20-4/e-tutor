@@ -7,8 +7,7 @@
         </div>
     </div>
     <nav class="sidebar-nav">
-        <a class="nav-item nav-home" href="#page-home"><span class="nav-icon">🏠</span> Home</a>
-        <div class="nav-separator"></div>
+        
         <details class="nav-parent layanan">
             <summary><span class="nav-icon">📚</span> Layanan Tutor <span class="chevron">▶</span></summary>
             <div class="nav-children">
