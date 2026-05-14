@@ -1,21 +1,20 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TeachingSchedule extends Model
+class PendaftaranKelas extends Model
 {
     use HasFactory;
 
-    protected $table = 'teaching_schedules';
+    protected $table = 'pendaftaran_kelas';
 
     protected $fillable = [
         'user_id',
-        'hari',
-        'tanggal',
-        'topik_pembahasan',
-        'waktu',
+        'teaching_schedule_id',
+        'status',
     ];
 
     public function user()
@@ -23,8 +22,8 @@ class TeachingSchedule extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function pendaftaran()
+    public function teachingSchedule()
     {
-        return $this->hasMany(PendaftaranKelas::class);
+        return $this->belongsTo(TeachingSchedule::class);
     }
 }

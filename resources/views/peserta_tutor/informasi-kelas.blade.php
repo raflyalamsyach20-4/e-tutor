@@ -936,7 +936,7 @@
         </div>
         <div class="header-stats">
           <div class="header-stat">
-            <div class="stat-num">6</div>
+            <div class="stat-num">{{ $schedules->count() }}</div>
             <div class="stat-label">Kelas Tersedia</div>
           </div>
           <div class="header-stat">
@@ -980,18 +980,28 @@
               </tr>
             </thead>
             <tbody>
-
+              @forelse($schedules as $index => $schedule)
+                @php
+                    $approvedCount = $schedule->pendaftaran->count(); // Already filtered to 'approved' in Controller
+                    $quota = 20;
+                    $percentage = ($approvedCount / $quota) * 100;
+                    $isFull = $approvedCount >= $quota;
+                    
+                    $barClass = 'low';
+                    if($percentage > 75) $barClass = 'high';
+                    elseif($percentage > 40) $barClass = 'mid';
+                @endphp
               <tr>
-                <td class="col-no">1</td>
+                <td class="col-no">{{ $index + 1 }}</td>
                 <td>
                   <div class="date-cell">
-                    <span class="date-day">Kamis</span>
-                    <span class="date-full">22 Februari 2026</span>
+                    <span class="date-day">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('l') }}</span>
+                    <span class="date-full">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d F Y') }}</span>
                   </div>
                 </td>
                 <td>
                   <div class="topic-cell">
-                    <div class="topic-text">Distribusi Normal dan Aplikasinya</div>
+                    <div class="topic-text">{{ $schedule->topik_pembahasan }}</div>
                     <div class="topic-details-wrapper">
                       <details>
                         <summary class="topic-details-toggle">
@@ -1001,12 +1011,7 @@
                           <div class="detail-row">
                             <div class="detail-icon">👤</div>
                             <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Udin Saputra</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Manajemen Informatika (MI)</span>
+                            <span class="detail-value">{{ $schedule->user->name }}</span>
                           </div>
                           <div class="detail-row">
                             <div class="detail-icon">✅</div>
@@ -1022,332 +1027,47 @@
                   <div class="time-cell">
                     <div class="time-icon">🕐</div>
                     <div>
-                      <div class="time-text">08:00 - 10:00</div>
-                      <div class="time-duration">2 jam</div>
+                      <div class="time-text">{{ \Carbon\Carbon::parse($schedule->waktu_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->waktu_selesai)->format('H:i') }}</div>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div class="participant-cell">
                     <div class="participant-info">
-                      <span class="participant-text">5 <span>/ 20</span></span>
+                      <span class="participant-text">{{ $approvedCount }} <span>/ {{ $quota }}</span></span>
                       <div class="participant-bar-bg">
-                        <div class="participant-bar-fill low" style="width: 25%"></div>
+                        <div class="participant-bar-fill {{ $barClass }}" style="width: {{ min(100, $percentage) }}%"></div>
                       </div>
                     </div>
-                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
+                    @if($isFull)
+                      <button class="btn-daftar full" disabled><span class="btn-icon">🚫</span> Penuh</button>
+                    @else
+                      <a href="/pendaftaran-kelas" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
+                    @endif
                   </div>
                 </td>
-                <td><span class="status-badge open"><span class="status-dot"></span> Tersedia</span></td>
+                <td>
+                  @if($isFull)
+                    <span class="status-badge closed"><span class="status-dot"></span> Penuh</span>
+                  @elseif($percentage > 75)
+                    <span class="status-badge almost-full"><span class="status-dot"></span> Hampir Penuh</span>
+                  @else
+                    <span class="status-badge open"><span class="status-dot"></span> Tersedia</span>
+                  @endif
+                </td>
               </tr>
-
+              @empty
               <tr>
-                <td class="col-no">2</td>
-                <td>
-                  <div class="date-cell">
-                    <span class="date-day">Jumat</span>
-                    <span class="date-full">23 Februari 2026</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="topic-cell">
-                    <div class="topic-text">CRUD dengan PHP & MySQL</div>
-                    <div class="topic-details-wrapper">
-                      <details>
-                        <summary class="topic-details-toggle">
-                          <span class="eye-icon">👁️</span> Lihat Detail Tutor
-                        </summary>
-                        <div class="topic-details-content">
-                          <div class="detail-row">
-                            <div class="detail-icon">👤</div>
-                            <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Siti Aminah</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Teknik Informatika (TI)</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">✅</div>
-                            <span class="detail-label">Status</span>
-                            <span class="approved-badge"><span class="check-icon">✓</span> Approved by Kaprodi</span>
-                          </div>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="time-cell">
-                    <div class="time-icon">🕐</div>
-                    <div>
-                      <div class="time-text">13:00 - 15:30</div>
-                      <div class="time-duration">2.5 jam</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="participant-cell">
-                    <div class="participant-info">
-                      <span class="participant-text">17 <span>/ 20</span></span>
-                      <div class="participant-bar-bg">
-                        <div class="participant-bar-fill high" style="width: 85%"></div>
-                      </div>
-                    </div>
-                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
-                  </div>
-                </td>
-                <td><span class="status-badge almost-full"><span class="status-dot"></span> Hampir Penuh</span></td>
+                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal kelas yang tersedia.</td>
               </tr>
-
-              <tr>
-                <td class="col-no">3</td>
-                <td>
-                  <div class="date-cell">
-                    <span class="date-day">Sabtu</span>
-                    <span class="date-full">24 Februari 2026</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="topic-cell">
-                    <div class="topic-text">Teori Graf & Pohon (Tree)</div>
-                    <div class="topic-details-wrapper">
-                      <details>
-                        <summary class="topic-details-toggle">
-                          <span class="eye-icon">👁️</span> Lihat Detail Tutor
-                        </summary>
-                        <div class="topic-details-content">
-                          <div class="detail-row">
-                            <div class="detail-icon">👤</div>
-                            <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Rizky Firmansyah</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Manajemen Informatika (MI)</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">✅</div>
-                            <span class="detail-label">Status</span>
-                            <span class="approved-badge"><span class="check-icon">✓</span> Approved by Kaprodi</span>
-                          </div>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="time-cell">
-                    <div class="time-icon">🕐</div>
-                    <div>
-                      <div class="time-text">09:00 - 11:00</div>
-                      <div class="time-duration">2 jam</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="participant-cell">
-                    <div class="participant-info">
-                      <span class="participant-text">20 <span>/ 20</span></span>
-                      <div class="participant-bar-bg">
-                        <div class="participant-bar-fill high" style="width: 100%"></div>
-                      </div>
-                    </div>
-                    <button class="btn-daftar full" disabled><span class="btn-icon">🚫</span> Penuh</button>
-                  </div>
-                </td>
-                <td><span class="status-badge closed"><span class="status-dot"></span> Penuh</span></td>
-              </tr>
-
-              <tr>
-                <td class="col-no">4</td>
-                <td>
-                  <div class="date-cell">
-                    <span class="date-day">Senin</span>
-                    <span class="date-full">26 Februari 2026</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="topic-cell">
-                    <div class="topic-text">Normalisasi Database (1NF - 3NF)</div>
-                    <div class="topic-details-wrapper">
-                      <details>
-                        <summary class="topic-details-toggle">
-                          <span class="eye-icon">👁️</span> Lihat Detail Tutor
-                        </summary>
-                        <div class="topic-details-content">
-                          <div class="detail-row">
-                            <div class="detail-icon">👤</div>
-                            <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Dewi Lestari</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Sistem Informasi (SI)</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">✅</div>
-                            <span class="detail-label">Status</span>
-                            <span class="approved-badge"><span class="check-icon">✓</span> Approved by Kaprodi</span>
-                          </div>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="time-cell">
-                    <div class="time-icon">🕐</div>
-                    <div>
-                      <div class="time-text">10:00 - 12:00</div>
-                      <div class="time-duration">2 jam</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="participant-cell">
-                    <div class="participant-info">
-                      <span class="participant-text">8 <span>/ 25</span></span>
-                      <div class="participant-bar-bg">
-                        <div class="participant-bar-fill low" style="width: 32%"></div>
-                      </div>
-                    </div>
-                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
-                  </div>
-                </td>
-                <td><span class="status-badge open"><span class="status-dot"></span> Tersedia</span></td>
-              </tr>
-
-              <tr>
-                <td class="col-no">5</td>
-                <td>
-                  <div class="date-cell">
-                    <span class="date-day">Selasa</span>
-                    <span class="date-full">27 Februari 2026</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="topic-cell">
-                    <div class="topic-text">Algoritma Pembelajaran Mesin</div>
-                    <div class="topic-details-wrapper">
-                      <details>
-                        <summary class="topic-details-toggle">
-                          <span class="eye-icon">👁️</span> Lihat Detail Tutor
-                        </summary>
-                        <div class="topic-details-content">
-                          <div class="detail-row">
-                            <div class="detail-icon">👤</div>
-                            <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Fajar Nugroho</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Teknik Informatika (TI)</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">✅</div>
-                            <span class="detail-label">Status</span>
-                            <span class="approved-badge"><span class="check-icon">✓</span> Approved by Kaprodi</span>
-                          </div>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="time-cell">
-                    <div class="time-icon">🕐</div>
-                    <div>
-                      <div class="time-text">14:00 - 16:00</div>
-                      <div class="time-duration">2 jam</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="participant-cell">
-                    <div class="participant-info">
-                      <span class="participant-text">12 <span>/ 20</span></span>
-                      <div class="participant-bar-bg">
-                        <div class="participant-bar-fill mid" style="width: 60%"></div>
-                      </div>
-                    </div>
-                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
-                  </div>
-                </td>
-                <td><span class="status-badge open"><span class="status-dot"></span> Tersedia</span></td>
-              </tr>
-
-              <tr>
-                <td class="col-no">6</td>
-                <td>
-                  <div class="date-cell">
-                    <span class="date-day">Rabu</span>
-                    <span class="date-full">28 Februari 2026</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="topic-cell">
-                    <div class="topic-text">Model OSI & Protokol TCP/IP</div>
-                    <div class="topic-details-wrapper">
-                      <details>
-                        <summary class="topic-details-toggle">
-                          <span class="eye-icon">👁️</span> Lihat Detail Tutor
-                        </summary>
-                        <div class="topic-details-content">
-                          <div class="detail-row">
-                            <div class="detail-icon">👤</div>
-                            <span class="detail-label">Nama Tutor</span>
-                            <span class="detail-value">Budi Santoso</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">🎓</div>
-                            <span class="detail-label">Jurusan</span>
-                            <span class="detail-value">Teknik Informatika (TI)</span>
-                          </div>
-                          <div class="detail-row">
-                            <div class="detail-icon">✅</div>
-                            <span class="detail-label">Status</span>
-                            <span class="approved-badge"><span class="check-icon">✓</span> Approved by Kaprodi</span>
-                          </div>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="time-cell">
-                    <div class="time-icon">🕐</div>
-                    <div>
-                      <div class="time-text">08:30 - 10:30</div>
-                      <div class="time-duration">2 jam</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="participant-cell">
-                    <div class="participant-info">
-                      <span class="participant-text">3 <span>/ 15</span></span>
-                      <div class="participant-bar-bg">
-                        <div class="participant-bar-fill low" style="width: 20%"></div>
-                      </div>
-                    </div>
-                    <a href="#" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>
-                  </div>
-                </td>
-                <td><span class="status-badge open"><span class="status-dot"></span> Tersedia</span></td>
-              </tr>
-
+              @endforelse
             </tbody>
           </table>
         </div>
 
         <div class="table-footer">
           <div class="table-footer-info">
-            Menampilkan <strong>1-6</strong> dari <strong>6</strong> kelas
+            Menampilkan <strong>{{ $schedules->count() }}</strong> kelas
           </div>
           <div class="pagination">
             <button class="page-btn">◀</button>

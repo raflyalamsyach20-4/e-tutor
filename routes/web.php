@@ -19,52 +19,29 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-Route::get('/informasi-kelas', function () {
-    return view('peserta_tutor.informasi-kelas');
-})->middleware('auth');
-
-Route::post('/pendaftaran-kelas', [PendaftaranKelasController::class, 'store']);
-
-Route::get('/informasi-kelas', function () {
-    return view('peserta_tutor.informasi-kelas');
-})->middleware('auth');
-
-Route::get('/pendaftaran-kelas', function () {
-    return view('peserta_tutor.pendaftaran-kelas');
-});
-
-Route::get('/list-pendaftar', function () {
-    return view('peserta_tutor.list-pendaftar');
-});
-
-Route::get('/notifikasi', function () {
-    return view('peserta_tutor.notifikasi');
-});
-
-Route::get('/registrasi', function () {
-    return view('registrasi');
-});
-
-Route::get('/login', function () {
-    return view('login');
-});
-
-Route::get('/aktivitas-peserta', function () {
-    return view('peserta_tutor.aktivitas-peserta');
-});
-
 Route::middleware('auth')->group(function () {
+    // Peserta
+    Route::get('/informasi-kelas', [\App\Http\Controllers\InformasiKelasController::class, 'index']);
+    
+    Route::get('/pendaftaran-kelas', [\App\Http\Controllers\PendaftaranKelasController::class, 'create']);
+    Route::post('/pendaftaran-kelas', [\App\Http\Controllers\PendaftaranKelasController::class, 'store']);
+    
+    Route::get('/aktivitas-peserta', [\App\Http\Controllers\AktivitasPesertaController::class, 'index']);
+
     // Tutor
     Route::get('/pengajuan-tutor', [PengajuanTutorController::class, 'create']);
     Route::post('/pengajuan-tutor', [PengajuanTutorController::class, 'store']);
     Route::get('/status-pengajuan', [PengajuanTutorController::class, 'status']);
+    
+    Route::get('/jadwal-tutor', [JadwalTutorController::class, 'index']);
+    Route::post('/jadwal-tutor', [JadwalTutorController::class, 'store']);
+
+    Route::get('/list-pendaftar', [\App\Http\Controllers\ListPendaftarController::class, 'index']);
+    Route::post('/list-pendaftar/{id}/approve', [\App\Http\Controllers\ListPendaftarController::class, 'approve']);
+    Route::post('/list-pendaftar/{id}/reject', [\App\Http\Controllers\ListPendaftarController::class, 'reject']);
 
     // Kaprodi
     Route::get('/acc-pengajuan', [AccPengajuanController::class, 'index']);
     Route::post('/acc-pengajuan/{id}/approve', [AccPengajuanController::class, 'approve']);
     Route::post('/acc-pengajuan/{id}/reject', [AccPengajuanController::class, 'reject']);
-
-    // Jadwal
-    Route::get('/jadwal-tutor', [JadwalTutorController::class, 'index']);
-    Route::post('/jadwal-tutor', [JadwalTutorController::class, 'store']);
 });

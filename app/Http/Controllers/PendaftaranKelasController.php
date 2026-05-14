@@ -1,30 +1,43 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\TeachingSchedule;
+use App\Models\PendaftaranKelas;
+use Illuminate\Support\Facades\Auth;
 
 class PendaftaranKelasController extends Controller
 {
+    public function create()
+    {
+        // Hanya tampilkan tutor yang punya jadwal
+        $schedules = TeachingSchedule::with('user')->orderBy('tanggal', 'asc')->get();
+        return view('peserta_tutor.pendaftaran-kelas', compact('schedules'));
+    }
+
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'nim' => 'required|numeric',
-            'kelas_tutor' => 'required|string',
-            'no_telepon' => 'required|numeric',
+            'teaching_schedule_id' => 'required|exists:teaching_schedules,id',
         ]);
 
-        // Simpan data ke database
-        DB::table('pendaftaran_kelas')->insert([
-            'nama_peserta' => $request->input('nama'),
-            'nim' => $request->input('nim'),
-            'kelas_tutor' => $request->input('kelas_tutor'),
-            'no_telepon' => $request->input('no_telepon'),
+        // Cek apakah sudah pernah mendaftar ke kelas ini
+        $existing = PendaftaranKelas::where('user_id', Auth::id())
+            ->where('teaching_schedule_id', $request->teaching_schedule_id)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Anda sudah mendaftar pada kelas ini.');
+        }
+
+        // Simpan pendaftaran
+        PendaftaranKelas::create([
+            'user_id' => Auth::id(),
+            'teaching_schedule_id' => $request->teaching_schedule_id,
+            'status' => 'pending',
         ]);
 
-        // Redirect dengan pesan sukses
-        return redirect()->back()->with('success', 'Pendaftaran berhasil disimpan!');
+        return redirect()->back()->with('success', 'Pendaftaran berhasil dikirim! Menunggu persetujuan tutor.');
     }
 }

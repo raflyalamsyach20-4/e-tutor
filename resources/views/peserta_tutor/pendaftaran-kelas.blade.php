@@ -680,34 +680,11 @@
                   class="form-input"
                   type="text"
                   id="nama"
-                  name="nama"
-                  placeholder="Masukkan nama lengkap"
-                  required
-                  autocomplete="name"
+                  value="{{ Auth::user()->name }}"
+                  disabled
                 >
                 <span class="input-icon">✏️</span>
               </div>
-            </div>
-
-            <!-- NIM -->
-            <div class="form-group">
-              <label class="form-label" for="nim">
-                <span class="label-icon">🔢</span> NIM
-              </label>
-              <div class="input-wrapper">
-                <input
-                  class="form-input"
-                  type="number"
-                  id="nim"
-                  name="nim"
-                  placeholder="Masukkan NIM (angka)"
-                  required
-                  min="0"
-                  inputmode="numeric"
-                >
-                <span class="input-icon">🔑</span>
-              </div>
-              <div class="form-helper">Hanya angka yang diperbolehkan</div>
             </div>
 
             <!-- Kelas Tutor -->
@@ -715,37 +692,15 @@
               <label class="form-label" for="kelas-tutor">
                 <span class="label-icon">📚</span> Kelas Tutor
               </label>
-              <select class="form-select" id="kelas-tutor" name="kelas_tutor" required>
-                <option value="" disabled selected>— Pilih Tutor —</option>
-                <option value="udin">Udin Saputra — Distribusi Normal & Aplikasinya</option>
-                <option value="siti">Siti Aminah — CRUD dengan PHP & MySQL</option>
-                <option value="rizky">Rizky Firmansyah — Teori Graf & Pohon (Tree)</option>
-                <option value="dewi">Dewi Lestari — Normalisasi Database (1NF - 3NF)</option>
-                <option value="fajar">Fajar Nugroho — Algoritma Pembelajaran Mesin</option>
-                <option value="budi">Budi Santoso — Model OSI & Protokol TCP/IP</option>
+              <select class="form-select" id="kelas-tutor" name="teaching_schedule_id" required>
+                <option value="" disabled selected>— Pilih Kelas Tutor —</option>
+                @foreach($schedules as $schedule)
+                <option value="{{ $schedule->id }}">
+                  {{ $schedule->user->name }} — {{ $schedule->topik_pembahasan }} ({{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d M Y') }})
+                </option>
+                @endforeach
               </select>
               <div class="form-helper">Pendaftaran akan dikirim ke tutor yang dipilih untuk diverifikasi</div>
-            </div>
-
-            <!-- No Telepon -->
-            <div class="form-group">
-              <label class="form-label" for="telp">
-                <span class="label-icon">📱</span> No Telepon
-              </label>
-              <div class="input-wrapper">
-                <input
-                  class="form-input"
-                  type="number"
-                  id="telp"
-                  name="no_telepon"
-                  placeholder="Masukkan nomor telepon"
-                  required
-                  min="0"
-                  inputmode="numeric"
-                >
-                <span class="input-icon">📞</span>
-              </div>
-              <div class="form-helper">Hanya angka yang diperbolehkan</div>
             </div>
 
             <!-- Button Daftar -->

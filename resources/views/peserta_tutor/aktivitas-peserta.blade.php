@@ -636,16 +636,13 @@
 
       <!-- Profile -->
       <div class="profile-card">
-        <div class="profile-avatar">AP</div>
+        <div class="profile-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
         <div class="profile-info">
-          <h2>Ahmad Pratama</h2>
+          <h2>{{ Auth::user()->name }}</h2>
           <div class="profile-meta">
-            <span class="profile-meta-item"><span class="mi">🔢</span> 2024001</span>
-            <span class="profile-meta-item"><span class="mi">🎓</span> Manajemen Informatika</span>
-            <span class="profile-meta-item"><span class="mi">📧</span> ahmad.pratama@univ.ac.id</span>
+            <span class="profile-meta-item"><span class="mi">📧</span> {{ Auth::user()->email }}</span>
           </div>
           <div class="profile-tags">
-            <span class="profile-tag blue">Semester 4</span>
             <span class="profile-tag green">Aktif</span>
           </div>
         </div>
@@ -654,19 +651,19 @@
       <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-card-num blue">2</div>
+          <div class="stat-card-num blue">{{ $stats['total'] }}</div>
           <div class="stat-card-label">Total Diajukan</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-num green">1</div>
+          <div class="stat-card-num green">{{ $stats['approved'] }}</div>
           <div class="stat-card-label">Disetujui</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-num yellow">1</div>
+          <div class="stat-card-num yellow">{{ $stats['pending'] }}</div>
           <div class="stat-card-label">Menunggu</div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-num red">0</div>
+          <div class="stat-card-num red">{{ $stats['rejected'] }}</div>
           <div class="stat-card-label">Ditolak</div>
         </div>
       </div>
@@ -680,58 +677,58 @@
         </span>
       </div>
 
-      <!-- Card 1 — Disetujui -->
-      <div class="reg-card approved">
+      @forelse($pendaftarans as $p)
+        @php
+            $statusClass = '';
+            $statusIcon = '';
+            $statusLabel = '';
+            
+            if($p->status == 'approved') { $statusClass = 'approved'; $statusIcon = '✅'; $statusLabel = '✓ Disetujui'; }
+            elseif($p->status == 'rejected') { $statusClass = 'rejected'; $statusIcon = '❌'; $statusLabel = '✗ Ditolak'; }
+            else { $statusClass = 'pending'; $statusIcon = '⏳'; $statusLabel = '⏳ Menunggu'; }
+            
+            $schedule = $p->teachingSchedule;
+        @endphp
+      <div class="reg-card {{ $statusClass }}">
         <div class="reg-card-top">
-          <div class="reg-card-icon">✅</div>
+          <div class="reg-card-icon">{{ $statusIcon }}</div>
           <div class="reg-card-body">
             <div class="reg-card-title-row">
-              <span class="reg-card-title">Distribusi Normal dan Aplikasinya</span>
-              <span class="reg-status-badge approved">✓ Disetujui</span>
+              <span class="reg-card-title">{{ $schedule->topik_pembahasan }}</span>
+              <span class="reg-status-badge {{ $statusClass }}">{{ $statusLabel }}</span>
             </div>
             <div class="reg-card-details">
-              <span class="reg-detail-item"><span class="rdi">📅</span> Kamis, 22 Feb 2026</span>
-              <span class="reg-detail-item"><span class="rdi">🕐</span> 08:00 – 10:00</span>
-              <span class="reg-detail-item"><span class="rdi">👤</span> Tutor: Udin Saputra</span>
-              <span class="reg-detail-item"><span class="rdi">📍</span> Ruang MI-201</span>
+              <span class="reg-detail-item"><span class="rdi">📅</span> {{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('l, d M Y') }}</span>
+              <span class="reg-detail-item"><span class="rdi">🕐</span> {{ \Carbon\Carbon::parse($schedule->waktu_mulai)->format('H:i') }} – {{ \Carbon\Carbon::parse($schedule->waktu_selesai)->format('H:i') }}</span>
+              <span class="reg-detail-item"><span class="rdi">👤</span> Tutor: {{ $schedule->user->name }}</span>
             </div>
           </div>
           <div class="reg-card-action">
+            @if($p->status == 'approved')
             <a href="/informasi-kelas" class="btn-jadwal">📅 Lihat Jadwal</a>
+            @else
+            <div class="btn-jadwal disabled">{{ $statusLabel }}</div>
+            @endif
           </div>
         </div>
         <div class="reg-card-timeline">
-          <span class="tlm-item"><span class="tlm-dot green"></span> Diajukan: 20 Feb, 14:23</span>
-          <span class="tlm-item"><span class="tlm-dot green"></span> Ditinjau: 21 Feb, 09:10</span>
-          <span class="tlm-item"><span class="tlm-dot green"></span> Disetujui: 21 Feb, 16:45</span>
-        </div>
-      </div>
-
-      <!-- Card 2 — Menunggu -->
-      <div class="reg-card pending">
-        <div class="reg-card-top">
-          <div class="reg-card-icon">⏳</div>
-          <div class="reg-card-body">
-            <div class="reg-card-title-row">
-              <span class="reg-card-title">CRUD dengan PHP & MySQL</span>
-              <span class="reg-status-badge pending">⏳ Menunggu</span>
-            </div>
-            <div class="reg-card-details">
-              <span class="reg-detail-item"><span class="rdi">📅</span> Jumat, 23 Feb 2026</span>
-              <span class="reg-detail-item"><span class="rdi">🕐</span> 13:00 – 15:30</span>
-              <span class="reg-detail-item"><span class="rdi">👤</span> Tutor: Siti Aminah</span>
-              <span class="reg-detail-item"><span class="rdi">📍</span> Ruang TI-305</span>
-            </div>
-          </div>
-          <div class="reg-card-action">
-            <div class="btn-jadwal disabled">⏳ Menunggu</div>
-          </div>
-        </div>
-        <div class="reg-card-timeline">
-          <span class="tlm-item"><span class="tlm-dot green"></span> Diajukan: 20 Feb, 15:07</span>
+          <span class="tlm-item"><span class="tlm-dot green"></span> Diajukan: {{ $p->created_at->format('d M, H:i') }}</span>
+          @if($p->status == 'approved')
+          <span class="tlm-item"><span class="tlm-dot green"></span> Disetujui: {{ $p->updated_at->format('d M, H:i') }}</span>
+          @elseif($p->status == 'rejected')
+          <span class="tlm-item"><span class="tlm-dot red"></span> Ditolak: {{ $p->updated_at->format('d M, H:i') }}</span>
+          @else
           <span class="tlm-item"><span class="tlm-dot yellow"></span> Menunggu review tutor...</span>
+          @endif
         </div>
       </div>
+      @empty
+      <div class="empty-state">
+          <div class="empty-icon-wrap">🔍</div>
+          <h2>Belum ada kelas</h2>
+          <p>Kamu belum mendaftar kelas apapun.</p>
+      </div>
+      @endforelse
 
       <!-- Footer -->
       <div class="status-footer">

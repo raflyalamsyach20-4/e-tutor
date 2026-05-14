@@ -478,22 +478,21 @@
               <p>Lihat siapa saja yang mendaftar pada kelas Anda. Atur status pendaftaran — setujui atau tolak peserta.</p>
             </div>
 
-            <!-- Stats -->
             <div class="list-stats">
               <div class="list-stat total">
-                <div class="ls-num">6</div>
+                <div class="ls-num">{{ $stats['total'] }}</div>
                 <div class="ls-label">Total Pendaftar</div>
               </div>
               <div class="list-stat approved">
-                <div class="ls-num">3</div>
+                <div class="ls-num">{{ $stats['approved'] }}</div>
                 <div class="ls-label">Disetujui</div>
               </div>
               <div class="list-stat rejected">
-                <div class="ls-num">1</div>
+                <div class="ls-num">{{ $stats['rejected'] }}</div>
                 <div class="ls-label">Ditolak</div>
               </div>
               <div class="list-stat pending">
-                <div class="ls-num">2</div>
+                <div class="ls-num">{{ $stats['pending'] }}</div>
                 <div class="ls-label">Menunggu</div>
               </div>
             </div>
@@ -534,119 +533,48 @@
                   </thead>
                   <tbody>
 
-                    <!-- Row 1 — Disetujui -->
-                    <tr class="row-disetujui">
-                      <td class="lt-no">1</td>
-                      <td><span class="lt-name">Rina Safitri</span></td>
-                      <td><span class="lt-nim">2023010001</span></td>
-                      <td><span class="lt-telp">081234567890</span></td>
+                    @forelse($pendaftar as $index => $p)
+                      @php
+                          $rowClass = '';
+                          $badgeClass = '';
+                          $label = '';
+                          if($p->status == 'approved') { $rowClass = 'row-disetujui'; $badgeClass = 'disetujui'; $label = 'Disetujui'; }
+                          elseif($p->status == 'rejected') { $rowClass = 'row-ditolak'; $badgeClass = 'ditolak'; $label = 'Ditolak'; }
+                          else { $rowClass = 'row-menunggu'; $badgeClass = 'menunggu'; $label = 'Menunggu'; }
+                      @endphp
+                    <tr class="{{ $rowClass }}">
+                      <td class="lt-no">{{ $index + 1 }}</td>
+                      <td><span class="lt-name">{{ $p->user->name }}</span><br><small style="color:rgba(255,255,255,0.5)">{{ $p->teachingSchedule->topik_pembahasan }}</small></td>
+                      <td><span class="lt-nim">{{ $p->user->email }}</span></td>
+                      <td><span class="lt-telp">-</span></td>
                       <td>
                         <div class="status-wrapper">
                           <details>
-                            <summary class="status-trigger disetujui"><span class="status-dot"></span> Disetujui <span class="arrow">▾</span></summary>
+                            <summary class="status-trigger {{ $badgeClass }}"><span class="status-dot"></span> {{ $label }} <span class="arrow">▾</span></summary>
                             <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
+                              <form action="/list-pendaftar/{{ $p->id }}/approve" method="POST" style="margin:0;">
+                                @csrf
+                                <button type="submit" class="status-option opt-setujui" style="background:none;border:none;width:100%;text-align:left;"><span class="opt-icon">✅</span> Disetujui</button>
+                              </form>
+                              <form action="/list-pendaftar/{{ $p->id }}/reject" method="POST" style="margin:0;">
+                                @csrf
+                                <button type="submit" class="status-option opt-tolak" style="background:none;border:none;width:100%;text-align:left;"><span class="opt-icon">❌</span> Ditolak</button>
+                              </form>
                             </div>
                           </details>
                         </div>
                       </td>
                     </tr>
-
-                    <!-- Row 2 — Disetujui -->
-                    <tr class="row-disetujui">
-                      <td class="lt-no">2</td>
-                      <td><span class="lt-name">Budi Hartono</span></td>
-                      <td><span class="lt-nim">2023020012</span></td>
-                      <td><span class="lt-telp">085678901234</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger disetujui"><span class="status-dot"></span> Disetujui <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
-                            </div>
-                          </details>
+                    @empty
+                    <tr>
+                      <td colspan="5">
+                        <div class="list-empty-content" style="padding: 48px 20px;">
+                          <div class="le-icon">🔍</div>
+                          <p>Belum ada pendaftar.</p>
                         </div>
                       </td>
                     </tr>
-
-                    <!-- Row 3 — Ditolak -->
-                    <tr class="row-ditolak">
-                      <td class="lt-no">3</td>
-                      <td><span class="lt-name">Dewi Anggraeni</span></td>
-                      <td><span class="lt-nim">2023030023</span></td>
-                      <td><span class="lt-telp">087812345678</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger ditolak"><span class="status-dot"></span> Ditolak <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
-                            </div>
-                          </details>
-                        </div>
-                      </td>
-                    </tr>
-
-                    <!-- Row 4 — Disetujui -->
-                    <tr class="row-disetujui">
-                      <td class="lt-no">4</td>
-                      <td><span class="lt-name">Firman Maulana</span></td>
-                      <td><span class="lt-nim">2023010045</span></td>
-                      <td><span class="lt-telp">089678901234</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger disetujui"><span class="status-dot"></span> Disetujui <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
-                            </div>
-                          </details>
-                        </div>
-                      </td>
-                    </tr>
-
-                    <!-- Row 5 — Menunggu -->
-                    <tr class="row-menunggu">
-                      <td class="lt-no">5</td>
-                      <td><span class="lt-name">Galih Prasetyo</span></td>
-                      <td><span class="lt-nim">2023040067</span></td>
-                      <td><span class="lt-telp">081345678901</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger menunggu"><span class="status-dot"></span> Menunggu <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
-                            </div>
-                          </details>
-                        </div>
-                      </td>
-                    </tr>
-
-                    <!-- Row 6 — Menunggu -->
-                    <tr class="row-menunggu">
-                      <td class="lt-no">6</td>
-                      <td><span class="lt-name">Hana Permata</span></td>
-                      <td><span class="lt-nim">2023020089</span></td>
-                      <td><span class="lt-telp">082198765432</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger menunggu"><span class="status-dot"></span> Menunggu <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <a class="status-option opt-setujui" href="#"><span class="opt-icon">✅</span> Disetujui</a>
-                              <a class="status-option opt-tolak" href="#"><span class="opt-icon">❌</span> Ditolak</a>
-                            </div>
-                          </details>
-                        </div>
-                      </td>
-                    </tr>
+                    @endforelse
 
                     <!-- Empty row — shown only when all filtered out (hidden by default) -->
                     <tr class="list-empty-row">
