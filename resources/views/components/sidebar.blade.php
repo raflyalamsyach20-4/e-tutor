@@ -12,6 +12,7 @@
                 <summary><span class="nav-icon">⚙️</span> Menu Admin <span class="chevron">▶</span></summary>
                 <div class="nav-children">
                     <a class="nav-child {{ request()->is('admin/acc-achievement') ? 'active' : '' }}" href="/admin/acc-achievement">Verifikasi Surat Skills</a>
+                    <a class="nav-child {{ request()->is('admin/manage-classes') ? 'active' : '' }}" href="/admin/manage-classes">Kelola Kelas</a>
                 </div>
             </details>
         @elseif(Auth::user()->role == 'kaprodi')

@@ -440,7 +440,9 @@
           </div>
         </div>
         <div class="topbar-right">
-          <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
+          <a href="{{ route('notifications.index') }}" class="topbar-btn">
+            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+          </a>
         </div>
       </div>
 

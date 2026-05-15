@@ -10,18 +10,24 @@ class JadwalTutorController extends Controller
 {
     public function index()
     {
-        $application = PengajuanTutor::where('user_id', Auth::id())->first();
+        $approvedCount = PengajuanTutor::where('user_id', Auth::id())->where('status', 'approved')->count();
+        $scheduleCount = TeachingSchedule::where('user_id', Auth::id())->count();
         $schedules = TeachingSchedule::where('user_id', Auth::id())->orderBy('tanggal', 'desc')->get();
 
-        return view('peserta_tutor.jadwal-tutor', compact('application', 'schedules'));
+        return view('peserta_tutor.jadwal-tutor', compact('approvedCount', 'scheduleCount', 'schedules'));
     }
 
     public function store(Request $request)
     {
-        $application = PengajuanTutor::where('user_id', Auth::id())->first();
+        $approvedCount = PengajuanTutor::where('user_id', Auth::id())->where('status', 'approved')->count();
+        $scheduleCount = TeachingSchedule::where('user_id', Auth::id())->count();
         
-        if (!$application || $application->status !== 'approved') {
-            return redirect()->back()->with('error', 'Anda belum disetujui sebagai tutor.');
+        if ($approvedCount === 0) {
+            return redirect()->back()->with('error', 'Anda belum memiliki pengajuan tutor yang disetujui.');
+        }
+
+        if ($scheduleCount >= $approvedCount) {
+            return redirect()->back()->with('error', 'Batas pembuatan jadwal tercapai. Satu pengajuan hanya berlaku untuk satu jadwal kelas. Silakan lakukan pengajuan tutor ulang untuk menambah kelas baru.');
         }
 
         $request->validate([

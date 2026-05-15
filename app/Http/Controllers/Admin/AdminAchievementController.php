@@ -12,13 +12,32 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminAchievementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $achievements = Achievement::with(['user.pengajuanTutor', 'skillLetter'])
-            ->latest()
-            ->get();
+        $search = $request->get('search');
+        $status = $request->get('status');
 
-        return view('admin.acc-achievement', compact('achievements'));
+        $query = Achievement::with(['user.pengajuanTutor', 'skillLetter']);
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('topic', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($qu) use ($search) {
+                      $qu->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('pengajuanTutor', function($qp) use ($search) {
+                            $qp->where('nim', 'like', "%{$search}%");
+                        });
+                  });
+            });
+        }
+
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $achievements = $query->latest()->get();
+
+        return view('admin.acc-achievement', compact('achievements', 'search', 'status'));
     }
 
     public function approve($id)

@@ -102,5 +102,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/acc-achievement/{id}/approve', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'approve'])->name('admin.acc-achievement.approve');
         Route::post('/admin/acc-achievement/{id}/reject', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'reject'])->name('admin.acc-achievement.reject');
         Route::get('/admin/acc-achievement/{id}/preview', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'previewLetter'])->name('admin.acc-achievement.preview');
+
+        // Manage Classes
+        Route::get('/admin/manage-classes', [\App\Http\Controllers\Admin\AdminClassController::class, 'index'])->name('admin.manage-classes');
+        Route::delete('/admin/manage-classes/{id}', [\App\Http\Controllers\Admin\AdminClassController::class, 'destroy'])->name('admin.manage-classes.destroy');
     });
 });

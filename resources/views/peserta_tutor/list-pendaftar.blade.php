@@ -249,28 +249,7 @@
        CSS-ONLY FILTER LOGIC — show/hide rows
        ================================================================ */
 
-    /* Default: show all rows */
-    .list-table tbody tr { display: table-row; }
-
-    /* Filter: Disetujui — hide non-matching */
-    #filter-disetujui:checked ~ .list-table-wrap .row-ditolak,
-    #filter-disetujui:checked ~ .list-table-wrap .row-menunggu {
-      display: none;
-    }
-
-    /* Filter: Ditolak — hide non-matching */
-    #filter-ditolak:checked ~ .list-table-wrap .row-disetujui,
-    #filter-ditolak:checked ~ .list-table-wrap .row-menunggu {
-      display: none;
-    }
-
-    /* Filter: Menunggu — hide non-matching */
-    #filter-menunggu:checked ~ .list-table-wrap .row-disetujui,
-    #filter-menunggu:checked ~ .list-table-wrap .row-ditolak {
-      display: none;
-    }
-
-    /* "Semua" resets everything — already default, no rule needed */
+    /* Filter Logic removed - moving to backend */
 
 
     /* ================================================================
@@ -400,6 +379,15 @@
       .filter-bar { gap: 6px; }
       .filter-label { padding: 7px 12px; font-size: 12px; }
     }
+
+    /* Search Box Styles */
+    .search-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 14px; min-width: 260px; transition: all 0.2s; margin-bottom: 20px; }
+    .search-box:focus-within { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
+    .search-box .search-icon { color: rgba(255,255,255,0.4); font-size: 16px; flex-shrink: 0; }
+    .search-box input { border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif; color: #fff; background: transparent; width: 100%; }
+    .search-box input::placeholder { color: rgba(255,255,255,0.3); }
+    .filter-label.active { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); color: #fff; }
+    .filter-label.active .filter-dot { background: #fff !important; }
   </style>
 </head>
 <body>
@@ -458,7 +446,9 @@
           </div>
         </div>
         <div class="topbar-right">
-          <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
+          <a href="{{ route('notifications.index') }}" class="topbar-btn">
+            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+          </a>
         </div>
       </div>
 
@@ -466,11 +456,29 @@
         <div class="list-card">
           <div class="list-inner">
 
-            <!-- Hidden radio inputs — MUST be siblings of filter-bar and table-wrap -->
-            <input type="radio" name="filter" id="filter-all" class="filter-radio" checked>
-            <input type="radio" name="filter" id="filter-disetujui" class="filter-radio">
-            <input type="radio" name="filter" id="filter-ditolak" class="filter-radio">
-            <input type="radio" name="filter" id="filter-menunggu" class="filter-radio">
+            <!-- SEARCH & FILTER BAR -->
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px;">
+              <form action="/list-pendaftar" method="GET" class="search-box" style="margin-bottom: 0;">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="search" placeholder="Cari nama atau email..." value="{{ $search }}">
+                <input type="hidden" name="filter" value="{{ $filter }}">
+              </form>
+
+              <div class="filter-bar" style="margin-bottom: 0;">
+                <a href="/list-pendaftar?filter=all&search={{ $search }}" class="filter-label label-all {{ $filter === 'all' ? 'active' : '' }}" style="text-decoration: none;">
+                  <span class="filter-dot"></span> Semua
+                </a>
+                <a href="/list-pendaftar?filter=approved&search={{ $search }}" class="filter-label label-disetujui {{ $filter === 'approved' ? 'active' : '' }}" style="text-decoration: none;">
+                  <span class="filter-dot" style="background: #4ade80;"></span> Disetujui
+                </a>
+                <a href="/list-pendaftar?filter=rejected&search={{ $search }}" class="filter-label label-ditolak {{ $filter === 'rejected' ? 'active' : '' }}" style="text-decoration: none;">
+                  <span class="filter-dot" style="background: #f87171;"></span> Ditolak
+                </a>
+                <a href="/list-pendaftar?filter=pending&search={{ $search }}" class="filter-label label-menunggu {{ $filter === 'pending' ? 'active' : '' }}" style="text-decoration: none;">
+                  <span class="filter-dot" style="background: #fbbf24;"></span> Menunggu
+                </a>
+              </div>
+            </div>
 
             <div class="list-header">
               <div class="list-icon">📋</div>
@@ -495,27 +503,6 @@
                 <div class="ls-num">{{ $stats['pending'] }}</div>
                 <div class="ls-label">Menunggu</div>
               </div>
-            </div>
-
-            <!-- FILTER BAR -->
-            <div class="filter-bar">
-              <label class="filter-label label-all" for="filter-all">
-                <span class="filter-dot"></span> Semua
-                <!-- hidden radio inside label so :has() works on the label -->
-                <input type="radio" name="filter" value="all" checked style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
-              </label>
-              <label class="filter-label label-disetujui" for="filter-disetujui">
-                <span class="filter-dot"></span> Disetujui
-                <input type="radio" name="filter" value="disetujui" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
-              </label>
-              <label class="filter-label label-ditolak" for="filter-ditolak">
-                <span class="filter-dot"></span> Ditolak
-                <input type="radio" name="filter" value="ditolak" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
-              </label>
-              <label class="filter-label label-menunggu" for="filter-menunggu">
-                <span class="filter-dot"></span> Menunggu
-                <input type="radio" name="filter" value="menunggu" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
-              </label>
             </div>
 
             <!-- TABLE -->

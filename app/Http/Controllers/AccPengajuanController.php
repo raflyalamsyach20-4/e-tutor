@@ -6,17 +6,34 @@ use Illuminate\Http\Request;
 
 class AccPengajuanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $applications = PengajuanTutor::latest()->get();
+        $search = $request->get('search');
+        $status = $request->get('status');
+
+        $query = PengajuanTutor::query();
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%")
+                  ->orWhere('topik_pembahasan', 'like', "%{$search}%");
+            });
+        }
+
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $applications = $query->latest()->get();
 
         $stats = [
-            'total' => $applications->count(),
-            'approved' => $applications->where('status', 'approved')->count(),
-            'pending' => $applications->where('status', 'pending')->count(),
+            'total' => PengajuanTutor::count(),
+            'approved' => PengajuanTutor::where('status', 'approved')->count(),
+            'pending' => PengajuanTutor::where('status', 'pending')->count(),
         ];
 
-        return view('kaprodi.acc-pengajuan', compact('applications', 'stats'));
+        return view('kaprodi.acc-pengajuan', compact('applications', 'stats', 'search', 'status'));
     }
 
     public function approve($id)

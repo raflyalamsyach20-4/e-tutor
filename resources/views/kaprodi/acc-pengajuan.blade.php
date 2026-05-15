@@ -491,14 +491,14 @@
     <div class="table-section">
       <div class="table-toolbar">
         <div class="table-toolbar-left">
-          <div class="search-box">
+          <form action="{{ route('kaprodi.acc-pengajuan') }}" method="GET" class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Cari nama, NIM, atau topik...">
-          </div>
-          <button class="filter-btn active"><span class="filter-icon">🔽</span> Semua</button>
-          <button class="filter-btn"><span class="filter-icon">⏳</span> Menunggu</button>
-          <button class="filter-btn"><span class="filter-icon">✅</span> Disetujui</button>
-          <button class="filter-btn"><span class="filter-icon">❌</span> Ditolak</button>
+            <input type="text" name="search" placeholder="Cari nama, NIM, atau topik..." value="{{ $search }}">
+          </form>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'all', 'search' => $search]) }}" class="filter-btn {{ !$status || $status === 'all' ? 'active' : '' }}"><span class="filter-icon">🔽</span> Semua</a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'pending', 'search' => $search]) }}" class="filter-btn {{ $status === 'pending' ? 'active' : '' }}"><span class="filter-icon">⏳</span> Menunggu</a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'approved', 'search' => $search]) }}" class="filter-btn {{ $status === 'approved' ? 'active' : '' }}"><span class="filter-icon">✅</span> Disetujui</a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'rejected', 'search' => $search]) }}" class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}"><span class="filter-icon">❌</span> Ditolak</a>
         </div>
       </div>
       

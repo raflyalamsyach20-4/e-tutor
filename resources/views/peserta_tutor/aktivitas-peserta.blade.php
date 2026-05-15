@@ -582,6 +582,19 @@
       .reg-card-action { align-self: flex-start; }
       .section-date { display: none; }
     }
+
+    /* Toolbar Styles */
+    .table-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+    .table-toolbar-left { display: flex; align-items: center; gap: 10px; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 14px; min-width: 260px; transition: all 0.2s; }
+    .search-box:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .search-box .search-icon { color: #94a3b8; font-size: 16px; flex-shrink: 0; }
+    .search-box input { border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif; color: #1e293b; background: transparent; width: 100%; }
+    .search-box input::placeholder { color: #94a3b8; }
+    .filter-btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; text-decoration: none; }
+    .filter-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .filter-btn.active { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .filter-btn .filter-icon { font-size: 16px; color: #94a3b8; }
   </style>
 </head>
 
@@ -649,6 +662,19 @@
       </div>
 
       <!-- Stats -->
+      <div class="table-toolbar">
+        <div class="table-toolbar-left">
+          <form action="/aktivitas-peserta" method="GET" class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="search" placeholder="Cari topik kelas..." value="{{ $search }}">
+          </form>
+          <a href="/aktivitas-peserta?status=all&search={{ $search }}" class="filter-btn {{ !$status || $status === 'all' ? 'active' : '' }}">Semua</a>
+          <a href="/aktivitas-peserta?status=pending&search={{ $search }}" class="filter-btn {{ $status === 'pending' ? 'active' : '' }}">Menunggu</a>
+          <a href="/aktivitas-peserta?status=approved&search={{ $search }}" class="filter-btn {{ $status === 'approved' ? 'active' : '' }}">Disetujui</a>
+          <a href="/aktivitas-peserta?status=rejected&search={{ $search }}" class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}">Ditolak</a>
+        </div>
+      </div>
+
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-card-num blue">{{ $stats['total'] }}</div>

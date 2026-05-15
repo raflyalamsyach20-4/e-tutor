@@ -394,9 +394,9 @@
         </div>
       </div>
       <div class="topbar-right">
-        <button class="topbar-btn">
-          🔔 <span class="notif-dot"></span>
-        </button>
+        <a href="{{ route('notifications.index') }}" class="topbar-btn">
+          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+        </a>
       </div>
     </div>
     
@@ -411,23 +411,24 @@
             </div>
 
             <!-- Tombol Add -->
-            @if(isset($application) && $application->status == 'approved')
-
-<a href="#page-jadwal-add" class="btn-add">
-    <span class="add-icon">➕</span> Tambah Jadwal
-</a>
-
-@else
-
-<button type="button" class="btn-add" disabled>
-    <span class="add-icon">➕</span> Tambah Jadwal
-</button>
-
-<p style="color:red; margin-top:10px;">
-    Anda belum disetujui sebagai tutor.
-</p>
-
-@endif
+            @if($approvedCount > 0 && $scheduleCount < $approvedCount)
+                <a href="#page-jadwal-add" class="btn-add">
+                    <span class="add-icon">➕</span> Tambah Jadwal
+                </a>
+            @else
+                <button type="button" class="btn-add" disabled>
+                    <span class="add-icon">➕</span> Tambah Jadwal
+                </button>
+                @if($approvedCount == 0)
+                    <p style="color:#ef4444; margin-top:10px; font-size: 13px; font-weight: 600;">
+                        ⚠️ Anda belum memiliki pengajuan tutor yang disetujui.
+                    </p>
+                @elseif($scheduleCount >= $approvedCount)
+                    <p style="color:rgba(255,255,255,0.7); margin-top:10px; font-size: 13px; font-weight: 500;">
+                        ⚠️ Kuota pembuatan jadwal habis. Sesuai ketentuan, satu pengajuan hanya untuk satu jadwal. Silakan <a href="/pengajuan-tutor" style="color:#fff; text-decoration:underline; font-weight: 600;">ajukan permohonan baru</a> untuk menambah kelas lain.
+                    </p>
+                @endif
+            @endif
             <!-- Tabel Jadwal -->
             <div class="jadwal-table-wrap">
               <div class="jadwal-table-scroll">
@@ -463,7 +464,7 @@
             </div>
 
             <div class="jadwal-footer">
-              Klik <a href="#page-info">Detail</a> untuk melihat kelas di halaman Informasi Kelas.
+              Klik <a href="/informasi-kelas">Detail</a> untuk melihat kelas di halaman Informasi Kelas.
             </div>
 
           </div>
@@ -489,8 +490,9 @@
           </div>
         </div>
         <div class="topbar-right">
-          <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
-          
+          <a href="{{ route('notifications.index') }}" class="topbar-btn">
+            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+          </a>
         </div>
       </div>
 

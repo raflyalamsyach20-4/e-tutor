@@ -12,6 +12,7 @@ class ListPendaftarController extends Controller
     public function index(Request $request)
     {
         $filter = $request->get('filter', 'all');
+        $search = $request->get('search');
 
         // Cari jadwal milik tutor yang sedang login
         $schedules = TeachingSchedule::where('user_id', Auth::id())->pluck('id');
@@ -19,6 +20,13 @@ class ListPendaftarController extends Controller
         // Cari pendaftaran yang menuju ke jadwal-jadwal tersebut
         $query = PendaftaranKelas::with(['user', 'teachingSchedule'])
             ->whereIn('teaching_schedule_id', $schedules);
+
+        if ($search) {
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
         if ($filter !== 'all') {
             $query->where('status', $filter); // pending, approved, rejected
@@ -33,7 +41,7 @@ class ListPendaftarController extends Controller
             'pending' => PendaftaranKelas::whereIn('teaching_schedule_id', $schedules)->where('status', 'pending')->count(),
         ];
 
-        return view('peserta_tutor.list-pendaftar', compact('pendaftar', 'stats', 'filter'));
+        return view('peserta_tutor.list-pendaftar', compact('pendaftar', 'stats', 'filter', 'search'));
     }
 
     public function approve($id)

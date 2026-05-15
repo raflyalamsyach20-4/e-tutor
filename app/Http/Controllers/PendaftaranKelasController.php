@@ -11,8 +11,20 @@ class PendaftaranKelasController extends Controller
 {
     public function create()
     {
-        // Hanya tampilkan tutor yang punya jadwal
-        $schedules = TeachingSchedule::with('user')->orderBy('tanggal', 'asc')->get();
+        // Hanya tampilkan jadwal yang pendaftarannya masih dibuka (maksimal 1 jam sebelum dimulai)
+        $schedules = TeachingSchedule::with('user')
+            ->orderBy('tanggal', 'asc')
+            ->get()
+            ->filter(function($schedule) {
+                try {
+                    $waktu_mulai = explode(' - ', $schedule->waktu)[0];
+                    $start_time = \Carbon\Carbon::parse($schedule->tanggal->format('Y-m-d') . ' ' . $waktu_mulai);
+                    return now()->lessThan($start_time->subHour());
+                } catch (\Exception $e) {
+                    return false;
+                }
+            });
+
         return view('peserta_tutor.pendaftaran-kelas', compact('schedules'));
     }
 
@@ -36,6 +48,15 @@ class PendaftaranKelasController extends Controller
 
         if ($existing) {
             return redirect()->back()->with('error', 'Anda sudah mendaftar pada kelas ini.');
+        }
+
+        // Cek waktu pendaftaran (minimal 1 jam sebelum dimulai)
+        $schedule = TeachingSchedule::findOrFail($request->teaching_schedule_id);
+        $waktu_mulai = explode(' - ', $schedule->waktu)[0];
+        $start_time = \Carbon\Carbon::parse($schedule->tanggal->format('Y-m-d') . ' ' . $waktu_mulai);
+        
+        if (now()->greaterThanOrEqualTo($start_time->subHour())) {
+            return redirect()->back()->with('error', 'Pendaftaran ditutup. Anda hanya dapat mendaftar maksimal 1 jam sebelum kelas dimulai.');
         }
 
         // Simpan pendaftaran

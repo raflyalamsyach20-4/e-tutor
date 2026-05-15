@@ -921,9 +921,9 @@
         </div>
       </div>
       <div class="topbar-right">
-        <button class="topbar-btn">
-          🔔 <span class="notif-dot"></span>
-        </button>
+        <a href="{{ route('notifications.index') }}" class="topbar-btn">
+          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+        </a>
       </div>
     </div>
 
@@ -957,10 +957,10 @@
 
       <div class="table-toolbar">
         <div class="table-toolbar-left">
-          <div class="search-box">
+          <form action="{{ route('informasi-kelas') }}" method="GET" class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Cari topik atau tutor...">
-          </div>
+            <input type="text" name="search" placeholder="Cari topik atau tutor..." value="{{ $search }}">
+          </form>
           <button class="filter-btn">
             <span class="filter-icon">🔽</span> Filter
           </button>
@@ -992,7 +992,8 @@
                 </td>
                 <td>
                   <div class="topic-cell">
-                    <div class="topic-text">{{ $schedule->topik }}</div>
+                    <div class="topic-text" style="font-size: 15px; color: #1e3a8a;">{{ $schedule->topik_pembahasan }}</div>
+                    <div class="tutor-brief" style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Tutor: {{ $schedule->user->name ?? 'Tidak diketahui' }}</div>
                     <div class="topic-details-wrapper">
                       <details>
                         <summary class="topic-details-toggle">
@@ -1018,10 +1019,7 @@
                   <div class="time-cell">
                     <div class="time-icon">🕐</div>
                     <div>
-                      <div class="time-text">{{ \Carbon\Carbon::parse($schedule->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->jam_selesai)->format('H:i') }}</div>
-                      <div class="time-duration">
-                        {{ \Carbon\Carbon::parse($schedule->jam_mulai)->diffInHours(\Carbon\Carbon::parse($schedule->jam_selesai)) }} jam
-                      </div>
+                      <div class="time-text">{{ $schedule->waktu }}</div>
                     </div>
                   </div>
                 </td>
@@ -1041,7 +1039,14 @@
                         <div class="participant-bar-fill {{ $fill_class }}" style="width: {{ $percentage }}%"></div>
                       </div>
                     </div>
-                    @if($kuota_terisi >= $kuota_total)
+                    @php
+                      $waktu_mulai = explode(' - ', $schedule->waktu)[0];
+                      $start_time = \Carbon\Carbon::parse($schedule->tanggal->format('Y-m-d') . ' ' . $waktu_mulai);
+                      $is_closed = now()->greaterThanOrEqualTo($start_time->subHour());
+                    @endphp
+                    @if($is_closed)
+                      <button class="btn-daftar full" disabled title="Pendaftaran ditutup (maksimal 1 jam sebelum kelas dimulai)"><span class="btn-icon">🔒</span> Ditutup</button>
+                    @elseif($kuota_terisi >= $kuota_total)
                       <button class="btn-daftar full" disabled><span class="btn-icon">🚫</span> Penuh</button>
                     @else
                       <a href="/pendaftaran-kelas?jadwal_id={{ $schedule->id }}" class="btn-daftar available"><span class="btn-icon">➕</span> Daftar</a>

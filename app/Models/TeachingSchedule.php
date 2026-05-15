@@ -3,10 +3,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TeachingSchedule extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'teaching_schedules';
 
@@ -16,6 +17,10 @@ class TeachingSchedule extends Model
         'tanggal',
         'topik_pembahasan',
         'waktu',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
     public function user()
