@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Notification;
 use App\Models\PendaftaranKelas;
 use App\Models\TeachingSchedule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ListPendaftarController extends Controller
@@ -22,9 +23,9 @@ class ListPendaftarController extends Controller
             ->whereIn('teaching_schedule_id', $schedules);
 
         if ($search) {
-            $query->whereHas('user', function($q) use ($search) {
+            $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -64,6 +65,15 @@ class ListPendaftarController extends Controller
 
         $pendaftaran->update(['status' => 'approved']);
 
+        // Kirim Notifikasi ke Peserta
+        Notification::create([
+            'user_id' => $pendaftaran->user_id,
+            'title' => 'Pendaftaran Kelas Disetujui',
+            'message' => "Selamat! Pendaftaran Anda untuk kelas dengan topik '{$schedule->topik_pembahasan}' (Tutor: {$schedule->user->name}) telah disetujui.",
+            'type' => 'pendaftaran_kelas',
+            'related_schedule_id' => $schedule->id,
+        ]);
+
         return redirect()->back()->with('success', 'Pendaftaran disetujui.');
     }
 
@@ -77,6 +87,15 @@ class ListPendaftarController extends Controller
         }
 
         $pendaftaran->update(['status' => 'rejected']);
+
+        // Kirim Notifikasi ke Peserta
+        Notification::create([
+            'user_id' => $pendaftaran->user_id,
+            'title' => 'Pendaftaran Kelas Ditolak',
+            'message' => "Maaf, pendaftaran Anda untuk kelas dengan topik '{$schedule->topik_pembahasan}' (Tutor: {$schedule->user->name}) ditolak.",
+            'type' => 'pendaftaran_kelas',
+            'related_schedule_id' => $schedule->id,
+        ]);
 
         return redirect()->back()->with('success', 'Pendaftaran ditolak.');
     }

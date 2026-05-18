@@ -157,6 +157,7 @@
       color: #94A3B8;
       transition: color 0.3s;
       pointer-events: none;
+      z-index: 5;
     }
 
     .form-input {

@@ -2,18 +2,20 @@
 
 use App\Http\Controllers\AccPengajuanController;
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\Admin\AdminAchievementController;
+use App\Http\Controllers\Admin\AdminClassController;
 use App\Http\Controllers\AktivitasPesertaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\InformasiKelasController;
 use App\Http\Controllers\JadwalTutorController;
 use App\Http\Controllers\ListPendaftarController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PendaftaranKelasController;
 use App\Http\Controllers\PengajuanTutorController;
 use App\Http\Controllers\RecommendationLetterController;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // =====================
@@ -30,6 +32,7 @@ Route::get('/', function () {
             return redirect('/admin/acc-achievement');
         }
     }
+
     return redirect()->route('login');
 });
 
@@ -69,6 +72,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/status-pengajuan', [PengajuanTutorController::class, 'status']);
         Route::get('/jadwal-tutor', [JadwalTutorController::class, 'index']);
         Route::post('/jadwal-tutor', [JadwalTutorController::class, 'store']);
+        Route::put('/jadwal-tutor/{id}', [JadwalTutorController::class, 'update']);
+        Route::delete('/jadwal-tutor/{id}', [JadwalTutorController::class, 'destroy']);
         Route::get('/list-pendaftar', [ListPendaftarController::class, 'index']);
         Route::post('/list-pendaftar/{id}/approve', [ListPendaftarController::class, 'approve']);
         Route::post('/list-pendaftar/{id}/reject', [ListPendaftarController::class, 'reject']);
@@ -98,13 +103,13 @@ Route::middleware('auth')->group(function () {
 
     // Admin
     Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/acc-achievement', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'index'])->name('admin.acc-achievement');
-        Route::post('/admin/acc-achievement/{id}/approve', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'approve'])->name('admin.acc-achievement.approve');
-        Route::post('/admin/acc-achievement/{id}/reject', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'reject'])->name('admin.acc-achievement.reject');
-        Route::get('/admin/acc-achievement/{id}/preview', [\App\Http\Controllers\Admin\AdminAchievementController::class, 'previewLetter'])->name('admin.acc-achievement.preview');
+        Route::get('/admin/acc-achievement', [AdminAchievementController::class, 'index'])->name('admin.acc-achievement');
+        Route::post('/admin/acc-achievement/{id}/approve', [AdminAchievementController::class, 'approve'])->name('admin.acc-achievement.approve');
+        Route::post('/admin/acc-achievement/{id}/reject', [AdminAchievementController::class, 'reject'])->name('admin.acc-achievement.reject');
+        Route::get('/admin/acc-achievement/{id}/preview', [AdminAchievementController::class, 'previewLetter'])->name('admin.acc-achievement.preview');
 
         // Manage Classes
-        Route::get('/admin/manage-classes', [\App\Http\Controllers\Admin\AdminClassController::class, 'index'])->name('admin.manage-classes');
-        Route::delete('/admin/manage-classes/{id}', [\App\Http\Controllers\Admin\AdminClassController::class, 'destroy'])->name('admin.manage-classes.destroy');
+        Route::get('/admin/manage-classes', [AdminClassController::class, 'index'])->name('admin.manage-classes');
+        Route::delete('/admin/manage-classes/{id}', [AdminClassController::class, 'destroy'])->name('admin.manage-classes.destroy');
     });
 });

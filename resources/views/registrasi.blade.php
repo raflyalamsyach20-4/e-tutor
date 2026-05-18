@@ -25,6 +25,7 @@
       overflow: hidden;
     }
 
+    /* ========== BACKGROUND ========== */
     .bg-decoration {
       position: fixed;
       inset: 0;
@@ -73,6 +74,7 @@
       -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
     }
 
+    /* ========== CARD ========== */
     .register-wrapper {
       position: relative;
       z-index: 10;
@@ -92,6 +94,7 @@
       animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    /* ========== BRAND ========== */
     .brand {
       text-align: center;
       margin-bottom: 36px;
@@ -128,6 +131,7 @@
       margin-top: 6px;
     }
 
+    /* ========== FORM ========== */
     .form-group {
       margin-bottom: 20px;
     }
@@ -187,6 +191,7 @@
       color: #0091FF;
     }
 
+    /* Toggle password */
     .toggle-password {
       position: absolute;
       right: 14px;
@@ -220,6 +225,7 @@
       padding-right: 46px;
     }
 
+    /* Password Strength */
     .password-strength {
       display: flex;
       gap: 4px;
@@ -252,6 +258,7 @@
     .strength-text.medium { color: #F59E0B; }
     .strength-text.strong { color: #22C55E; }
 
+    /* ========== BUTTON ========== */
     .btn-register {
       width: 100%;
       padding: 15px 24px;
@@ -293,6 +300,7 @@
       box-shadow: 0 2px 10px rgba(0, 145, 255, 0.3);
     }
 
+    /* ========== DIVIDER ========== */
     .divider {
       display: flex;
       align-items: center;
@@ -316,6 +324,7 @@
       letter-spacing: 0.08em;
     }
 
+    /* ========== SOCIAL ========== */
     .social-buttons {
       display: flex;
       gap: 12px;
@@ -354,6 +363,7 @@
       transform: translateY(0);
     }
 
+    /* ========== LOGIN LINK ========== */
     .login-link {
       text-align: center;
       margin-top: 28px;
@@ -372,6 +382,7 @@
       color: #0070E0;
     }
 
+    /* ========== TERMS ========== */
     .terms {
       text-align: center;
       margin-top: 20px;
@@ -455,6 +466,7 @@
     .form-group:nth-child(3) { animation: fadeInUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
     .form-group:nth-child(4) { animation: fadeInUp 0.5s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
+    /* ========== RESPONSIVE ========== */
     @media (max-width: 480px) {
       .register-wrapper { padding: 16px; }
       .register-card { padding: 36px 24px 32px; border-radius: 20px; }

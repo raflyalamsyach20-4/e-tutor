@@ -1,6 +1,10 @@
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
 <aside class="sidebar">
     <div class="sidebar-brand">
-        <div class="brand-icon">E</div>
+        <div class="brand-icon">
+            <span class="iconify" data-icon="lucide:graduation-cap" style="font-size: 20px; color: #fff;"></span>
+        </div>
         <div>
             <div class="brand-text">E-Tutor</div>
             <div class="brand-sub">Sistem Tutoring</div>
@@ -72,3 +76,23 @@
         @endauth
     </div>
 </aside>
+
+<style>
+    .btn-logout {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(239,68,68,0.1);
+        color: #f87171;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+    .btn-logout:hover {
+        background: rgba(239,68,68,0.2);
+    }
+</style>

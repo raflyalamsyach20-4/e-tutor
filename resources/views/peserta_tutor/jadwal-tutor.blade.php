@@ -247,6 +247,58 @@
     .btn-detail:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); color: #fff; }
     .btn-detail .detail-icon { font-size: 14px; display: flex; align-items: center; }
 
+    .btn-edit {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border-radius: 8px;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      background: rgba(234, 179, 8, 0.1);
+      color: rgba(253, 224, 71, 0.9);
+      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-edit:hover { background: rgba(234, 179, 8, 0.2); border-color: rgba(234, 179, 8, 0.5); color: #fff; }
+    .btn-edit .edit-icon { font-size: 14px; display: flex; align-items: center; }
+
+    .btn-delete-tutor {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.1);
+      color: rgba(252, 165, 165, 0.9);
+      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-delete-tutor:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #fff; }
+    .btn-delete-tutor .delete-icon { font-size: 14px; display: flex; align-items: center; }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-content {
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+
     /* Empty row state */
     .jadwal-empty {
       text-align: center; padding: 40px 20px;
@@ -451,7 +503,27 @@
                       <td><span class="jt-date">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d F Y') }}</span></td>
                       <td><span class="jt-topic">{{ $schedule->topik_pembahasan }}</span></td>
                       <td><span class="jt-time">{{ $schedule->waktu }}</span></td>
-                      <td><a href="/informasi-kelas" class="btn-detail"><span class="detail-icon">👁️</span> Detail</a></td>
+                      <td>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                          <a href="/informasi-kelas" class="btn-detail" title="Detail Kelas"><span class="detail-icon">👁️</span> Detail</a>
+                          <button type="button" class="btn-edit" 
+                                  data-id="{{ $schedule->id }}"
+                                  data-hari="{{ $schedule->hari }}"
+                                  data-tanggal="{{ $schedule->tanggal->format('Y-m-d') }}"
+                                  data-topik="{{ $schedule->topik_pembahasan }}"
+                                  data-waktu-mulai="{{ explode(' - ', $schedule->waktu)[0] }}"
+                                  data-waktu-selesai="{{ explode(' - ', $schedule->waktu)[1] }}"
+                                  title="Edit Jadwal">
+                            <span class="edit-icon">✏️</span> Edit
+                          </button>
+                          <button type="button" class="btn-delete-tutor"
+                                  data-id="{{ $schedule->id }}"
+                                  data-topik="{{ $schedule->topik_pembahasan }}"
+                                  title="Hapus Jadwal">
+                            <span class="delete-icon">🗑️</span> Hapus
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                     @empty
                     <tr>
@@ -617,5 +689,215 @@
     </div>
 
   </div>
+
+  <!-- ====================================================================
+       ✅ MODAL EDIT JADWAL (PREMIUM GLASSMORPHISM)
+       ==================================================================== -->
+  <div id="modal-edit" class="modal">
+    <div class="form-card modal-content" style="max-width: 560px; width: 90%; position: relative;">
+      <button type="button" class="btn-close-modal" id="btn-close-edit" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 36px; height: 36px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.2s;">✕</button>
+      <div class="form-inner">
+        <div class="form-header" style="margin-bottom: 24px;">
+          <div class="form-icon">✏️</div>
+          <h1>Edit Jadwal Mengajar</h1>
+          <p>Perbarui detail jadwal tutoring Anda. Perubahan akan otomatis ter-update untuk peserta dan admin.</p>
+        </div>
+
+        <form id="form-edit-jadwal" method="post">
+          @csrf
+          @method('PUT')
+
+          <!-- Hari -->
+          <div class="form-group">
+            <label class="form-label" for="edit-hari">
+              <span class="label-icon">📆</span> HARI
+              <span class="required-badge">R</span>
+            </label>
+            <div class="input-wrapper">
+              <select class="form-select" id="edit-hari" name="hari" required>
+                <option value="senin">Senin</option>
+                <option value="selasa">Selasa</option>
+                <option value="rabu">Rabu</option>
+                <option value="kamis">Kamis</option>
+                <option value="jumat">Jumat</option>
+                <option value="sabtu">Sabtu</option>
+                <option value="minggu">Minggu</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tanggal -->
+          <div class="form-group">
+            <label class="form-label" for="edit-tanggal">
+              <span class="label-icon">📅</span> TANGGAL
+              <span class="required-badge">R</span>
+            </label>
+            <div class="input-wrapper">
+              <input class="form-input" type="date" id="edit-tanggal" name="tanggal" required>
+              <span class="input-icon">🗓️</span>
+            </div>
+          </div>
+
+          <!-- Topik Pembahasan -->
+          <div class="form-group">
+            <label class="form-label" for="edit-topik">
+              <span class="label-icon">📖</span> TOPIK PEMBAHASAN
+              <span class="required-badge">R</span>
+            </label>
+            <div class="input-wrapper">
+              <input class="form-input" type="text" id="edit-topik" name="topik" placeholder="Contoh: Algoritma & Struktur Data" required>
+              <span class="input-icon">📚</span>
+            </div>
+          </div>
+
+          <!-- Waktu Mulai - Selesai -->
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🕐</span> WAKTU
+              <span class="required-badge">R</span>
+            </label>
+            <div class="time-range-row">
+              <div class="input-wrapper" style="flex:1">
+                <input class="form-input" type="time" id="edit-mulai" name="waktu_mulai" required>
+                <span class="input-icon">▶️</span>
+              </div>
+              <span class="time-range-sep">—</span>
+              <div class="input-wrapper" style="flex:1">
+                <input class="form-input" type="time" id="edit-selesai" name="waktu_selesai" required>
+                <span class="input-icon">⏹️</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn-submit" style="margin-top: 10px;">
+            SIMPAN PERUBAHAN
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       ✅ MODAL HAPUS JADWAL (PREMIUM GLASSMORPHISM)
+       ==================================================================== -->
+  <div id="modal-delete" class="modal">
+    <div class="form-card modal-content" style="max-width: 480px; width: 90%; position: relative; padding: 32px 30px;">
+      <button type="button" class="btn-close-modal" id="btn-close-delete" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 32px; height: 32px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; transition: all 0.2s;">✕</button>
+      <div class="form-inner" style="text-align: center;">
+        <div class="form-header" style="margin-bottom: 20px;">
+          <div class="form-icon" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.25); color: #f87171;">🗑️</div>
+          <h1 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Hapus Jadwal?</h1>
+          <p style="font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5;">Apakah Anda yakin ingin menghapus jadwal <strong id="delete-topik-name" style="color: #fff;"></strong>?</p>
+        </div>
+        
+        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 12px 14px; text-align: left; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start;">
+          <span style="font-size: 16px; margin-top: 2px;">💡</span>
+          <p style="font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.4; margin: 0;">
+            Penghapusan ini <strong>hanya khusus untuk membersihkan tampilan jadwal Anda sendiri</strong>. Informasi kelas ini <strong>TIDAK AKAN</strong> terhapus dari halaman Informasi Kelas peserta maupun Manage Class admin.
+          </p>
+        </div>
+
+        <form id="form-delete-jadwal" method="post">
+          @csrf
+          @method('DELETE')
+          <div style="display: flex; gap: 12px;">
+            <button type="button" class="btn-back" id="btn-cancel-delete" style="flex: 1; margin-bottom: 0; justify-content: center; padding: 12px;">Batal</button>
+            <button type="submit" class="btn-submit" style="flex: 1; background: #ef4444; color: #fff; border: none; padding: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);">
+              YA, HAPUS
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal when close button is clicked
+        const closeBtns = document.querySelectorAll('.btn-close-modal');
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = btn.closest('.modal');
+                modal.classList.remove('show');
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
+            });
+        });
+
+        // Close modal when clicking outside modal content
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                    setTimeout(() => { modal.style.display = 'none'; }, 300);
+                }
+            });
+        });
+
+        // Edit Modal Trigger
+        const editBtns = document.querySelectorAll('.btn-edit');
+        const modalEdit = document.getElementById('modal-edit');
+        const formEdit = document.getElementById('form-edit-jadwal');
+        const editHari = document.getElementById('edit-hari');
+        const editTanggal = document.getElementById('edit-tanggal');
+        const editTopik = document.getElementById('edit-topik');
+        const editMulai = document.getElementById('edit-mulai');
+        const editSelesai = document.getElementById('edit-selesai');
+
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = btn.getAttribute('data-id');
+                const hari = btn.getAttribute('data-hari');
+                const tanggal = btn.getAttribute('data-tanggal');
+                const topik = btn.getAttribute('data-topik');
+                const mulai = btn.getAttribute('data-waktu-mulai');
+                const selesai = btn.getAttribute('data-waktu-selesai');
+
+                formEdit.setAttribute('action', `/jadwal-tutor/${id}`);
+                editHari.value = hari.toLowerCase();
+                editTanggal.value = tanggal;
+                editTopik.value = topik;
+                editMulai.value = mulai;
+                editSelesai.value = selesai;
+
+                modalEdit.style.display = 'flex';
+                setTimeout(() => { modalEdit.classList.add('show'); }, 10);
+            });
+        });
+
+        // Delete Modal Trigger
+        const deleteBtns = document.querySelectorAll('.btn-delete-tutor');
+        const modalDelete = document.getElementById('modal-delete');
+        const formDelete = document.getElementById('form-delete-jadwal');
+        const deleteTopikName = document.getElementById('delete-topik-name');
+        const cancelDeleteBtn = document.getElementById('btn-cancel-delete');
+
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = btn.getAttribute('data-id');
+                const topik = btn.getAttribute('data-topik');
+
+                formDelete.setAttribute('action', `/jadwal-tutor/${id}`);
+                deleteTopikName.textContent = topicsSnippet(topik);
+
+                modalDelete.style.display = 'flex';
+                setTimeout(() => { modalDelete.classList.add('show'); }, 10);
+            });
+        });
+
+        if (cancelDeleteBtn) {
+            cancelDeleteBtn.addEventListener('click', function() {
+                modalDelete.classList.remove('show');
+                setTimeout(() => { modalDelete.style.display = 'none'; }, 300);
+            });
+        }
+
+        function topicsSnippet(text) {
+            return text.length > 40 ? text.substring(0, 37) + '...' : text;
+        }
+    });
+  </script>
 </body>
 </html>

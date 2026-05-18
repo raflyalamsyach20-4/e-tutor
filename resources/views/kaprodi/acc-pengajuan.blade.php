@@ -422,37 +422,7 @@
 <div class="layout">
 
   <!-- ==================== SIDEBAR ==================== -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon">E</div>
-      <div>
-        <div class="brand-text">E-Tutor</div>
-        <div class="brand-sub">Sistem Tutoring</div>
-      </div>
-    </div>
-      <details class="nav-parent kaprodi" open>
-        <summary><span class="nav-icon">🛡️</span> Menu Kaprodi <span class="chevron">▶</span></summary>
-        <div class="nav-children">
-          <a class="nav-child active" href="acc-pengajuan">Verifikasi Pengajuan</a>
-        </div>
-      </details>
-
-      <div class="sidebar-footer">
-      @auth
-      <div class="user-card">
-        <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
-        <div class="user-info">
-          <div class="user-name">{{ Auth::user()->name }}</div>
-          <div class="user-role">{{ Auth::user()->role }}</div>
-        </div>
-      </div>
-      <form action="/logout" method="POST" style="margin-top: 10px;">
-        @csrf
-        <button type="submit" class="btn-logout">Logout</button>
-      </form>
-      @endauth
-    </div>  <!-- ✅ tutup sidebar-footer -->
-  </aside>  <!-- ✅ tutup aside sidebar -->
+  <x-sidebar />
 
   <!-- ==================== MAIN CONTENT ==================== -->
   <main class="main-content">
@@ -541,10 +511,7 @@
                       @csrf
                       <button type="submit" class="btn-approve acc">✓ Setujui</button>
                     </form>
-                    <form action="/acc-pengajuan/{{ $app->id }}/reject" method="POST" style="display:inline;">
-                      @csrf
-                      <button type="submit" class="btn-approve rej">✗ Tolak</button>
-                    </form>
+                    <button type="button" class="btn-approve rej" onclick="openReject({{ $app->id }}, '{{ addslashes($app->nama) }}')">✗ Tolak</button>
                   </div>
                   @elseif($app->status === 'approved')
                   <span class="status-final approved">✓ Disetujui</span>
@@ -602,6 +569,47 @@
 </div>
 
 
+<!-- ==================== REJECTION MODAL ==================== -->
+<div class="pdf-overlay" id="rejectOverlay" onclick="closeRejectOutside(event)">
+  <div class="pdf-modal" style="max-width: 520px;">
+    <div class="pdf-modal-header" style="border-bottom: 1px solid #f1f5f9; background: #fff;">
+      <div class="pdf-modal-title">
+        <div class="pdf-icon" style="background: #fee2e2; color: #dc2626;">❌</div>
+        <div>
+          <div style="font-weight: 800; color: #1e293b;">Tolak Pengajuan Tutor</div>
+          <div class="pdf-modal-subtitle" id="rejectSubtitle">Mahasiswa: —</div>
+        </div>
+      </div>
+      <button class="pdf-modal-close" onclick="closeReject()">✕</button>
+    </div>
+    
+    <form id="form-reject-tutor" method="POST">
+      @csrf
+      <div style="padding: 24px;">
+        <div style="margin-bottom: 16px;">
+          <label for="reject-alasan" style="display: block; font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
+            Alasan Penolakan <span style="color: #ef4444;">*</span>
+          </label>
+          <textarea id="reject-alasan" name="alasan" required placeholder="Contoh: Bukti kelulusan berkas tidak valid atau topik pembahasan tidak sesuai dengan keahlian akademik..." style="width: 100%; height: 120px; border-radius: 10px; border: 1px solid #cbd5e1; padding: 12px; font-family: inherit; font-size: 13.5px; color: #1e293b; outline: none; transition: border-color 0.2s, box-shadow 0.2s; resize: none;"></textarea>
+        </div>
+        
+        <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 12px; display: flex; gap: 8px; align-items: flex-start;">
+          <span style="font-size: 15px;">💡</span>
+          <p style="font-size: 12px; color: #b7791f; line-height: 1.4; margin: 0;">
+            Alasan penolakan ini akan <strong>tampil di notifikasi Tutor</strong> agar mahasiswa dapat memperbaiki pengajuannya di kemudian hari.
+          </p>
+        </div>
+      </div>
+      
+      <div class="pdf-modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px;">
+        <button type="button" class="btn-pdf-action close-modal" onclick="closeReject()" style="background: #fff; border: 1px solid #cbd5e1; color: #475569; font-weight: 600; padding: 10px 18px; border-radius: 8px; cursor: pointer;">Batal</button>
+        <button type="submit" class="btn-pdf-action download" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-weight: 700; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">Tolak Pengajuan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- ==================== CONFIRM DIALOG ==================== -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-dialog">
@@ -623,6 +631,30 @@
 <script>
   let currentAction = '';
   let currentRow = '';
+
+  // ========== REJECT MODAL ==========
+  function openReject(id, name) {
+    const overlay = document.getElementById('rejectOverlay');
+    const form = document.getElementById('form-reject-tutor');
+    const subtitle = document.getElementById('rejectSubtitle');
+    const textarea = document.getElementById('reject-alasan');
+
+    form.setAttribute('action', '/acc-pengajuan/' + id + '/reject');
+    subtitle.textContent = 'Mahasiswa: ' + name;
+    textarea.value = '';
+
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeReject() {
+    document.getElementById('rejectOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function closeRejectOutside(e) {
+    if (e.target === document.getElementById('rejectOverlay')) closeReject();
+  }
 
   // ========== PDF MODAL ==========
   function openPdf(name, url, nim) {
@@ -725,7 +757,7 @@
 
   // ========== KEYBOARD ==========
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') { closePdf(); closeConfirm(); }
+    if (e.key === 'Escape') { closePdf(); closeConfirm(); closeReject(); }
   });
 
   // ========== FILTER BUTTONS ==========

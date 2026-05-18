@@ -502,7 +502,12 @@
                         @elseif($app->status === 'approved')
                         <span class="status-badge disetujui"><span class="sb-dot"></span> Disetujui</span>
                         @else
-                        <span class="status-badge ditolak"><span class="sb-dot"></span> Ditolak</span>
+                        <span class="status-badge ditolak" style="margin-bottom: 6px;"><span class="sb-dot"></span> Ditolak</span>
+                        @if($app->catatan_kaprodi)
+                          <div style="font-size: 11.5px; color: rgba(248, 113, 113, 0.95); line-height: 1.45; margin-top: 6px; max-width: 220px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(248, 113, 113, 0.2); padding: 8px 10px; border-radius: 8px;">
+                            <strong style="color: #f87171;">Alasan:</strong> {{ $app->catatan_kaprodi }}
+                          </div>
+                        @endif
                         @endif
                       </td>
                     </tr>

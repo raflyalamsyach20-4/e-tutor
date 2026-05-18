@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,7 @@ class TeachingSchedule extends Model
         'tanggal',
         'topik_pembahasan',
         'waktu',
+        'hidden_for_tutor',
     ];
 
     protected $casts = [

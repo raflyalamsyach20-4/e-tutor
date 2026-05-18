@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\TeachingSchedule;
 use App\Models\PengajuanTutor;
+use App\Models\TeachingSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +13,10 @@ class JadwalTutorController extends Controller
     {
         $approvedCount = PengajuanTutor::where('user_id', Auth::id())->where('status', 'approved')->count();
         $scheduleCount = TeachingSchedule::where('user_id', Auth::id())->count();
-        $schedules = TeachingSchedule::where('user_id', Auth::id())->orderBy('tanggal', 'desc')->get();
+        $schedules = TeachingSchedule::where('user_id', Auth::id())
+            ->where('hidden_for_tutor', false)
+            ->orderBy('tanggal', 'desc')
+            ->get();
 
         return view('peserta_tutor.jadwal-tutor', compact('approvedCount', 'scheduleCount', 'schedules'));
     }
@@ -21,7 +25,7 @@ class JadwalTutorController extends Controller
     {
         $approvedCount = PengajuanTutor::where('user_id', Auth::id())->where('status', 'approved')->count();
         $scheduleCount = TeachingSchedule::where('user_id', Auth::id())->count();
-        
+
         if ($approvedCount === 0) {
             return redirect()->back()->with('error', 'Anda belum memiliki pengajuan tutor yang disetujui.');
         }
@@ -43,9 +47,40 @@ class JadwalTutorController extends Controller
             'hari' => $request->hari,
             'tanggal' => $request->tanggal,
             'topik_pembahasan' => $request->topik,
-            'waktu' => $request->waktu_mulai . ' - ' . $request->waktu_selesai,
+            'waktu' => $request->waktu_mulai.' - '.$request->waktu_selesai,
         ]);
 
         return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'hari' => 'required|string',
+            'tanggal' => 'required|date',
+            'topik' => 'required|string',
+            'waktu_mulai' => 'required',
+            'waktu_selesai' => 'required',
+        ]);
+
+        $schedule = TeachingSchedule::where('user_id', Auth::id())->findOrFail($id);
+        $schedule->update([
+            'hari' => $request->hari,
+            'tanggal' => $request->tanggal,
+            'topik_pembahasan' => $request->topik,
+            'waktu' => $request->waktu_mulai.' - '.$request->waktu_selesai,
+        ]);
+
+        return redirect()->back()->with('success', 'Jadwal berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $schedule = TeachingSchedule::where('user_id', Auth::id())->findOrFail($id);
+
+        // Sembunyikan khusus untuk tutor sendiri sesuai permintaan
+        $schedule->update(['hidden_for_tutor' => true]);
+
+        return redirect()->back()->with('success', 'Jadwal berhasil dihapus dari daftar Anda.');
     }
 }

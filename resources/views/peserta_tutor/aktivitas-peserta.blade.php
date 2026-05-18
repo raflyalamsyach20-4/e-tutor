@@ -255,6 +255,10 @@
       top: 0;
       z-index: 50;
     }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
+    .breadcrumb a { color: #3b82f6; text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { color: #cbd5e1; }
     .topbar-brand {
       display: flex;
       align-items: center;

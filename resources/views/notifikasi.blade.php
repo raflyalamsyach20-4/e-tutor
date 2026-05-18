@@ -130,6 +130,9 @@
     }
     .notif-icon-wrap.class_reminder { background: #dcfce7; color: #16a34a; }
     .notif-icon-wrap.info { background: #eff6ff; color: #3b82f6; }
+    .notif-icon-wrap.pengajuan_tutor { background: #fef3c7; color: #d97706; }
+    .notif-icon-wrap.achievement { background: #f3e8ff; color: #7c3aed; }
+    .notif-icon-wrap.pendaftaran_kelas { background: #e0f2fe; color: #0284c7; }
 
     .notif-content { flex: 1; }
     .notif-title { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
@@ -186,11 +189,21 @@
         @forelse($notifications as $notif)
           <a href="#" class="notif-item {{ $notif->is_read ? '' : 'unread' }}" onclick="markAsRead(event, {{ $notif->id }})">
             <div class="notif-icon-wrap {{ $notif->type }}">
-              {{ $notif->type == 'class_reminder' ? '⏰' : '📢' }}
+              @if($notif->type == 'class_reminder')
+                ⏰
+              @elseif($notif->type == 'pengajuan_tutor')
+                🛡️
+              @elseif($notif->type == 'achievement')
+                🏆
+              @elseif($notif->type == 'pendaftaran_kelas')
+                📖
+              @else
+                📢
+              @endif
             </div>
             <div class="notif-content">
               <div class="notif-title">{{ $notif->title }}</div>
-              <div class="notif-message">{{ $notif->message }}</div>
+              <div class="notif-message">{!! nl2br(e($notif->message)) !!}</div>
               <div class="notif-time">{{ $notif->created_at->diffForHumans() }}</div>
             </div>
           </a>
