@@ -3,246 +3,237 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notifikasi — E-Tutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Pusat Notifikasi</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    .layout { display: flex; min-height: 100vh; }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
 
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
-    .sidebar-brand { padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
-    .sidebar-brand .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-    .nav-item { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; text-decoration: none; transition: all 0.2s; cursor: pointer; }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item.active { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: #fff !important; box-shadow: 0 3px 12px rgba(59,130,246,0.3); font-weight: 600; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; cursor: pointer; transition: all 0.2s; user-select: none; list-style: none; }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s ease; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-    .nav-children { padding: 4px 0 6px 0; display: flex; flex-direction: column; gap: 1px; }
-    .nav-child { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 46px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #64748b; text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative; }
-    .nav-child::before { content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s; }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-child.active { color: #fff; background: rgba(59,130,246,0.15); font-weight: 600; }
-    .nav-child.active::before { background: #3b82f6; box-shadow: 0 0 6px rgba(59,130,246,0.5); width: 6px; height: 6px; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-    .btn-logout { width: 100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(239,68,68,0.1); color: #f87171; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
-    .btn-logout:hover { background: rgba(239,68,68,0.2); }
-
-    /* ================================================================
-       MAIN CONTENT
-       ================================================================ */
-    .main-content {
-      margin-left: 270px; flex: 1; min-height: 100vh;
-      display: flex; flex-direction: column; background-color: #f0f2f5;
-    }
-    .topbar {
-      background: #fff; padding: 14px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; font-size: 16px; transition: all 0.2s; position: relative; }
-    .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-
-    /* ================================================================
-       PAGE HEADER
-       ================================================================ */
-    .page-header {
-      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 40%, #3b82f6 100%);
-      padding: 36px 32px 40px; position: relative; overflow: hidden;
-    }
-    .page-header::before { content: ''; position: absolute; top: -60%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
-    .page-header-inner { position: relative; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; }
-    .page-header-text h1 { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .page-header-text p { font-size: 14px; color: rgba(255,255,255,0.7); max-width: 540px; line-height: 1.6; }
-
-    /* ================================================================
-       NOTIFICATIONS
-       ================================================================ */
-    .content-section { padding: 28px 32px 40px; flex: 1; }
-    .notif-card {
-      background: #fff; border-radius: 18px; border: 1px solid #e2e8f0;
-      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .notif-header {
-      padding: 18px 24px; border-bottom: 1px solid #f1f5f9;
-      display: flex; align-items: center; justify-content: space-between;
-      background: #fcfdfe;
-    }
-    .notif-header-title { font-size: 15px; font-weight: 700; color: #1e293b; }
-    .btn-mark-all {
-      font-size: 12px; font-weight: 600; color: #3b82f6;
-      background: none; border: none; cursor: pointer;
-    }
-    .btn-mark-all:hover { text-decoration: underline; }
-
-    .notif-list { display: flex; flex-direction: column; }
-    .notif-item {
-      padding: 20px 24px; display: flex; gap: 16px;
-      border-bottom: 1px solid #f1f5f9; transition: all 0.2s;
-      text-decoration: none; color: inherit; position: relative;
-    }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: #f8fafc; }
-    .notif-item.unread { background: #eff6ff; }
-    .notif-item.unread::before {
-      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 4px; background: #3b82f6;
-    }
-
-    .notif-icon-wrap {
-      width: 44px; height: 44px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
-    }
-    .notif-icon-wrap.class_reminder { background: #dcfce7; color: #16a34a; }
-    .notif-icon-wrap.info { background: #eff6ff; color: #3b82f6; }
-    .notif-icon-wrap.pengajuan_tutor { background: #fef3c7; color: #d97706; }
-    .notif-icon-wrap.achievement { background: #f3e8ff; color: #7c3aed; }
-    .notif-icon-wrap.pendaftaran_kelas { background: #e0f2fe; color: #0284c7; }
-
-    .notif-content { flex: 1; }
-    .notif-title { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
-    .notif-message { font-size: 13.5px; color: #64748b; line-height: 1.5; margin-bottom: 8px; }
-    .notif-time { font-size: 11px; color: #94a3b8; font-weight: 500; }
-
-    .notif-empty {
-      padding: 60px 20px; text-align: center; color: #94a3b8;
-    }
-    .notif-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
-
-    .pagination-wrap { padding: 20px 24px; border-top: 1px solid #f1f5f9; }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-<x-sidebar />
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
+  <x-sidebar />
 
-<main class="main-content">
-  <div class="topbar">
-    <div></div>
-    <div class="topbar-right">
-      <a href="{{ route('notifications.index') }}" class="topbar-btn">
-        🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
-      </a>
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[10%] left-[5%] w-[450px] h-[450px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
     </div>
-  </div>
 
-  <div class="page-header">
-    <div class="page-header-inner">
-      <div class="page-header-text">
-        <h1>Pusat Notifikasi</h1>
-        <p>Kelola dan lihat semua pemberitahuan sistem Anda di sini.</p>
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Home <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">Notifikasi</span>
+      </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
+        </a>
+      </div>
+    </header>
+
+    <!-- Page Header (Luxury Bright Style) -->
+    <div class="relative overflow-hidden bg-brand-blue px-10 py-12 mx-6 mt-8 rounded-[32px] shadow-[0_20px_40px_-15px_rgba(15,76,129,0.3)] animate-fade-in-up border border-brand-blue z-10">
+      <!-- Decorative Orbs -->
+      <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+      <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -3s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <h1 class="text-3xl md:text-[40px] font-extrabold text-white tracking-tight mb-4 leading-none">Pusat <span class="text-brand-yellow">Notifikasi</span></h1>
+          <p class="text-blue-100/90 text-[15px] max-w-xl leading-relaxed font-medium">
+            Kelola dan lihat semua pemberitahuan sistem Anda di sini. Pastikan Anda memeriksa notifikasi secara berkala.
+          </p>
+        </div>
+        <div class="flex gap-4">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-[20px] px-8 py-6 text-center min-w-[140px] shadow-lg">
+              <div class="text-[12px] uppercase tracking-widest font-extrabold text-blue-200 mb-2">Total Pesan</div>
+              <div class="text-[40px] font-extrabold text-white leading-none">{{ $notifications->total() }}</div>
+          </div>
+          <div class="bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/30 rounded-[20px] px-8 py-6 text-center min-w-[140px] shadow-lg relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-yellow/10 to-transparent"></div>
+              <div class="relative z-10">
+                <div class="text-[12px] uppercase tracking-widest font-extrabold text-yellow-200/90 mb-2">Belum Dibaca</div>
+                <div class="text-[40px] font-extrabold text-brand-yellow leading-none">{{ Auth::user()->notifications()->where('is_read', false)->count() }}</div>
+              </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="content-section">
-    @if(session('success'))
-      <div style="background: #dcfce7; color: #16a34a; padding: 14px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
-        {{ session('success') }}
-      </div>
-    @endif
+    <!-- Content Section -->
+    <div class="p-6 md:p-8 flex-1 relative z-10">
+      
+      @if(session('success'))
+        <div class="animate-fade-in-up stagger-1 bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-[16px] mb-8 flex items-start gap-3 shadow-sm">
+          <span class="iconify text-xl shrink-0 mt-0.5 text-emerald-500" data-icon="lucide:check-circle"></span>
+          <span class="font-extrabold text-[14px]">{{ session('success') }}</span>
+        </div>
+      @endif
 
-    <div class="notif-card">
-      <div class="notif-header">
-        <div class="notif-header-title">Semua Notifikasi</div>
+      <!-- Toolbar -->
+      <div class="flex items-center justify-between mb-8 animate-fade-in-up stagger-1">
+        <div>
+          <h2 class="text-[14px] font-extrabold text-brand-blue uppercase tracking-widest">Semua Notifikasi</h2>
+        </div>
         <form action="{{ route('notifications.markAllAsRead') }}" method="POST">
           @csrf
-          <button type="submit" class="btn-mark-all">Tandai semua dibaca</button>
+          <button type="submit" class="px-5 py-2.5 rounded-[12px] border border-slate-200 bg-white text-slate-600 text-[13px] font-extrabold hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm">
+            Tandai Semua Dibaca
+          </button>
         </form>
       </div>
 
-      <div class="notif-list">
+      <!-- Notifications Bento List -->
+      <div class="space-y-4 animate-fade-in-up stagger-2">
         @forelse($notifications as $notif)
-          <a href="#" class="notif-item {{ $notif->is_read ? '' : 'unread' }}" onclick="markAsRead(event, {{ $notif->id }})">
-            <div class="notif-icon-wrap {{ $notif->type }}">
-              @if($notif->type == 'class_reminder')
-                ⏰
-              @elseif($notif->type == 'pengajuan_tutor')
-                🛡️
-              @elseif($notif->type == 'achievement')
-                🏆
-              @elseif($notif->type == 'pendaftaran_kelas')
-                📖
-              @else
-                📢
-              @endif
-            </div>
-            <div class="notif-content">
-              <div class="notif-title">{{ $notif->title }}</div>
-              <div class="notif-message">{!! nl2br(e($notif->message)) !!}</div>
-              <div class="notif-time">{{ $notif->created_at->diffForHumans() }}</div>
-            </div>
-          </a>
+          @php
+            $icon = 'lucide:bell';
+            $colorClasses = 'bg-slate-100 text-slate-600 border-slate-200';
+            $borderIndicator = 'border-l-slate-300';
+            
+            if ($notif->type === 'class_reminder') {
+              $icon = 'lucide:calendar-clock';
+              $colorClasses = 'bg-brand-blue/10 text-brand-blue border-brand-blue/20';
+              $borderIndicator = 'border-l-brand-blue';
+            } elseif ($notif->type === 'pengajuan_tutor') {
+              $icon = 'lucide:shield-alert';
+              $colorClasses = 'bg-brand-yellow/10 text-brand-yellow border-brand-yellow/30';
+              $borderIndicator = 'border-l-brand-yellow';
+            } elseif ($notif->type === 'achievement') {
+              $icon = 'lucide:award';
+              $colorClasses = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+              $borderIndicator = 'border-l-emerald-500';
+            } elseif ($notif->type === 'pendaftaran_kelas') {
+              $icon = 'lucide:user-plus';
+              $colorClasses = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+              $borderIndicator = 'border-l-indigo-500';
+            }
+          @endphp
+          
+          <div data-id="{{ $notif->id }}" 
+               class="bg-white/95 backdrop-blur-md rounded-[24px] border border-slate-200 border-l-[8px] {{ $borderIndicator }} p-6 shadow-[0_8px_30px_rgb(15,76,129,0.02)] hover:shadow-[0_15px_40px_rgb(15,76,129,0.06)] transition-all flex flex-col md:flex-row gap-6 items-start group relative {{ $notif->is_read ? '' : 'is-unread bg-brand-light/30' }}"
+               onclick="markAsRead(this, {{ $notif->id }})">
+              
+              <div class="w-12 h-12 rounded-[14px] {{ $colorClasses }} flex items-center justify-center shrink-0 border group-hover:scale-105 transition-transform">
+                <span class="iconify text-[22px]" data-icon="{{ $icon }}"></span>
+              </div>
+              
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-[8px] text-[10px] font-extrabold uppercase tracking-wider {{ $colorClasses }} border">
+                    {{ str_replace('_', ' ', $notif->type) }}
+                  </span>
+                  @if(!$notif->is_read)
+                    <span class="unread-dot w-2.5 h-2.5 rounded-full bg-brand-yellow shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse"></span>
+                  @endif
+                </div>
+                <h3 class="text-[16px] font-extrabold text-brand-blue mb-1 leading-snug group-hover:text-blue-700 transition-colors">{{ $notif->title }}</h3>
+                <p class="text-[14px] text-slate-500 font-medium leading-relaxed">{!! nl2br(e($notif->message)) !!}</p>
+              </div>
+              
+              <div class="flex md:flex-col items-center md:items-end gap-3 shrink-0 w-full md:w-auto justify-between md:justify-start">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-brand-light rounded-[10px] text-[12px] font-bold text-slate-500 border border-slate-200 shadow-sm">
+                  <span class="iconify text-slate-400 text-[14px]" data-icon="lucide:clock"></span>
+                  {{ $notif->created_at->diffForHumans() }}
+                </div>
+              </div>
+          </div>
         @empty
-          <div class="notif-empty">
-            <div class="notif-empty-icon">📭</div>
-            <div>Belum ada notifikasi untuk Anda.</div>
+          <div class="py-24 text-center bg-white/95 border border-slate-200 rounded-[24px] shadow-sm">
+            <div class="w-20 h-20 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-5 border border-slate-200">
+              <span class="iconify text-[36px] text-slate-300" data-icon="lucide:inbox"></span>
+            </div>
+            <p class="text-[18px] font-extrabold text-brand-blue">Belum ada notifikasi</p>
+            <p class="text-[14px] font-medium text-slate-400 mt-1">Semua pesan dari sistem E-Tutor akan muncul di sini.</p>
           </div>
         @endforelse
       </div>
 
       @if($notifications->hasPages())
-        <div class="pagination-wrap">
+        <div class="mt-8 animate-fade-in-up stagger-3 bg-white/90 border border-slate-200 rounded-[20px] p-5">
           {{ $notifications->links() }}
         </div>
       @endif
     </div>
-  </div>
-</main>
+  </main>
 
-<script>
-  function markAsRead(e, id) {
-    // If it's already read, don't do anything special
-    const item = e.currentTarget;
-    if (!item.classList.contains('unread')) return;
+  <script>
+    function markAsRead(element, id) {
+      if (!element.classList.contains('is-unread')) return;
 
-    fetch(`/notifikasi/${id}/mark-as-read`, {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    }).then(response => {
-      if (response.ok) {
-        item.classList.remove('unread');
-      }
-    });
-  }
-</script>
+      fetch(`/notifikasi/${id}/mark-as-read`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          element.classList.remove('is-unread', 'bg-brand-light/30');
+          const dot = element.querySelector('.unread-dot');
+          if (dot) dot.remove();
+        }
+      });
+    }
+  </script>
 </body>
 </html>

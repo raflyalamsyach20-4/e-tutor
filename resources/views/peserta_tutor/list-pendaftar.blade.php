@@ -3,590 +3,299 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Tutor - List Pendaftar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - List Pendaftar</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
     }
-    .sidebar-brand {
-      padding: 22px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; gap: 12px;
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
-    .sidebar-brand .brand-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 17px; color: #fff;
-    }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav {
-      flex: 1; padding: 12px 10px;
-      display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      text-decoration: none; transition: all 0.2s; cursor: pointer;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      cursor: pointer; transition: all 0.2s; user-select: none; list-style: none;
-    }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary::marker { content: ''; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s ease; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-    .nav-children { padding: 4px 0 6px 0; display: flex; flex-direction: column; gap: 1px; }
-    .nav-child {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px 8px 46px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: #64748b;
-      text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative;
-    }
-    .nav-child::before {
-      content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
-      width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s;
-    }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-
-
-    /* ================================================================
-       CSS ROUTING
-       ================================================================ */
-    .page-wrapper { display: none; flex-direction: column; min-height: 100vh; }
-    #page-list { display: flex; }
-    .page-wrapper:target { display: flex !important; }
-    body:has(.page-wrapper:target) #page-list { display: none; }
-
-    .nav-list { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    .nav-list::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-    body:has(.page-wrapper:target) .nav-child { color: #64748b !important; background: transparent !important; font-weight: 500 !important; }
-    body:has(.page-wrapper:target) .nav-child::before { background: #334155 !important; box-shadow: none !important; width: 5px !important; height: 5px !important; }
-
-    body:has(#page-home:target) .nav-home,
-    body:has(#page-template:target) .nav-template { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: #fff !important; box-shadow: 0 3px 12px rgba(59,130,246,0.3) !important; font-weight: 600 !important; }
-
-    body:has(#page-info:target) .nav-info,
-    body:has(#page-daftar:target) .nav-daftar { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    body:has(#page-info:target) .nav-info::before,
-    body:has(#page-daftar:target) .nav-daftar::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-    body:has(#page-pengajuan:target) .nav-pengajuan,
-    body:has(#page-status:target) .nav-status,
-    body:has(#page-jadwal:target) .nav-jadwal,
-    body:has(#page-list:target) .nav-list,
-    body:has(#page-achievement:target) .nav-achievement { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    body:has(#page-pengajuan:target) .nav-pengajuan::before,
-    body:has(#page-status:target) .nav-status::before,
-    body:has(#page-jadwal:target) .nav-jadwal::before,
-    body:has(#page-list:target) .nav-list::before,
-    body:has(#page-achievement:target) .nav-achievement::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-
-    /* ================================================================
-       MAIN
-       ================================================================ */
-    .main-content { margin-left: 270px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar {
-      background: #fff; padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50;
-    }
-    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
-    .breadcrumb a { color: #3b82f6; text-decoration: none; font-weight: 500; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb .sep { color: #cbd5e1; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .topbar-btn {
-      width: 38px; height: 38px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #64748b; font-size: 18px;
-      transition: all 0.2s; position: relative;
-    }
-    .topbar-btn:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
-    .topbar-btn .notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-
-
-    /* ================================================================
-       EMPTY STATE
-       ================================================================ */
-    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 32px; }
-    .empty-icon-wrap { width: 100px; height: 100px; border-radius: 28px; background: linear-gradient(135deg, #f0f4ff, #e8eeff); border: 1px solid #dce4f8; display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 24px; }
-    .empty-state h2 { font-size: 22px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em; margin-bottom: 8px; }
-    .empty-state p { font-size: 14px; color: #94a3b8; font-weight: 500; max-width: 340px; text-align: center; line-height: 1.6; }
-    .empty-badge { margin-top: 20px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; background: #fef9c3; color: #a16207; font-size: 12px; font-weight: 600; }
-
-
-    /* ================================================================
-       LIST PENDAFTAR PAGE
-       ================================================================ */
-    .list-page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
-
-    .list-card {
-      width: 100%; max-width: 880px;
-      background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 45%, #2563eb 100%);
-      border-radius: 20px; padding: 40px 36px 32px;
-      position: relative; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(30,64,175,0.25), 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .list-card::before { content: ''; position: absolute; top: -80px; right: -60px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%); border-radius: 50%; }
-    .list-card::after { content: ''; position: absolute; bottom: -50px; left: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
-    .list-inner { position: relative; z-index: 2; }
-
-    .list-header { text-align: center; margin-bottom: 28px; }
-    .list-header .list-icon {
-      width: 52px; height: 52px;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px; font-size: 24px;
-    }
-    .list-header h1 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 5px; }
-    .list-header p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5; }
-
-
-    /* ================================================================
-       FILTER — CSS-only radio buttons
-       ================================================================ */
-
-    /* Hide real radio inputs */
-    .filter-radio { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
-
-    .filter-bar {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 22px; flex-wrap: wrap;
-    }
-
-    .filter-label {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 8px 16px; border-radius: 9px;
-      border: 1.5px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      font-size: 12.5px; font-weight: 600;
-      color: rgba(255,255,255,0.55);
-      cursor: pointer; transition: all 0.2s;
-      user-select: none;
-    }
-
-    .filter-label .filter-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      flex-shrink: 0;
-      background: rgba(255,255,255,0.2);
-      transition: all 0.2s;
-    }
-
-    /* Active states per filter */
-    #filter-all:checked ~ .filter-bar .label-all,
-    .filter-label:has(~ .filter-radio#filter-all:checked) {
-      border-color: rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-    }
-    .filter-label:has(~ .filter-radio#filter-all:checked) .filter-dot { background: #fff; }
-
-    #filter-disetujui:checked ~ .filter-bar .label-disetujui {
-      border-color: rgba(74,222,128,0.4);
-      background: rgba(74,222,128,0.15);
-      color: #4ade80;
-    }
-    .filter-label:has(~ .filter-radio#filter-disetujui:checked) .filter-dot { background: #4ade80; }
-
-    #filter-ditolak:checked ~ .filter-bar .label-ditolak {
-      border-color: rgba(248,113,113,0.4);
-      background: rgba(248,113,113,0.15);
-      color: #f87171;
-    }
-    .filter-label:has(~ .filter-radio#filter-ditolak:checked) .filter-dot { background: #f87171; }
-
-    #filter-menunggu:checked ~ .filter-bar .label-menunggu {
-      border-color: rgba(251,191,36,0.4);
-      background: rgba(251,191,36,0.15);
-      color: #fbbf24;
-    }
-    .filter-label:has(~ .filter-radio#filter-menunggu:checked) .filter-dot { background: #fbbf24; }
-
-
-    /* ================================================================
-       CSS-ONLY FILTER LOGIC — show/hide rows
-       ================================================================ */
-
-    /* Filter Logic removed - moving to backend */
-
-
-    /* ================================================================
-       STATS
-       ================================================================ */
-    .list-stats { display: flex; gap: 14px; margin-bottom: 24px; }
-    .list-stat {
-      flex: 1; padding: 14px 16px;
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px; text-align: center;
-    }
-    .list-stat .ls-num { font-size: 22px; font-weight: 800; line-height: 1; }
-    .list-stat .ls-label { font-size: 10.5px; color: rgba(255,255,255,0.45); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    .list-stat.total .ls-num { color: #fff; }
-    .list-stat.approved .ls-num { color: #4ade80; }
-    .list-stat.rejected .ls-num { color: #f87171; }
-    .list-stat.pending .ls-num { color: #fbbf24; }
-
-
-    /* ================================================================
-       TABLE
-       ================================================================ */
-    .list-table-wrap {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px; overflow: hidden;
-    }
-    .list-table-scroll { overflow-x: auto; }
-    .list-table { width: 100%; border-collapse: collapse; min-width: 620px; }
-    .list-table thead {
-      background: rgba(255,255,255,0.08);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .list-table thead th {
-      padding: 13px 18px; font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.07em;
-      color: rgba(255,255,255,0.5); text-align: left; white-space: nowrap;
-    }
-    .list-table tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background 0.15s;
-    }
-    .list-table tbody tr:last-child { border-bottom: none; }
-    .list-table tbody tr:hover { background: rgba(255,255,255,0.04); }
-    .list-table tbody td {
-      padding: 14px 18px; font-size: 13.5px; color: rgba(255,255,255,0.85); vertical-align: middle;
-    }
-
-    .lt-no { color: rgba(255,255,255,0.4); font-weight: 600; text-align: center; width: 45px; }
-    .lt-name { font-weight: 600; color: #fff; font-size: 13.5px; }
-    .lt-nim { font-weight: 500; color: rgba(255,255,255,0.7); font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.03em; }
-    .lt-telp { font-weight: 500; color: rgba(255,255,255,0.7); }
-
-    /* Status badges */
-    .status-wrapper { position: relative; }
-    .status-trigger {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 5px 12px; border-radius: 8px;
-      font-size: 12px; font-weight: 700;
-      cursor: pointer; list-style: none;
-      transition: all 0.2s; border: 1px solid transparent;
-    }
-    .status-trigger::-webkit-details-marker { display: none; }
-    .status-trigger::marker { content: ''; }
-    .status-trigger.disetujui { background: rgba(74,222,128,0.15); color: #4ade80; border-color: rgba(74,222,128,0.2); }
-    .status-trigger.ditolak { background: rgba(248,113,113,0.15); color: #f87171; border-color: rgba(248,113,113,0.2); }
-    .status-trigger.menunggu { background: rgba(251,191,36,0.15); color: #fbbf24; border-color: rgba(251,191,36,0.2); }
-    .status-trigger:hover { filter: brightness(1.2); }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .status-trigger.disetujui .status-dot { background: #4ade80; }
-    .status-trigger.ditolak .status-dot { background: #f87171; }
-    .status-trigger.menunggu .status-dot { background: #fbbf24; }
-    .status-trigger .arrow { font-size: 10px; margin-left: 2px; transition: transform 0.2s; }
-    .status-wrapper[open] > .status-trigger .arrow { transform: rotate(180deg); }
-
-    .status-dropdown {
-      position: absolute; top: calc(100% + 6px); right: 0;
-      background: #1e293b; border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px; padding: 6px;
-      min-width: 160px; z-index: 30;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      animation: fadeUp 0.2s ease;
-    }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-    .status-option {
-      display: flex; align-items: center; gap: 8px;
-      padding: 9px 12px; border-radius: 8px;
-      font-size: 12.5px; font-weight: 600;
-      cursor: pointer; transition: all 0.15s; text-decoration: none;
-      color: #cbd5e1;
-    }
-    .status-option:hover { background: rgba(255,255,255,0.08); }
-    .status-option.opt-setujui:hover { color: #4ade80; }
-    .status-option.opt-tolak:hover { color: #f87171; }
-    .status-option .opt-icon { font-size: 14px; display: flex; align-items: center; }
-
-    /* Empty state inside table when all filtered out */
-    .list-empty-row td {
-      padding: 48px 20px !important;
-    }
-
-    .list-empty-content {
-      text-align: center; width: 100%;
-    }
-    .list-empty-content .le-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.3; }
-    .list-empty-content p { font-size: 13px; color: rgba(255,255,255,0.35); font-weight: 500; }
-
-    /* Footer */
-    .list-footer {
-      margin-top: 18px; text-align: center;
-      font-size: 11.5px; color: rgba(255,255,255,0.35); line-height: 1.6;
-    }
-    .list-footer strong { color: rgba(255,255,255,0.55); }
-
-
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .main-content { margin-left: 0; }
-      .topbar { padding: 12px 16px; }
-      .list-page { padding: 24px 16px; }
-      .list-card { padding: 28px 20px 22px; border-radius: 16px; }
-      .list-header h1 { font-size: 19px; }
-      .list-stats { flex-direction: column; gap: 8px; }
-      .filter-bar { gap: 6px; }
-      .filter-label { padding: 7px 12px; font-size: 12px; }
-    }
-
-    /* Search Box Styles */
-    .search-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 14px; min-width: 260px; transition: all 0.2s; margin-bottom: 20px; }
-    .search-box:focus-within { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
-    .search-box .search-icon { color: rgba(255,255,255,0.4); font-size: 16px; flex-shrink: 0; }
-    .search-box input { border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif; color: #fff; background: transparent; width: 100%; }
-    .search-box input::placeholder { color: rgba(255,255,255,0.3); }
-    .filter-label.active { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); color: #fff; }
-    .filter-label.active .filter-dot { background: #fff !important; }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
 
-<x-sidebar />
-  <!-- ==================== MAIN ==================== -->
-  <div class="main-content">
+  <x-sidebar />
 
-    <!-- Placeholder pages -->
-    <div class="page-wrapper" id="page-home">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><span>Home</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏠</div><h2>Home</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-info">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Informasi Kelas</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📚</div><h2>Informasi Kelas</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-daftar">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Pendaftaran Kelas</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📝</div><h2>Pendaftaran Kelas</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-pengajuan">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Pengajuan Tutor</span><span class="sep">/</span><span>Halaman Pengajuan</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">✍️</div><h2>Halaman Pengajuan</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-status">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Status Pengajuan</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🔍</div><h2>Status Pengajuan</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-jadwal">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Jadwal Tutor</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📅</div><h2>Jadwal Tutor</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-achievement">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Achievement</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏆</div><h2>Achievement</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-template">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Template</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📄</div><h2>Template</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
+  <!-- Main Content -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[5%] right-[10%] w-[400px] h-[400px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] left-[5%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <!-- Elegant Grid Overlay -->
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
     </div>
 
-
-    <!-- ====================================================================
-         ✅ HALAMAN LIST PENDAFTAR
-         ==================================================================== -->
-    <div class="page-wrapper" id="page-list">
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="breadcrumb">
-            <a href="#page-home">Home</a>
-            <span class="sep">/</span>
-            <span>Pengajuan Tutor</span>
-            <span class="sep">/</span>
-            <span>List Pendaftar</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <a href="{{ route('notifications.index') }}" class="topbar-btn">
-            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
-          </a>
-        </div>
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Pengajuan Tutor <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">List Pendaftar Kelas</span>
       </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
+        </a>
+      </div>
+    </header>
 
-      <div class="list-page">
-        <div class="list-card">
-          <div class="list-inner">
-
-            <!-- SEARCH & FILTER BAR -->
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px;">
-              <form action="/list-pendaftar" method="GET" class="search-box" style="margin-bottom: 0;">
-                <span class="search-icon">🔍</span>
-                <input type="text" name="search" placeholder="Cari nama atau email..." value="{{ $search }}">
-                <input type="hidden" name="filter" value="{{ $filter }}">
-              </form>
-
-              <div class="filter-bar" style="margin-bottom: 0;">
-                <a href="/list-pendaftar?filter=all&search={{ $search }}" class="filter-label label-all {{ $filter === 'all' ? 'active' : '' }}" style="text-decoration: none;">
-                  <span class="filter-dot"></span> Semua
-                </a>
-                <a href="/list-pendaftar?filter=approved&search={{ $search }}" class="filter-label label-disetujui {{ $filter === 'approved' ? 'active' : '' }}" style="text-decoration: none;">
-                  <span class="filter-dot" style="background: #4ade80;"></span> Disetujui
-                </a>
-                <a href="/list-pendaftar?filter=rejected&search={{ $search }}" class="filter-label label-ditolak {{ $filter === 'rejected' ? 'active' : '' }}" style="text-decoration: none;">
-                  <span class="filter-dot" style="background: #f87171;"></span> Ditolak
-                </a>
-                <a href="/list-pendaftar?filter=pending&search={{ $search }}" class="filter-label label-menunggu {{ $filter === 'pending' ? 'active' : '' }}" style="text-decoration: none;">
-                  <span class="filter-dot" style="background: #fbbf24;"></span> Menunggu
-                </a>
-              </div>
+    <div class="p-6 md:p-10 flex-1 relative z-10">
+      
+      <!-- Premium Page Header -->
+      <div class="relative overflow-hidden bg-brand-blue px-10 py-12 rounded-[32px] shadow-[0_20px_40px_-15px_rgba(15,76,129,0.3)] mb-10 animate-fade-in-up border border-brand-blue">
+        <!-- Decorative Orbs -->
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -3s;"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
+        
+        <div class="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-8">
+          <div class="text-center xl:text-left">
+            <h1 class="text-3xl md:text-[40px] font-extrabold text-white tracking-tight mb-4 leading-none">Peserta <span class="text-brand-yellow">Kelas Anda</span></h1>
+            <p class="text-blue-100/90 text-[15px] max-w-xl leading-relaxed font-medium">
+              Kelola peserta yang mendaftar pada kelas tutoring Anda. Tinjau pendaftaran dan berikan akses kepada mereka untuk mengikuti kelas.
+            </p>
+          </div>
+          
+          <!-- Stats Grid -->
+          <div class="flex gap-4 flex-wrap justify-center xl:justify-end w-full xl:w-auto">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-[20px] px-6 py-5 min-w-[120px] text-center shadow-lg">
+                <div class="text-[32px] font-extrabold text-white leading-none mb-1.5">{{ $stats['total'] }}</div>
+                <div class="text-[10px] uppercase font-extrabold text-blue-200 tracking-widest">Total Pendaftar</div>
             </div>
-
-            <div class="list-header">
-              <div class="list-icon">📋</div>
-              <h1>Halaman List Pendaftar Peserta Tutor</h1>
-              <p>Lihat siapa saja yang mendaftar pada kelas Anda. Atur status pendaftaran — setujui atau tolak peserta.</p>
+            <div class="bg-emerald-500/10 backdrop-blur-md border border-emerald-500/30 rounded-[20px] px-6 py-5 min-w-[120px] text-center shadow-lg relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-emerald-500/10 to-transparent"></div>
+                <div class="relative z-10">
+                    <div class="text-[32px] font-extrabold text-emerald-400 leading-none mb-1.5">{{ $stats['approved'] }}</div>
+                    <div class="text-[10px] uppercase font-extrabold text-emerald-200/90 tracking-widest">Disetujui</div>
+                </div>
             </div>
-
-            <div class="list-stats">
-              <div class="list-stat total">
-                <div class="ls-num">{{ $stats['total'] }}</div>
-                <div class="ls-label">Total Pendaftar</div>
-              </div>
-              <div class="list-stat approved">
-                <div class="ls-num">{{ $stats['approved'] }}</div>
-                <div class="ls-label">Disetujui</div>
-              </div>
-              <div class="list-stat rejected">
-                <div class="ls-num">{{ $stats['rejected'] }}</div>
-                <div class="ls-label">Ditolak</div>
-              </div>
-              <div class="list-stat pending">
-                <div class="ls-num">{{ $stats['pending'] }}</div>
-                <div class="ls-label">Menunggu</div>
-              </div>
+            <div class="bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/30 rounded-[20px] px-6 py-5 min-w-[120px] text-center shadow-lg relative overflow-hidden hidden sm:block">
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-yellow/10 to-transparent"></div>
+                <div class="relative z-10">
+                    <div class="text-[32px] font-extrabold text-brand-yellow leading-none mb-1.5">{{ $stats['pending'] }}</div>
+                    <div class="text-[10px] uppercase font-extrabold text-yellow-200/90 tracking-widest">Menunggu</div>
+                </div>
             </div>
-
-            <!-- TABLE -->
-            <div class="list-table-wrap">
-              <div class="list-table-scroll">
-                <table class="list-table">
-                  <thead>
-                    <tr>
-                      <th class="lt-no">No</th>
-                      <th>Nama</th>
-                      <th>Nim</th>
-                      <th>No Telepon</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                    @forelse($pendaftar as $index => $p)
-                      @php
-                          $rowClass = '';
-                          $badgeClass = '';
-                          $label = '';
-                          if($p->status == 'approved') { $rowClass = 'row-disetujui'; $badgeClass = 'disetujui'; $label = 'Disetujui'; }
-                          elseif($p->status == 'rejected') { $rowClass = 'row-ditolak'; $badgeClass = 'ditolak'; $label = 'Ditolak'; }
-                          else { $rowClass = 'row-menunggu'; $badgeClass = 'menunggu'; $label = 'Menunggu'; }
-                      @endphp
-                    <tr class="{{ $rowClass }}">
-                      <td class="lt-no">{{ $index + 1 }}</td>
-                      <td><span class="lt-name">{{ $p->user->name }}</span><br><small style="color:rgba(255,255,255,0.5)">{{ $p->teachingSchedule->topik_pembahasan }}</small></td>
-                      <td><span class="lt-nim">{{ $p->user->email }}</span></td>
-                      <td><span class="lt-telp">-</span></td>
-                      <td>
-                        <div class="status-wrapper">
-                          <details>
-                            <summary class="status-trigger {{ $badgeClass }}"><span class="status-dot"></span> {{ $label }} <span class="arrow">▾</span></summary>
-                            <div class="status-dropdown">
-                              <form action="/list-pendaftar/{{ $p->id }}/approve" method="POST" style="margin:0;">
-                                @csrf
-                                <button type="submit" class="status-option opt-setujui" style="background:none;border:none;width:100%;text-align:left;"><span class="opt-icon">✅</span> Disetujui</button>
-                              </form>
-                              <form action="/list-pendaftar/{{ $p->id }}/reject" method="POST" style="margin:0;">
-                                @csrf
-                                <button type="submit" class="status-option opt-tolak" style="background:none;border:none;width:100%;text-align:left;"><span class="opt-icon">❌</span> Ditolak</button>
-                              </form>
-                            </div>
-                          </details>
-                        </div>
-                      </td>
-                    </tr>
-                    @empty
-                    <tr>
-                      <td colspan="5">
-                        <div class="list-empty-content" style="padding: 48px 20px;">
-                          <div class="le-icon">🔍</div>
-                          <p>Belum ada pendaftar.</p>
-                        </div>
-                      </td>
-                    </tr>
-                    @endforelse
-
-                    <!-- Empty row — shown only when all filtered out (hidden by default) -->
-                    <tr class="list-empty-row">
-                      <td colspan="5">
-                        <div class="list-empty-content">
-                          <div class="le-icon">🔍</div>
-                          <p>Tidak ada peserta dengan status ini.</p>
-                        </div>
-                      </td>
-                    </tr>
-
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="list-footer">
-              Klik pada status untuk mengubah — <strong>Disetujui</strong> atau <strong>Ditolak</strong> pendaftaran peserta.
-            </div>
-
           </div>
         </div>
       </div>
-    </div>
 
-  </div>
+      <!-- Filter & Search Toolbar -->
+      <div class="flex flex-col md:flex-row gap-5 justify-between items-center mb-8 animate-fade-in-up stagger-1">
+          <form action="/list-pendaftar" method="GET" class="relative w-full xl:max-w-md group">
+              <span class="iconify absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors" data-icon="lucide:search"></span>
+              <input type="text" name="search" placeholder="Cari nama atau email..." value="{{ $search }}" 
+                     class="w-full pl-14 pr-4 py-4 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-[16px] text-[14px] font-bold focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all shadow-[0_8px_30px_rgb(15,76,129,0.04)] text-slate-800 placeholder:text-slate-400 placeholder:font-normal">
+              <input type="hidden" name="filter" value="{{ $filter }}">
+          </form>
+
+          <div class="flex items-center gap-2 p-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-[16px] shadow-[0_8px_30px_rgb(15,76,129,0.04)] overflow-x-auto w-full md:w-auto hide-scrollbar">
+              <a href="/list-pendaftar?filter=all&search={{ $search }}" 
+                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all whitespace-nowrap {{ $filter === 'all' ? 'bg-brand-blue text-white shadow-[0_4px_12px_rgba(15,76,129,0.2)]' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+                  Semua
+              </a>
+              <a href="/list-pendaftar?filter=approved&search={{ $search }}" 
+                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all whitespace-nowrap {{ $filter === 'approved' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+                  <span class="w-1.5 h-1.5 rounded-full {{ $filter === 'approved' ? 'bg-emerald-500' : 'bg-slate-300' }}"></span> Disetujui
+              </a>
+              <a href="/list-pendaftar?filter=pending&search={{ $search }}" 
+                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all whitespace-nowrap {{ $filter === 'pending' ? 'bg-brand-yellow/10 border border-brand-yellow/30 text-yellow-700 shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+                  <span class="w-1.5 h-1.5 rounded-full {{ $filter === 'pending' ? 'bg-brand-yellow' : 'bg-slate-300' }}"></span> Menunggu
+              </a>
+              <a href="/list-pendaftar?filter=rejected&search={{ $search }}" 
+                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all whitespace-nowrap {{ $filter === 'rejected' ? 'bg-brand-red/10 border border-brand-red/20 text-brand-red shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+                  <span class="w-1.5 h-1.5 rounded-full {{ $filter === 'rejected' ? 'bg-brand-red' : 'bg-slate-300' }}"></span> Ditolak
+              </a>
+          </div>
+      </div>
+
+      <!-- Luxury Table -->
+      <div class="bg-white/95 backdrop-blur-md rounded-[24px] border border-slate-200 shadow-[0_20px_50px_rgba(15,76,129,0.05)] overflow-hidden mb-8 relative z-0 animate-fade-in-up stagger-2">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left min-w-[900px]">
+            <thead class="bg-brand-light/50 border-b border-slate-200">
+              <tr>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center w-16">No</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Data Peserta</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Informasi Kontak</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Kelas / Topik</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center">Status & Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100/80">
+              @forelse($pendaftar as $index => $p)
+              <tr class="hover:bg-brand-light/40 transition-colors group">
+                <td class="py-5 px-6 text-center text-[14px] font-extrabold text-slate-400 align-top">{{ $index + 1 }}</td>
+                
+                <td class="py-5 px-6 align-top">
+                  <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 rounded-[16px] bg-brand-blue flex items-center justify-center text-white text-lg font-extrabold shadow-sm shrink-0">
+                          {{ strtoupper(substr($p->user->name, 0, 2)) }}
+                      </div>
+                      <div class="flex flex-col gap-1">
+                          <span class="text-[15px] font-extrabold text-slate-800">{{ $p->user->name }}</span>
+                          <span class="text-[12px] font-bold text-slate-500">Mendaftar: {{ $p->created_at->format('d M, H:i') }}</span>
+                      </div>
+                  </div>
+                </td>
+                
+                <td class="py-5 px-6 align-top">
+                  <div class="flex flex-col gap-2">
+                      <span class="inline-flex items-center gap-2 text-[13px] font-extrabold text-slate-600 bg-brand-light px-3 py-1.5 rounded-[12px] border border-slate-200 w-fit shadow-sm">
+                          <span class="iconify text-brand-blue" data-icon="lucide:mail"></span> {{ $p->user->email }}
+                      </span>
+                  </div>
+                </td>
+                
+                <td class="py-5 px-6 align-top">
+                    <div class="text-[14px] font-extrabold text-brand-blue leading-snug line-clamp-2 mb-1.5">{{ $p->teachingSchedule->topik_pembahasan }}</div>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-extrabold text-blue-700 bg-blue-50 border border-blue-200">
+                        <span class="iconify" data-icon="lucide:calendar-clock"></span> 
+                        {{ \Carbon\Carbon::parse($p->teachingSchedule->tanggal)->format('d M') }}, {{ explode(' - ', $p->teachingSchedule->waktu)[0] }}
+                    </div>
+                </td>
+                
+                <td class="py-5 px-6 align-top text-center">
+                  
+                  @php
+                      $badgeClass = '';
+                      $dotClass = '';
+                      $label = '';
+                      if($p->status == 'approved') { 
+                          $badgeClass = 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'; 
+                          $dotClass = 'bg-emerald-500';
+                          $label = 'Disetujui'; 
+                      } elseif($p->status == 'rejected') { 
+                          $badgeClass = 'bg-brand-red/10 border-brand-red/20 text-brand-red hover:bg-brand-red/20'; 
+                          $dotClass = 'bg-brand-red';
+                          $label = 'Ditolak'; 
+                      } else { 
+                          $badgeClass = 'bg-brand-yellow/10 border-brand-yellow/30 text-yellow-700 hover:bg-brand-yellow/20'; 
+                          $dotClass = 'bg-brand-yellow';
+                          $label = 'Menunggu'; 
+                      }
+                  @endphp
+                  
+                  <div class="relative inline-block text-left group/dropdown">
+                      <details class="group [&_summary::-webkit-details-marker]:hidden">
+                          <summary class="inline-flex items-center gap-2 px-4 py-2.5 rounded-[12px] border {{ $badgeClass }} text-[11px] font-extrabold uppercase tracking-widest cursor-pointer transition-colors select-none shadow-sm">
+                              <span class="w-1.5 h-1.5 rounded-full {{ $dotClass }}"></span>
+                              {{ $label }}
+                              <span class="iconify text-slate-400 group-open:rotate-180 transition-transform" data-icon="lucide:chevron-down"></span>
+                          </summary>
+                          
+                          <!-- Dropdown Menu -->
+                          <div class="absolute right-0 mt-2 w-52 origin-top-right rounded-[16px] bg-white shadow-[0_15px_40px_rgba(15,76,129,0.15)] ring-1 ring-slate-200 focus:outline-none p-2 z-50 overflow-hidden transform scale-95 opacity-0 group-open:scale-100 group-open:opacity-100 transition-all duration-200">
+                              <div class="px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-100 mb-1">
+                                  Ubah Status
+                              </div>
+                              <form action="/list-pendaftar/{{ $p->id }}/approve" method="POST" class="m-0">
+                                  @csrf
+                                  <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-extrabold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-[10px] transition-colors">
+                                      <span class="iconify text-emerald-500 text-[18px]" data-icon="lucide:check-circle-2"></span> Setujui Peserta
+                                  </button>
+                              </form>
+                              <form action="/list-pendaftar/{{ $p->id }}/reject" method="POST" class="m-0 mt-1">
+                                  @csrf
+                                  <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] font-extrabold text-slate-700 hover:bg-brand-red/10 hover:text-brand-red rounded-[10px] transition-colors">
+                                      <span class="iconify text-brand-red text-[18px]" data-icon="lucide:x-circle"></span> Tolak Peserta
+                                  </button>
+                              </form>
+                          </div>
+                      </details>
+                  </div>
+
+                </td>
+              </tr>
+              @empty
+              <tr>
+                <td colspan="5" class="py-24 text-center">
+                  <div class="flex flex-col items-center justify-center text-slate-500">
+                      <div class="w-20 h-20 bg-brand-light rounded-full flex items-center justify-center mb-5 border border-slate-200 shadow-sm">
+                          <span class="iconify text-4xl text-slate-300" data-icon="lucide:users"></span>
+                      </div>
+                      <p class="text-[18px] font-extrabold text-brand-blue">Belum ada pendaftar</p>
+                      <p class="text-[14px] mt-1 font-medium text-slate-500">Saat ini belum ada peserta yang mendaftar di kelas Anda.</p>
+                  </div>
+                </td>
+              </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="bg-brand-light/50 border-t border-slate-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-slate-500 font-medium">
+          <div>Menampilkan <span class="font-extrabold text-brand-blue">{{ $pendaftar->count() }}</span> data</div>
+          <div class="flex items-center gap-2 text-[12px] bg-white px-4 py-2 rounded-[12px] border border-slate-200 font-bold shadow-sm">
+              <span class="iconify text-brand-yellow text-[16px]" data-icon="lucide:info"></span> Klik status untuk mengubah persetujuan.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('click', function(e) {
+        const details = document.querySelectorAll('details');
+        details.forEach(detail => {
+            if (detail !== e.target.closest('details')) {
+                detail.removeAttribute('open');
+            }
+        });
+    });
+  </script>
 </body>
 </html>

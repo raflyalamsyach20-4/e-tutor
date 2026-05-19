@@ -3,236 +3,229 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kelola Kelas — E-Tutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Kelola Kelas</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    .layout { display: flex; min-height: 100vh; }
-
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .sidebar-brand { padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
-    .sidebar-brand .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-    .nav-item { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative; }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item.active { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: #fff !important; box-shadow: 0 3px 12px rgba(59,130,246,0.3); font-weight: 600; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-item .notif-badge { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
     
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; cursor: pointer; transition: all 0.2s; user-select: none; list-style: none; }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s ease; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-    .nav-children { padding: 4px 0 6px 0; display: flex; flex-direction: column; gap: 1px; }
-    .nav-child { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 46px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #64748b; text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative; }
-    .nav-child::before { content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s; }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-child.active { color: #fff; background: rgba(59,130,246,0.15); font-weight: 600; }
-    .nav-child.active::before { background: #3b82f6; box-shadow: 0 0 6px rgba(59,130,246,0.5); width: 6px; height: 6px; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
     
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-    .btn-logout { width: 100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(239,68,68,0.1); color: #f87171; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; border: none; }
-    .btn-logout:hover { background: rgba(239,68,68,0.2); }
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
 
-    /* ================================================================
-       MAIN CONTENT
-       ================================================================ */
-    .main-content {
-      margin-left: 270px; flex: 1; min-height: 100vh;
-      display: flex; flex-direction: column; background-color: #f0f2f5;
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
-    .topbar {
-      background: #fff; padding: 14px 32px;
-      display: flex; align-items: center; justify-content: flex-end;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; font-size: 16px; transition: all 0.2s; position: relative; }
-    .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-
-    /* ================================================================
-       PAGE HEADER
-       ================================================================ */
-    .page-header {
-      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 40%, #3b82f6 100%);
-      padding: 36px 32px 40px; position: relative; overflow: hidden;
-    }
-    .page-header::before { content: ''; position: absolute; top: -60%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
-    .page-header-inner { position: relative; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; }
-    .page-header-text h1 { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .page-header-text p { font-size: 14px; color: rgba(255,255,255,0.7); max-width: 540px; line-height: 1.6; }
-    
-    /* ================================================================
-       TABLE SECTION
-       ================================================================ */
-    .table-section { padding: 28px 32px 40px; flex: 1; }
-    .table-wrapper { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-    thead th { padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; text-align: left; }
-    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
-    tbody td { padding: 16px; font-size: 13px; color: #334155; }
-
-    .status-badge { display: inline-flex; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .status-past { background: #f1f5f9; color: #64748b; }
-    .status-active { background: #dcfce7; color: #16a34a; }
-    .status-upcoming { background: #eff6ff; color: #2563eb; }
-
-    .btn-delete { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; border: 1px solid #fee2e2; background: #fff; color: #dc2626; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .btn-delete:hover { background: #fee2e2; border-color: #fecaca; }
-    .btn-delete:disabled { opacity: 0.5; cursor: not-allowed; background: #f8fafc; border-color: #e2e8f0; color: #94a3b8; }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-<div class="layout">
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
   <x-sidebar />
 
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-right">
-        <a href="{{ route('notifications.index') }}" class="topbar-btn">
-          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[10%] left-[5%] w-[450px] h-[450px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
+    </div>
+
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Menu Admin <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">Kelola Kelas</span>
+      </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
         </a>
       </div>
-    </div>
+    </header>
 
-    <div class="page-header">
-      <div class="page-header-inner">
-        <div class="page-header-text">
-          <h1>Kelola Kelas</h1>
-          <p>Daftar seluruh kelas yang ada di sistem. Anda dapat menghapus kelas yang sudah selesai atau lewat jadwalnya.</p>
+    <!-- Page Header (Luxury Bright Style) -->
+    <div class="relative overflow-hidden bg-brand-blue px-10 py-12 mx-6 mt-8 rounded-[32px] shadow-[0_20px_40px_-15px_rgba(15,76,129,0.3)] animate-fade-in-up border border-brand-blue z-10">
+      <!-- Decorative Orbs -->
+      <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+      <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -3s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <h1 class="text-3xl md:text-[40px] font-extrabold text-white tracking-tight mb-4 leading-none">Kelola <span class="text-brand-yellow">Kelas</span></h1>
+          <p class="text-blue-100/90 text-[15px] max-w-xl leading-relaxed font-medium">
+            Pantau dan kelola seluruh jadwal kelas tutoring di sistem. Hapus kelas yang sudah berlalu untuk menjaga data tetap bersih.
+          </p>
         </div>
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-3 text-center">
-            <div class="text-2xl font-extrabold text-white">{{ $classes->total() }}</div>
-            <div class="text-[10px] uppercase tracking-wider font-semibold text-white/60">Total Kelas</div>
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-[20px] px-8 py-6 text-center min-w-[180px] shadow-lg flex items-center justify-between gap-6 hover:bg-white/20 transition-all cursor-default">
+            <div class="text-left">
+              <div class="text-[12px] uppercase tracking-widest font-extrabold text-blue-200 mb-2">Total Kelas</div>
+              <div class="text-[40px] font-extrabold text-white leading-none">{{ $classes->total() ?? 0 }}</div>
+            </div>
+            <div class="w-14 h-14 rounded-full bg-brand-yellow flex items-center justify-center text-brand-blue text-[24px] shadow-sm">
+              <span class="iconify" data-icon="lucide:layout-grid"></span>
+            </div>
         </div>
       </div>
     </div>
 
-    <div class="table-section">
+    <!-- Content Section -->
+    <div class="p-6 md:p-8 flex-1 relative z-10">
+      
       @if(session('success'))
-        <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-          <span class="text-xl">✅</span>
-          <span class="font-medium text-sm">{{ session('success') }}</span>
+        <div class="animate-fade-in-up stagger-1 bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-[16px] mb-8 flex items-start gap-3 shadow-sm">
+          <span class="iconify text-xl shrink-0 mt-0.5 text-emerald-500" data-icon="lucide:check-circle"></span>
+          <span class="font-extrabold text-[14px]">{{ session('success') }}</span>
         </div>
       @endif
 
       @if(session('error'))
-        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-          <span class="text-xl">❌</span>
-          <span class="font-medium text-sm">{{ session('error') }}</span>
+        <div class="animate-fade-in-up stagger-1 bg-brand-red/10 border border-brand-red/20 text-brand-red px-6 py-4 rounded-[16px] mb-8 flex items-start gap-3 shadow-sm">
+          <span class="iconify text-xl shrink-0 mt-0.5 text-brand-red" data-icon="lucide:alert-circle"></span>
+          <span class="font-extrabold text-[14px]">{{ session('error') }}</span>
         </div>
       @endif
 
-      <div class="flex items-center justify-between mb-6">
-        <form action="{{ route('admin.manage-classes') }}" method="GET" class="relative group">
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">🔍</span>
-          <input type="text" name="search" placeholder="Cari topik atau tutor..." value="{{ $search }}" class="pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all w-80 shadow-sm">
+      <!-- Toolbar -->
+      <div class="flex items-center justify-between mb-8 animate-fade-in-up stagger-1">
+        <form action="{{ route('admin.manage-classes') }}" method="GET" class="relative group w-full max-w-md">
+          <span class="iconify absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors" data-icon="lucide:search"></span>
+          <input type="text" name="search" placeholder="Cari topik atau nama tutor..." value="{{ $search }}" 
+                 class="w-full pl-14 pr-4 py-4 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-[16px] text-[14px] font-bold focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all shadow-[0_8px_30px_rgb(15,76,129,0.04)] text-slate-800 placeholder:text-slate-400 placeholder:font-normal">
         </form>
       </div>
 
-      <div class="table-wrapper">
+      <!-- Bento Table Card -->
+      <div class="bg-white/95 backdrop-blur-md border border-slate-200 rounded-[24px] shadow-[0_20px_50px_rgba(15,76,129,0.05)] overflow-hidden animate-fade-in-up stagger-2">
         <div class="overflow-x-auto">
-          <table>
-            <thead>
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-brand-light/50 border-b border-slate-200">
               <tr>
-                <th class="w-16 text-center">No</th>
-                <th>Nama Kelas / Topik</th>
-                <th>Tutor</th>
-                <th>Waktu & Tanggal</th>
-                <th class="text-center">Peserta</th>
-                <th>Status</th>
-                <th class="text-center">Aksi</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center w-16">No</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Detail Kelas</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Tutor</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Waktu Pelaksanaan</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center">Peserta</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Status</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100/80">
               @forelse($classes as $index => $class)
                 @php
                   $waktu_mulai = explode(' - ', $class->waktu)[0];
                   $start_time = \Carbon\Carbon::parse($class->tanggal->format('Y-m-d') . ' ' . $waktu_mulai);
                   $is_past = $start_time->isPast();
                 @endphp
-                <tr>
-                  <td class="text-center font-medium text-slate-400">{{ $classes->firstItem() + $index }}</td>
-                  <td>
-                    <div class="font-bold text-slate-700">{{ $class->topik_pembahasan }}</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5">ID: #{{ str_pad($class->id, 5, '0', STR_PAD_LEFT) }}</div>
-                  </td>
-                  <td>
+                <tr class="hover:bg-brand-light/40 transition-colors group">
+                  <td class="py-5 px-6 text-center text-[14px] font-extrabold text-slate-400">{{ $classes->firstItem() + $index }}</td>
+                  <td class="py-5 px-6">
+                    <div class="font-extrabold text-brand-blue text-[15px] leading-tight mb-2 group-hover:text-brand-yellow transition-colors">{{ $class->topik_pembahasan }}</div>
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">
+                        <span class="inline-flex items-center px-3 py-1 rounded-[8px] text-[10px] font-extrabold bg-brand-light border border-slate-200 text-slate-500 uppercase tracking-widest shadow-sm">ID: #{{ str_pad($class->id, 5, '0', STR_PAD_LEFT) }}</span>
+                    </div>
+                  </td>
+                  <td class="py-5 px-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-[12px] bg-brand-blue flex items-center justify-center text-[13px] font-extrabold text-white shadow-sm border border-brand-blue/20">
                             {{ strtoupper(substr($class->user->name, 0, 2)) }}
                         </div>
-                        <span class="font-semibold text-slate-600">{{ $class->user->name }}</span>
+                        <span class="font-extrabold text-slate-800 text-[14px]">{{ $class->user->name }}</span>
                     </div>
                   </td>
-                  <td>
-                    <div class="flex flex-col">
-                        <span class="font-medium text-slate-600">{{ $class->tanggal->translatedFormat('d M Y') }}</span>
-                        <span class="text-[11px] text-slate-400 font-medium">{{ $class->waktu }}</span>
+                  <td class="py-5 px-6">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2 text-[14px] font-bold text-slate-800 bg-brand-light px-3 py-1.5 rounded-[10px] border border-slate-200 shadow-sm w-fit">
+                            <span class="iconify text-brand-blue text-[16px]" data-icon="lucide:calendar"></span>
+                            {{ $class->tanggal->translatedFormat('d M Y') }}
+                        </div>
+                        <div class="flex items-center gap-2 text-[13px] font-bold text-slate-600 px-1">
+                            <span class="iconify text-brand-yellow text-[16px]" data-icon="lucide:clock"></span>
+                            {{ $class->waktu }}
+                        </div>
                     </div>
                   </td>
-                  <td class="text-center">
-                    <span class="px-2 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-600">
+                  <td class="py-5 px-6 text-center">
+                    <div class="inline-flex items-center justify-center min-w-[36px] h-9 bg-brand-light rounded-[10px] text-[14px] font-extrabold text-brand-blue border border-slate-200 shadow-sm">
                         {{ $class->pendaftaran_count }}
-                    </span>
+                    </div>
                   </td>
-                  <td>
+                  <td class="py-5 px-6">
                     @if($is_past)
-                      <span class="status-badge status-past">Selesai / Lewat</span>
+                      <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100/80 text-slate-600 border border-slate-200 rounded-[12px] text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Selesai
+                      </span>
                     @else
-                      <span class="status-badge status-upcoming">Akan Datang</span>
+                      <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-[12px] text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Akan Datang
+                      </span>
                     @endif
                   </td>
-                  <td class="text-center">
+                  <td class="py-5 px-6 text-right">
                     @if($is_past)
-                      <button onclick="confirmDelete({{ $class->id }}, '{{ $class->topik_pembahasan }}')" class="btn-delete">
-                        🗑️ Hapus
+                      <button onclick="confirmDelete({{ $class->id }}, '{{ addslashes($class->topik_pembahasan) }}')" class="inline-flex items-center justify-center w-10 h-10 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-[12px] transition-all shadow-sm group/btn" title="Hapus Kelas">
+                        <span class="iconify text-[18px] group-hover/btn:scale-110 transition-transform" data-icon="lucide:trash-2"></span>
                       </button>
                     @else
-                      <button class="btn-delete" disabled title="Kelas aktif tidak bisa dihapus">
-                        🗑️ Hapus
+                      <button disabled title="Kelas aktif tidak bisa dihapus" class="inline-flex items-center justify-center w-10 h-10 bg-brand-light border border-slate-200 text-slate-400 rounded-[12px] cursor-not-allowed shadow-sm">
+                        <span class="iconify text-[18px]" data-icon="lucide:trash-2"></span>
                       </button>
                     @endif
                   </td>
                 </tr>
               @empty
                 <tr>
-                  <td colspan="7" class="text-center py-20">
-                    <div class="flex flex-col items-center opacity-40">
-                        <span class="text-5xl mb-4">📂</span>
-                        <p class="text-sm font-medium">Tidak ada data kelas yang ditemukan.</p>
+                  <td colspan="7" class="py-24 text-center">
+                    <div class="flex flex-col items-center justify-center text-slate-500">
+                        <div class="w-20 h-20 bg-brand-light rounded-full flex items-center justify-center mb-5 border border-slate-200 shadow-sm">
+                            <span class="iconify text-[36px] text-slate-300" data-icon="lucide:layout-grid"></span>
+                        </div>
+                        <p class="text-[18px] font-extrabold text-brand-blue">Tidak ada data kelas</p>
+                        <p class="text-[14px] font-medium mt-1">Belum ada kelas yang didaftarkan ke sistem.</p>
                     </div>
                   </td>
                 </tr>
@@ -240,62 +233,60 @@
             </tbody>
           </table>
         </div>
+        
         @if($classes->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
-                {{ $classes->links() }}
-            </div>
+          <div class="px-6 py-5 border-t border-slate-200 bg-brand-light/30">
+              {{ $classes->links() }}
+          </div>
         @endif
       </div>
     </div>
   </main>
-</div>
 
-<!-- Modal Konfirmasi Hapus -->
-<div id="deleteModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-    <div class="bg-white rounded-2xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden transform transition-all">
-        <div class="p-8 text-center">
-            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-6 border-4 border-red-100">
-                ⚠️
-            </div>
-            <h3 class="text-xl font-extrabold text-slate-800 mb-2">Hapus Kelas?</h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-8">
-                Apakah Anda yakin ingin menghapus kelas <span id="deleteClassName" class="font-bold text-slate-800"></span>? Data pendaftaran dan notifikasi terkait juga akan ikut dihapus secara aman (Soft Delete).
-            </p>
-            <div class="flex gap-3">
-                <button onclick="closeDeleteModal()" class="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-colors">
-                    Batal
-                </button>
-                <form id="deleteForm" method="POST" class="flex-1">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-600/20 transition-all">
-                        Ya, Hapus
-                    </button>
-                </form>
-            </div>
-        </div>
+  <!-- Premium Delete Modal -->
+  <div id="deleteModal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-brand-blue/80 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+    <div class="bg-white rounded-[28px] w-full max-w-md relative z-10 shadow-[0_20px_60px_rgba(0,0,0,0.2)] overflow-hidden transform transition-all p-8 text-center border border-slate-200">
+      <div class="w-20 h-20 bg-brand-red/10 text-brand-red rounded-[20px] flex items-center justify-center text-[36px] mx-auto mb-6 border border-brand-red/20 shadow-sm">
+        <span class="iconify" data-icon="lucide:trash-2"></span>
+      </div>
+      <h3 class="text-[24px] font-extrabold text-brand-blue mb-3">Hapus Kelas?</h3>
+      <p class="text-slate-500 text-[15px] leading-relaxed mb-8 font-medium">
+        Anda yakin ingin menghapus kelas <br/><span id="deleteClassName" class="font-extrabold text-brand-blue"></span>?<br/> Data pendaftaran terkait tidak dapat dikembalikan.
+      </p>
+      <div class="flex gap-4">
+        <button onclick="closeDeleteModal()" class="flex-1 px-6 py-4 bg-brand-light hover:bg-slate-100 border border-slate-200 text-slate-700 font-extrabold rounded-[16px] transition-colors text-[14px] shadow-sm">
+          Batal
+        </button>
+        <form id="deleteForm" method="POST" class="flex-1">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="w-full px-6 py-4 bg-brand-red hover:bg-red-700 text-white font-extrabold rounded-[16px] shadow-[0_8px_20px_rgba(225,29,72,0.3)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.4)] transition-all text-[14px] hover:-translate-y-1">
+            Ya, Hapus
+          </button>
+        </form>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     function confirmDelete(id, name) {
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteForm');
-        const nameSpan = document.getElementById('deleteClassName');
-        
-        nameSpan.textContent = name;
-        form.action = `/admin/manage-classes/${id}`;
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+      const modal = document.getElementById('deleteModal');
+      const form = document.getElementById('deleteForm');
+      const nameSpan = document.getElementById('deleteClassName');
+      
+      nameSpan.textContent = name;
+      form.action = `/admin/manage-classes/${id}`;
+      
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
     }
 
     function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+      const modal = document.getElementById('deleteModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
-</script>
+  </script>
 </body>
 </html>

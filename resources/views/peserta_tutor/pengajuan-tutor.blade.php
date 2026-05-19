@@ -3,592 +3,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Tutor - Pengajuan Tutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Pengajuan Tutor</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+    
+    @keyframes shine {
+      0% { left: -100%; }
+      20% { left: 100%; }
+      100% { left: 100%; }
     }
 
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
 
-    .sidebar-brand {
-      padding: 22px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .sidebar-brand .brand-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 17px; color: #fff;
-    }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-
-    .sidebar-nav {
-      flex: 1; padding: 12px 10px;
-      display: flex; flex-direction: column; gap: 2px;
-      overflow-y: auto;
-    }
-
-    /* Top-level nav item */
-    .nav-item {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      text-decoration: none; transition: all 0.2s; cursor: pointer;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-
-    /* Collapsible parent — using <details> for native toggle */
-    .nav-parent { margin: 4px 0 2px; }
-
-    .nav-parent > summary {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      cursor: pointer; transition: all 0.2s; user-select: none;
-      list-style: none;
-    }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary::marker { content: ''; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron {
-      margin-left: auto; font-size: 11px; color: #475569;
-      transition: transform 0.25s ease;
-    }
-    /* Chevron rotates when details is open — native behavior */
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-
-    /* Children */
-    .nav-children {
-      padding: 4px 0 6px 0;
-      display: flex; flex-direction: column; gap: 1px;
-    }
-
-    .nav-child {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px 8px 46px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: #64748b;
-      text-decoration: none; transition: all 0.2s; cursor: pointer;
+    .btn-shine {
       position: relative;
+      overflow: hidden;
     }
-    .nav-child::before {
-      content: ''; position: absolute;
-      left: 30px; top: 50%; transform: translateY(-50%);
-      width: 5px; height: 5px; border-radius: 50%;
-      background: #334155; transition: all 0.2s;
-    }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-
-
-    /* ================================================================
-       CSS ROUTING — page visibility only
-       sidebar open/close handled by <details> natively
-       ================================================================ */
-    .page-wrapper { display: none; flex-direction: column; min-height: 100vh; }
-    #page-pengajuan { display: flex; }  /* default */
-    .page-wrapper:target { display: flex !important; }
-    body:has(.page-wrapper:target) #page-pengajuan { display: none; }
-
-
-    /* ================================================================
-       ACTIVE HIGHLIGHT — only controls dot/color, NOT open/close
-       ================================================================ */
-
-    /* Default: nav-pengajuan aktif */
-    .nav-pengajuan {
-      color: #fff !important;
-      background: rgba(59,130,246,0.15) !important;
-      font-weight: 600 !important;
-    }
-    .nav-pengajuan::before {
-      background: #3b82f6 !important;
-      box-shadow: 0 0 6px rgba(59,130,246,0.5) !important;
-      width: 6px !important; height: 6px !important;
-    }
-
-    /* Reset semua highlight saat ada target */
-    body:has(.page-wrapper:target) .nav-child {
-      color: #64748b !important;
-      background: transparent !important;
-      font-weight: 500 !important;
-    }
-    body:has(.page-wrapper:target) .nav-child::before {
-      background: #334155 !important;
-      box-shadow: none !important;
-      width: 5px !important; height: 5px !important;
-    }
-
-    /* Standalone pages */
-    body:has(#page-home:target) .nav-home,
-    body:has(#page-template:target) .nav-template {
-      background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-      color: #fff !important;
-      box-shadow: 0 3px 12px rgba(59,130,246,0.3) !important;
-      font-weight: 600 !important;
-    }
-
-    /* Layanan children */
-    body:has(#page-info:target) .nav-info,
-    body:has(#page-daftar:target) .nav-daftar {
-      color: #fff !important;
-      background: rgba(59,130,246,0.15) !important;
-      font-weight: 600 !important;
-    }
-    body:has(#page-info:target) .nav-info::before,
-    body:has(#page-daftar:target) .nav-daftar::before {
-      background: #3b82f6 !important;
-      box-shadow: 0 0 6px rgba(59,130,246,0.5) !important;
-      width: 6px !important; height: 6px !important;
-    }
-
-    /* Pengajuan children */
-    body:has(#page-pengajuan:target) .nav-pengajuan,
-    body:has(#page-status:target) .nav-status,
-    body:has(#page-jadwal:target) .nav-jadwal,
-    body:has(#page-list:target) .nav-list,
-    body:has(#page-achievement:target) .nav-achievement {
-      color: #fff !important;
-      background: rgba(59,130,246,0.15) !important;
-      font-weight: 600 !important;
-    }
-    body:has(#page-pengajuan:target) .nav-pengajuan::before,
-    body:has(#page-status:target) .nav-status::before,
-    body:has(#page-jadwal:target) .nav-jadwal::before,
-    body:has(#page-list:target) .nav-list::before,
-    body:has(#page-achievement:target) .nav-achievement::before {
-      background: #3b82f6 !important;
-      box-shadow: 0 0 6px rgba(59,130,246,0.5) !important;
-      width: 6px !important; height: 6px !important;
-    }
-
-
-    /* ================================================================
-       MAIN
-       ================================================================ */
-    .main-content { margin-left: 270px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-
-    .topbar {
-      background: #fff; padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
-    .breadcrumb a { color: #3b82f6; text-decoration: none; font-weight: 500; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb .sep { color: #cbd5e1; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .topbar-btn {
-      width: 38px; height: 38px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #64748b; font-size: 18px;
-      transition: all 0.2s; position: relative;
-    }
-    .topbar-btn:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
-    .topbar-btn .notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-
-
-    /* ================================================================
-       EMPTY STATE
-       ================================================================ */
-    .empty-state {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; padding: 40px 32px;
-    }
-    .empty-icon-wrap {
-      width: 100px; height: 100px; border-radius: 28px;
-      background: linear-gradient(135deg, #f0f4ff, #e8eeff);
-      border: 1px solid #dce4f8;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 44px; margin-bottom: 24px;
-    }
-    .empty-state h2 { font-size: 22px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em; margin-bottom: 8px; }
-    .empty-state p { font-size: 14px; color: #94a3b8; font-weight: 500; max-width: 340px; text-align: center; line-height: 1.6; }
-    .empty-badge { margin-top: 20px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; background: #fef9c3; color: #a16207; font-size: 12px; font-weight: 600; }
-
-
-    /* ================================================================
-       FORM STYLES
-       ================================================================ */
-    .page-content-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
-
-    .form-card {
-      width: 100%; max-width: 580px;
-      background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 50%, #2563eb 100%);
-      border-radius: 20px; padding: 40px 38px 36px;
-      position: relative; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(30,64,175,0.25), 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .form-card::before { content: ''; position: absolute; top: -80px; right: -60px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
-    .form-card::after { content: ''; position: absolute; bottom: -50px; left: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
-    .form-inner { position: relative; z-index: 2; }
-
-    .form-header { text-align: center; margin-bottom: 32px; }
-    .form-header .form-icon {
-      width: 56px; height: 56px;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 16px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px; font-size: 26px;
-    }
-    .form-header h1 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .form-header p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
-
-    .form-group { margin-bottom: 20px; }
-    .form-group:last-of-type { margin-bottom: 28px; }
-
-    .form-label {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.7); margin-bottom: 8px;
-    }
-    .form-label .label-icon { font-size: 14px; opacity: 0.8; }
-
-    .required-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 17px; height: 17px; border-radius: 5px;
-      background: #ef4444; color: #fff;
-      font-size: 10px; font-weight: 800;
-      margin-left: 2px; flex-shrink: 0; line-height: 1;
-    }
-
-    .form-input, .form-select, .form-textarea {
-      width: 100%; padding: 13px 16px; border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(4px);
-      font-size: 14px; font-family: 'Inter', sans-serif; color: #fff;
-      transition: all 0.25s ease; outline: none;
-    }
-    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.35); }
-    .form-input:hover, .form-select:hover, .form-textarea:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.12); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
-    .form-input[type="number"]::-webkit-outer-spin-button,
-    .form-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .form-input[type="number"] { -moz-appearance: textfield; }
-    .form-select {
-      cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px;
-    }
-    .form-select option { background: #1e293b; color: #fff; }
-    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
-
-    .input-wrapper { position: relative; }
-    .input-wrapper .input-icon {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      font-size: 16px; color: rgba(255,255,255,0.4); pointer-events: none; transition: color 0.2s;
-    }
-    .input-wrapper .form-input { padding-left: 44px; }
-    .input-wrapper .form-input:focus ~ .input-icon,
-    .input-wrapper .form-input:hover ~ .input-icon { color: rgba(255,255,255,0.65); }
-
-    .form-helper { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 5px; padding-left: 2px; }
-
-    .upload-zone {
-      position: relative;
-      border: 2px dashed rgba(255,255,255,0.2);
-      border-radius: 14px; padding: 28px 20px;
-      text-align: center; transition: all 0.25s ease;
-      cursor: pointer; background: rgba(255,255,255,0.03);
-    }
-    .upload-zone:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06); }
-    .upload-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0;
-      cursor: pointer; width: 100%; height: 100%; z-index: 2;
-    }
-    .upload-zone-content { position: relative; z-index: 1; pointer-events: none; }
-    .upload-icon-circle {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.15);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px; font-size: 22px;
-    }
-    .upload-text-main { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 4px; }
-    .upload-text-main span { color: #93c5fd; text-decoration: underline; text-underline-offset: 2px; }
-    .upload-text-sub { font-size: 11.5px; color: rgba(255,255,255,0.35); line-height: 1.5; }
-    .upload-accepted {
-      display: inline-flex; align-items: center; gap: 4px;
-      margin-top: 10px; padding: 3px 10px; border-radius: 6px;
-      background: rgba(255,255,255,0.06);
-      font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.4);
-    }
-
-    .btn-submit {
-      width: 100%; padding: 15px 24px; border-radius: 13px; border: none;
-      background: #fff; color: #1e40af; font-size: 15px; font-weight: 800;
-      font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease;
-      letter-spacing: 0.02em; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none;
-    }
-    .btn-submit:hover { background: #f0f9ff; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-    .btn-submit:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .btn-submit .btn-arrow { font-size: 16px; transition: transform 0.2s; }
-    .btn-submit:hover .btn-arrow { transform: translateX(3px); }
-
-    .btn-status {
-      width: 100%; padding: 13px 20px; border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.85); font-size: 13.5px; font-weight: 600;
-      font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.25s ease;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none; backdrop-filter: blur(4px);
-    }
-    .btn-status:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); color: #fff; }
-    .btn-status .status-icon { font-size: 16px; display: flex; align-items: center; }
-    .btn-status .status-arrow { font-size: 13px; color: rgba(255,255,255,0.4); transition: transform 0.2s; }
-    .btn-status:hover .status-arrow { transform: translateX(3px); color: rgba(255,255,255,0.7); }
-
-    .form-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 24px 0; }
-    .form-footer-note { text-align: center; margin-top: 20px; font-size: 11.5px; color: rgba(255,255,255,0.4); line-height: 1.6; }
-    .form-footer-note a { color: rgba(255,255,255,0.7); text-decoration: underline; text-underline-offset: 2px; }
-    .form-footer-note a:hover { color: #fff; }
-
-
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .main-content { margin-left: 0; }
-      .topbar { padding: 12px 16px; }
-      .page-content-center { padding: 24px 16px; }
-      .form-card { padding: 28px 22px 24px; border-radius: 16px; }
-      .form-header h1 { font-size: 19px; }
-      .upload-zone { padding: 22px 16px; }
+    .btn-shine::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      animation: shine 4s infinite;
     }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-<x-sidebar />
-  <!-- ==================== MAIN ==================== -->
-  <div class="main-content">
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
 
-    <!-- Placeholder pages -->
-    <div class="page-wrapper" id="page-home">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><span>Home</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏠</div><h2>Home</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-status">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Pengajuan Tutor</span><span class="sep">/</span><span>Status Pengajuan</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🔍</div><h2>Status Pengajuan</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-jadwal">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Jadwal Tutor</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📅</div><h2>Jadwal Tutor</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-list">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>List Pendaftar</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📋</div><h2>List Pendaftar</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-achievement">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Achievement</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">🏆</div><h2>Achievement</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
-    </div>
-    <div class="page-wrapper" id="page-template">
-      <div class="topbar"><div class="topbar-left"><div class="breadcrumb"><a href="#page-home">Home</a><span class="sep">/</span><span>Template</span></div></div><div class="topbar-right"><button class="topbar-btn">🔔 <span class="notif-dot"></span></button><button class="topbar-btn">❓</button></div></div>
-      <div class="empty-state"><div class="empty-icon-wrap">📄</div><h2>Template</h2><p>Halaman ini sedang dalam pengembangan.</p><div class="empty-badge">🔧 Segera Hadir</div></div>
+  <x-sidebar />
+
+  <!-- Main Content -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[10%] right-[10%] w-[400px] h-[400px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] left-[5%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <div class="absolute top-[50%] right-[20%] w-[300px] h-[300px] bg-brand-red/5 rounded-full blur-[80px] floating-shape" style="animation-delay: -4s;"></div>
+      <!-- Elegant Grid Overlay -->
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
     </div>
 
-
-    <!-- ====================================================================
-         ✅ HALAMAN PENGAJUAN TUTOR
-         ==================================================================== -->
-    <div class="page-wrapper" id="page-pengajuan">
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="breadcrumb">
-            <a href="#page-home">Home</a>
-            <span class="sep">/</span>
-            <span>Pengajuan Tutor</span>
-            <span class="sep">/</span>
-            <span>Halaman Pengajuan</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <a href="{{ route('notifications.index') }}" class="topbar-btn">
-            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
-          </a>
-        </div>
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Menu <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">Pengajuan Tutor</span>
       </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
+        </a>
+      </div>
+    </header>
 
-      <div class="page-content-center">
-        <div class="form-card">
-          <div class="form-inner">
+    <div class="p-6 md:p-10 flex-1 flex items-center justify-center min-h-[calc(100vh-80px)] relative z-10">
+      
+      <div class="w-full max-w-4xl bg-brand-blue rounded-[32px] p-8 md:p-12 relative overflow-hidden shadow-[0_20px_50px_rgba(15,76,129,0.2)] border border-brand-blue">
+        <!-- Decor in card -->
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -2s;"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
 
-            <div class="form-header">
-              <div class="form-icon">✍️</div>
-              <h1>Halaman Pengajuan Tutor</h1>
-              <p>Ajukan diri Anda sebagai E-Tutor kepada Kaprodi. Pengajuan akan diverifikasi sebelum Anda dapat membuka kelas.</p>
+        <div class="relative z-10">
+
+          <!-- Header -->
+          <div class="text-center mb-10 animate-fade-in-up">
+            <div class="w-20 h-20 bg-white/10 border border-white/20 rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 backdrop-blur-md shadow-[0_8px_20px_rgba(0,0,0,0.1)] text-brand-yellow">
+                <span class="iconify text-brand-yellow" data-icon="lucide:file-signature"></span>
             </div>
+            <h1 class="text-3xl md:text-[40px] font-extrabold text-white tracking-tight mb-4 leading-tight">Pengajuan Menjadi <span class="text-brand-yellow">Tutor</span></h1>
+            <p class="text-[15px] text-blue-100/90 max-w-xl mx-auto leading-relaxed font-medium">
+              Ajukan diri Anda untuk membuka kelas tutoring premium. Form ini akan diverifikasi terlebih dahulu oleh Kaprodi sebelum jadwal dapat dibuat.
+            </p>
+          </div>
 
-            @if(session('success'))
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;">
-                {{ session('success') }}
+          @if(session('success'))
+            <div class="animate-fade-in-up stagger-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-6 py-4 rounded-[16px] mb-8 text-[14px] font-extrabold flex items-start gap-3 backdrop-blur-md shadow-sm">
+                <span class="iconify text-emerald-400 text-xl shrink-0 mt-0.5" data-icon="lucide:check-circle-2"></span> {{ session('success') }}
             </div>
-            @endif
+          @endif
 
-            @if($errors->any())
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
-                <ul style="margin-left: 20px;">
+          @if($errors->any())
+            <div class="animate-fade-in-up stagger-1 bg-brand-red/10 border border-brand-red/30 text-red-200 px-6 py-4 rounded-[16px] mb-8 text-[14px] font-extrabold backdrop-blur-md shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="iconify text-brand-red text-lg" data-icon="lucide:alert-circle"></span> Terdapat Kesalahan:
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-red-200/90 font-medium text-[13px] ml-1">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-            @endif
+          @endif
 
-            <form action="/pengajuan-tutor" method="post" enctype="multipart/form-data">
-            @csrf
-              <!-- NAMA -->
-              <div class="form-group">
-                <label class="form-label" for="aj-nama">
-                  <span class="label-icon">👤</span> NAMA
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <input class="form-input" type="text" id="aj-nama" name="nama" placeholder="Masukkan nama lengkap" required autocomplete="name">
-                  <span class="input-icon">✏️</span>
-                </div>
-              </div>
+          <div class="bg-white rounded-[24px] p-8 md:p-10 shadow-2xl animate-fade-in-up stagger-2">
+            <form action="/pengajuan-tutor" method="post" enctype="multipart/form-data" class="space-y-6">
+              @csrf
 
-              <!-- NIM -->
-              <div class="form-group">
-                <label class="form-label" for="aj-nim">
-                  <span class="label-icon">🔢</span> NIM
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <input class="form-input" type="number" id="aj-nim" name="nim" placeholder="Masukkan NIM (angka)" required min="0" inputmode="numeric">
-                  <span class="input-icon">🔑</span>
-                </div>
-                <div class="form-helper">Hanya angka yang diperbolehkan</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- NAMA -->
+                  <div class="space-y-2">
+                      <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                          Nama Lengkap <span class="text-brand-red">*</span>
+                      </label>
+                      <div class="relative group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:type"></span>
+                          <input type="text" name="nama" placeholder="Masukkan nama Anda" required autocomplete="name" 
+                                class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400">
+                      </div>
+                  </div>
+
+                  <!-- NIM -->
+                  <div class="space-y-2">
+                      <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                          NIM <span class="text-brand-red">*</span>
+                      </label>
+                      <div class="relative group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:hash"></span>
+                          <input type="number" name="nim" placeholder="Masukkan angka NIM" required min="0" inputmode="numeric" 
+                                class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                      </div>
+                  </div>
               </div>
 
               <!-- TOPIK PEMBAHASAN -->
-              <div class="form-group">
-                <label class="form-label" for="aj-topik">
-                  <span class="label-icon">📖</span> TOPIK PEMBAHASAN
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <input class="form-input" type="text" id="aj-topik" name="topik" placeholder="Contoh: Algoritma & Struktur Data" required>
-                  <span class="input-icon">📚</span>
-                </div>
-                <div class="form-helper">Topik yang akan Anda ajarkan sebagai E-Tutor</div>
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Topik / Mata Kuliah <span class="text-brand-red">*</span>
+                  </label>
+                  <div class="relative group">
+                      <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:bookmark"></span>
+                      <input type="text" name="topik" placeholder="Contoh: Pemrograman Web Lanjut (Laravel)" required 
+                            class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400">
+                  </div>
+                  <div class="text-[12px] text-slate-500 ml-1 mt-2 font-bold"><span class="iconify inline text-brand-yellow mr-1" data-icon="lucide:info"></span>Topik ini akan menjadi judul kelas utama Anda nantinya.</div>
               </div>
 
               <!-- BUKTI MEMENUHI -->
-              <div class="form-group">
-                <label class="form-label">
-                  <span class="label-icon">📎</span> BUKTI MEMENUHI
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="upload-zone">
-                  <input type="file" name="bukti_memenuhi" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
-                  <div class="upload-zone-content">
-                    <div class="upload-icon-circle">📎</div>
-                    <div class="upload-text-main">
-                      <span>Klik untuk upload</span> atau drag file ke sini
-                    </div>
-                    <div class="upload-text-sub">
-                      Unggah bukti bahwa Anda memenuhi syarat sebagai E-Tutor
-                    </div>
-                    <div class="upload-accepted">
-                      📁 PDF, JPG, PNG, DOC — Maks. 5MB
-                    </div>
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Dokumen Bukti Memenuhi Syarat <span class="text-brand-red">*</span>
+                  </label>
+                  <div class="upload-zone relative border-2 border-dashed border-slate-300 hover:border-brand-blue bg-brand-light hover:bg-brand-blue/5 rounded-[20px] p-10 text-center transition-all cursor-pointer group">
+                      <input type="file" name="bukti_memenuhi" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required class="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full" id="file-upload">
+                      <div class="relative z-0 pointer-events-none flex flex-col items-center">
+                          <div class="w-16 h-16 rounded-[20px] bg-white border border-slate-200 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-sm">
+                              <span class="iconify text-[32px] text-slate-400 group-hover:text-brand-blue transition-colors" data-icon="lucide:upload-cloud"></span>
+                          </div>
+                          <div class="text-[16px] font-extrabold text-slate-800 mb-2 upload-text-main">
+                              <span class="text-brand-blue group-hover:underline underline-offset-4">Pilih Dokumen</span> atau seret file kemari
+                          </div>
+                          <div class="text-[14px] text-slate-500 mb-5 font-medium">KHS, Sertifikat, atau Transkrip Nilai (Bukti kemampuan Anda)</div>
+                          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[12px] font-extrabold text-slate-500 border border-slate-200 shadow-sm">
+                              <span class="iconify text-brand-red" data-icon="lucide:file-type-2"></span> PDF, JPG, PNG, DOC (Maks. 5MB)
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <div class="form-helper">File akan divalidasi dan diverifikasi oleh Kaprodi</div>
               </div>
-              <script>
-    const fileInput = document.querySelector('input[name="bukti_memenuhi"]');
-    const uploadText = document.querySelector('.upload-text-main');
 
-    fileInput.addEventListener('change', function() {
-        if (this.files && this.files.length > 0) {
-            // Ambil nama file yang dipilih
-            const fileName = this.files[0].name;
-            // Ubah teks instruksi menjadi nama file
-            uploadText.innerHTML = `<strong>✅ File terpilih:</strong> ${fileName}`;
-            // Opsional: ganti warna border zona upload agar terlihat beda
-            document.querySelector('.upload-zone').style.borderColor = '#4ade80'; 
-        }
-    });
-</script>
               <!-- DESKRIPSI JOB -->
-              <div class="form-group">
-                <label class="form-label" for="aj-deskripsi">
-                  <span class="label-icon">📝</span> DESKRIPSI JOB
-                  <span class="required-badge">R</span>
-                </label>
-                <textarea class="form-textarea" id="aj-deskripsi" name="deskripsi" placeholder="Jelaskan rencana mengajar Anda, pengalaman, metode yang akan digunakan, dan alasan mengapa Anda layak menjadi E-Tutor..." required></textarea>
-                <div class="form-helper">Deskripsikan secara detail rencana dan kompetensi Anda</div>
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Deskripsi & Rencana Mengajar <span class="text-brand-red">*</span>
+                  </label>
+                  <textarea name="deskripsi" rows="5" placeholder="Ceritakan pengalaman Anda terkait topik ini dan bagaimana rencana Anda dalam mengajarkannya kepada peserta..." required 
+                            class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400 resize-none"></textarea>
               </div>
 
-              <div class="form-divider"></div>
+              <div class="h-px bg-slate-100 my-8"></div>
 
-              <!-- LIHAT STATUS PENGAJUAN -->
-              <div class="form-group">
-                <a href="/status-pengajuan" class="btn-status">
-                  <span class="status-icon">🔍</span>
-                  Lihat Status Pengajuan
-                  <span class="status-arrow">→</span>
-                </a>
+              <div class="flex flex-col gap-4 mt-8">
+                  <button type="submit" class="btn-shine w-full py-4 bg-brand-yellow hover:bg-yellow-400 text-brand-blue font-extrabold rounded-[16px] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_12px_25px_rgba(245,158,11,0.4)] transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-[15px] group/btn">
+                      Kirim Pengajuan Tutor <span class="iconify text-[20px] group-hover/btn:translate-x-1 transition-transform" data-icon="lucide:send"></span>
+                  </button>
+
+                  <a href="/status-pengajuan" class="w-full py-4 bg-slate-50 border border-slate-200 text-slate-600 font-extrabold rounded-[16px] hover:bg-brand-blue hover:text-white hover:border-brand-blue transition-all flex items-center justify-center gap-2 text-[14px] shadow-sm group/link">
+                      <span class="iconify text-slate-400 group-hover/link:text-white transition-colors text-[18px]" data-icon="lucide:search"></span> Cek Status Pengajuan Sebelumnya
+                  </a>
               </div>
-
-              <!-- AJUKAN -->
-              <button type="submit" class="btn-submit">
-                AJUKAN
-                <span class="btn-arrow">→</span>
-              </button>
               
-          
-              </form>
-            <div class="form-footer-note">
-              Pengajuan akan dikirim kepada Kaprodi untuk diverifikasi.<br>
-              Pastikan semua data dan bukti yang diisi sudah benar.
-            </div>
-
+            </form>
           </div>
+
         </div>
       </div>
     </div>
+  </main>
 
-  </div>
+  <script>
+    const fileInput = document.getElementById('file-upload');
+    const uploadText = document.querySelector('.upload-text-main');
+    const uploadZone = document.querySelector('.upload-zone');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            const fileName = this.files[0].name;
+            uploadText.innerHTML = `<div class="flex flex-col items-center gap-2"><span class="inline-flex items-center gap-1.5 text-emerald-600"><span class="iconify text-[20px]" data-icon="lucide:check-circle-2"></span> File Berhasil Dipilih:</span> <span class="font-extrabold text-brand-blue bg-brand-light px-4 py-2 rounded-lg border border-slate-200">${fileName}</span></div>`;
+            uploadZone.classList.add('border-emerald-500/50', 'bg-emerald-50/50');
+            uploadZone.classList.remove('border-slate-300', 'bg-brand-light', 'hover:border-brand-blue', 'hover:bg-brand-blue/5');
+        }
+    });
+  </script>
 </body>
 </html>

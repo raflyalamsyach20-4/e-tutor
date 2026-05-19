@@ -3,771 +3,382 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verifikasi Pengajuan Tutor — E-Tutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Verifikasi Pengajuan Tutor</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    .layout { display: flex; min-height: 100vh; }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
 
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .sidebar-brand {
-      padding: 22px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .sidebar-brand .brand-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 17px; color: #fff;
-    }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav {
-      flex: 1; padding: 12px 10px;
-      display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      text-decoration: none; transition: all 0.2s; cursor: pointer;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      cursor: pointer; transition: all 0.2s; user-select: none; list-style: none;
-    }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary::marker { content: ''; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-
-    .nav-children { display: flex; flex-direction: column; gap: 1px; padding: 4px 0 6px 0; }
-    .nav-child {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px 8px 46px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: #64748b;
-      text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative;
-    }
-    .nav-child::before {
-      content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
-      width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s;
-    }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-child.active {
-      color: #fff; background: rgba(59,130,246,0.15); font-weight: 600;
-    }
-    .nav-child.active::before {
-      background: #3b82f6; box-shadow: 0 0 6px rgba(59,130,246,0.5); width: 6px; height: 6px;
-    }
-
-    .notif-badge {
-      margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
-      min-width: 20px; height: 20px; padding: 0 6px;
-      border-radius: 10px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 700;
-    }
-
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-
-
-    /* ================================================================
-       MAIN CONTENT
-       ================================================================ */
-    .main-content {
-      margin-left: 270px; flex: 1; min-height: 100vh;
-      display: flex; flex-direction: column; background-color: #f0f2f5;
-    }
-
-    .topbar {
-      background: #fff; padding: 14px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .topbar-brand-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 15px; color: #fff;
-    }
-    .topbar-brand-text { font-weight: 700; font-size: 15px; color: #1e293b; letter-spacing: -0.02em; }
-    .topbar-brand-sub { font-size: 10px; color: #94a3b8; font-weight: 500; display: block; line-height: 1; margin-top: 1px; }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-btn {
-      width: 36px; height: 36px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #64748b; font-size: 16px;
-      transition: all 0.2s; position: relative;
-    }
-    .topbar-btn:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
-    .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-    .topbar-user { display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; }
-    .topbar-avatar { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; color: #fff; }
-    .topbar-user-name { font-size: 12.5px; font-weight: 600; color: #334155; }
-
-
-    /* ================================================================
-       PAGE HEADER
-       ================================================================ */
-    .page-header {
-      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 40%, #3b82f6 100%);
-      padding: 36px 32px 40px; position: relative; overflow: hidden;
-    }
-    .page-header::before { content: ''; position: absolute; top: -60%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
-    .page-header::after { content: ''; position: absolute; bottom: -40%; left: 20%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
-    .page-header-inner { position: relative; z-index: 2; display: flex; align-items: flex-start; justify-content: space-between; }
-    .page-header-text h1 { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .page-header-text p { font-size: 14px; color: rgba(255,255,255,0.7); max-width: 520px; line-height: 1.6; }
-    .header-stats { display: flex; gap: 14px; }
-    .header-stat { background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 105px; }
-    .header-stat .stat-num { font-size: 24px; font-weight: 800; color: #fff; line-height: 1; }
-    .header-stat .stat-label { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 4px; font-weight: 500; }
-
-
-    /* ================================================================
-       TABLE SECTION
-       ================================================================ */
-    .table-section { padding: 28px 32px 40px; flex: 1; }
-    .table-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
-    .table-toolbar-left { display: flex; align-items: center; gap: 10px; }
-    .search-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 14px; min-width: 260px; transition: all 0.2s; }
-    .search-box:focus-within { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-    .search-box .search-icon { color: #94a3b8; font-size: 16px; flex-shrink: 0; }
-    .search-box input { border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif; color: #1e293b; background: transparent; width: 100%; }
-    .search-box input::placeholder { color: #94a3b8; }
-    .filter-btn { display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; font-size: 13px; font-weight: 500; color: #475569; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-    .filter-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-    .filter-btn.active { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
-    .filter-btn .filter-icon { font-size: 16px; color: #94a3b8; }
-
-    .table-wrapper { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 900px; }
-    thead { background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-    thead th { padding: 14px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; text-align: left; white-space: nowrap; }
-    tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: #f8fafc; }
-    tbody td { padding: 14px 16px; font-size: 13px; color: #334155; vertical-align: top; }
-
-    .col-no { font-weight: 600; color: #94a3b8; text-align: center; width: 45px; }
-
-    .nama-cell { min-width: 150px; }
-    .nama-text { font-weight: 600; color: #1e293b; font-size: 13.5px; }
-    .nim-text { font-size: 12px; color: #94a3b8; font-weight: 500; margin-top: 1px; }
-
-    .topik-cell { min-width: 160px; }
-    .topik-text { font-weight: 600; color: #1e293b; font-size: 13px; line-height: 1.4; }
-
-    /* Bukti cell */
-    .bukti-cell { min-width: 120px; }
-    .btn-bukti {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 7px 14px; border-radius: 8px;
-      border: 1px solid #e2e8f0; background: #fff;
-      font-size: 12px; font-weight: 600; color: #2563eb;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: all 0.2s; text-decoration: none;
-    }
-    .btn-bukti:hover { background: #eff6ff; border-color: #bfdbfe; }
-    .btn-bukti .bukti-icon { font-size: 14px; }
-
-    /* Deskripsi cell */
-    .deskripsi-cell { min-width: 200px; max-width: 260px; }
-    .deskripsi-text {
-      font-size: 12.5px; color: #64748b; line-height: 1.5;
-      display: -webkit-box; -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-
-    /* Status cell */
-    .status-cell { min-width: 200px; }
-    .status-approve-group { display: flex; gap: 6px; }
-    .btn-approve {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 7px 14px; border-radius: 8px; border: none;
-      font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s; white-space: nowrap;
-    }
-    .btn-approve.acc {
-      background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;
-    }
-    .btn-approve.acc:hover { background: #bbf7d0; }
-    .btn-approve.rej {
-      background: #fee2e2; color: #dc2626; border: 1px solid #fecaca;
-    }
-    .btn-approve.rej:hover { background: #fecaca; }
-
-    .status-final {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 5px 12px; border-radius: 8px;
-      font-size: 12px; font-weight: 700;
-    }
-    .status-final.approved { background: #dcfce7; color: #16a34a; }
-    .status-final.rejected { background: #fee2e2; color: #dc2626; }
-
-    .table-footer {
-      padding: 14px 18px; border-top: 1px solid #f1f5f9;
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px; color: #94a3b8; background: #fafbfc;
-    }
-    .table-footer-info strong { color: #475569; }
-
-
-    /* ================================================================
-       PDF MODAL
-       ================================================================ */
-    .pdf-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center;
-      padding: 24px;
-    }
-    .pdf-overlay.show { display: flex; }
-
-    .pdf-modal {
-      background: #fff; border-radius: 20px;
-      width: 100%; max-width: 780px; max-height: 90vh;
-      display: flex; flex-direction: column;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-      overflow: hidden;
-      animation: modalIn 0.25s ease;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.95) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .pdf-modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 24px; border-bottom: 1px solid #e2e8f0;
-      background: #f8fafc;
-    }
-    .pdf-modal-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 15px; font-weight: 700; color: #1e293b;
-    }
-    .pdf-modal-title .pdf-icon {
-      width: 34px; height: 34px; border-radius: 9px;
-      background: #fee2e2; display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-    }
-    .pdf-modal-subtitle { font-size: 12px; color: #94a3b8; font-weight: 500; }
-    .pdf-modal-close {
-      width: 36px; height: 36px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #64748b; font-size: 18px;
-      transition: all 0.2s;
-    }
-    .pdf-modal-close:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
-
-    .pdf-modal-body { flex: 1; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative; min-height: 400px; }
-    .pdf-modal-body iframe { width: 100%; height: 100%; min-height: 500px; border: none; }
-    .pdf-placeholder {
-      text-align: center; padding: 40px;
-    }
-    .pdf-placeholder-icon {
-      width: 80px; height: 80px; border-radius: 20px;
-      background: linear-gradient(135deg, #fee2e2, #fecaca);
-      border: 1px solid #fca5a5;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 36px; margin: 0 auto 16px;
-    }
-    .pdf-placeholder h3 { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
-    .pdf-placeholder p { font-size: 13px; color: #94a3b8; }
-    .pdf-placeholder .pdf-filename {
-      display: inline-flex; align-items: center; gap: 5px;
-      margin-top: 12px; padding: 6px 14px; border-radius: 8px;
-      background: #fff; border: 1px solid #e2e8f0;
-      font-size: 12px; font-weight: 600; color: #475569;
-    }
-
-    .pdf-modal-footer {
-      padding: 14px 24px; border-top: 1px solid #e2e8f0;
-      display: flex; align-items: center; justify-content: space-between;
-      background: #f8fafc;
-    }
-    .pdf-modal-info { font-size: 12px; color: #94a3b8; font-weight: 500; }
-    .pdf-modal-actions { display: flex; gap: 8px; }
-    .btn-pdf-action {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 8px 16px; border-radius: 9px; border: none;
-      font-size: 12px; font-weight: 700; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-pdf-action.download { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.2); }
-    .btn-pdf-action.download:hover { box-shadow: 0 4px 14px rgba(37,99,235,0.3); transform: translateY(-1px); }
-    .btn-pdf-action.close-modal { background: #fff; color: #475569; border: 1px solid #e2e8f0; }
-    .btn-pdf-action.close-modal:hover { background: #f8fafc; }
-
-
-    /* ================================================================
-       CONFIRM DIALOG
-       ================================================================ */
-    .confirm-overlay {
-      position: fixed; inset: 0; z-index: 300;
-      background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center; padding: 24px;
-    }
-    .confirm-overlay.show { display: flex; }
-
-    .confirm-dialog {
-      background: #fff; border-radius: 20px;
-      width: 100%; max-width: 400px; padding: 32px;
-      text-align: center;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-      animation: modalIn 0.25s ease;
-    }
-    .confirm-icon {
-      width: 64px; height: 64px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 30px; margin: 0 auto 20px;
-    }
-    .confirm-icon.green { background: #dcfce7; border: 2px solid #bbf7d0; }
-    .confirm-icon.red { background: #fee2e2; border: 2px solid #fecaca; }
-    .confirm-dialog h3 { font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
-    .confirm-dialog p { font-size: 13.5px; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
-    .confirm-dialog p strong { color: #1e293b; font-weight: 600; }
-    .confirm-actions { display: flex; gap: 10px; }
-    .confirm-btn {
-      flex: 1; padding: 12px 20px; border-radius: 11px; border: none;
-      font-size: 13.5px; font-weight: 700; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .confirm-btn.cancel { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-    .confirm-btn.cancel:hover { background: #e2e8f0; }
-    .confirm-btn.yes-green { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 2px 8px rgba(22,163,74,0.25); }
-    .confirm-btn.yes-green:hover { box-shadow: 0 4px 14px rgba(22,163,74,0.35); transform: translateY(-1px); }
-    .confirm-btn.yes-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; box-shadow: 0 2px 8px rgba(220,38,38,0.25); }
-    .confirm-btn.yes-red:hover { box-shadow: 0 4px 14px rgba(220,38,38,0.35); transform: translateY(-1px); }
-
-
-    /* ================================================================
-       TOAST
-       ================================================================ */
-    .toast-container {
-      position: fixed; top: 80px; right: 24px; z-index: 400;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .toast {
-      display: flex; align-items: center; gap: 10px;
-      padding: 14px 20px; border-radius: 14px;
-      background: #fff; border: 1px solid #e2e8f0;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-      animation: toastIn 0.35s ease;
-      min-width: 300px;
-    }
-    @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-    .toast-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-    .toast-icon.green { background: #dcfce7; }
-    .toast-icon.red { background: #fee2e2; }
-    .toast-text { font-size: 13px; font-weight: 600; color: #1e293b; }
-    .toast-sub { font-size: 11.5px; color: #94a3b8; font-weight: 500; margin-top: 1px; }
-
-
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
-    @media (max-width: 1100px) { .header-stats { display: none; } }
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .main-content { margin-left: 0; }
-      .page-header { padding: 24px 20px 28px; }
-      .page-header-text h1 { font-size: 20px; }
-      .table-section { padding: 20px 16px 32px; }
-      .topbar { padding: 12px 16px; }
-      .search-box { min-width: 180px; }
-      .pdf-modal { max-width: 95vw; }
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-
-<body>
-<div class="layout">
-
-  <!-- ==================== SIDEBAR ==================== -->
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
   <x-sidebar />
 
-  <!-- ==================== MAIN CONTENT ==================== -->
-  <main class="main-content">
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[10%] right-[5%] w-[450px] h-[450px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
+    </div>
 
-    <div class="topbar">
-      <a href="#" class="topbar-brand">
-        <div class="topbar-brand-icon">E</div>
-        <div>
-          <div class="topbar-brand-text">E-Tutor</div>
-          <span class="topbar-brand-sub">Sistem Tutoring</span>
-        </div>
-      </a>
-      <div class="topbar-right">
-        <a href="{{ route('notifications.index') }}" class="topbar-btn">
-          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Menu Kaprodi <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">ACC Pengajuan</span>
+      </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
         </a>
       </div>
-    </div>
+    </header>
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="page-header-inner">
-        <div class="page-header-text">
-          <h1>Halaman Verifikasi Pengajuan Tutor</h1>
-          <p>Periksa dan verifikasi pengajuan dari mahasiswa yang ingin menjadi E-Tutor. Pastikan bukti dan deskripsi sudah memenuhi syarat.</p>
-        </div>
-        <div class="header-stats">
-          <div class="header-stat"><div class="stat-num">{{ $stats['total'] }}</div><div class="stat-label">Total Pengajuan</div></div>
-          <div class="header-stat"><div class="stat-num" style="color:#86efac">{{ $stats['approved'] }}</div><div class="stat-label">Disetujui</div></div>
-          <div class="header-stat"><div class="stat-num" style="color:#fde047">{{ $stats['pending'] }}</div><div class="stat-label">Menunggu</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Table Section -->
-    <div class="table-section">
-      <div class="table-toolbar">
-        <div class="table-toolbar-left">
-          <form action="{{ route('kaprodi.acc-pengajuan') }}" method="GET" class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" name="search" placeholder="Cari nama, NIM, atau topik..." value="{{ $search }}">
-          </form>
-          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'all', 'search' => $search]) }}" class="filter-btn {{ !$status || $status === 'all' ? 'active' : '' }}"><span class="filter-icon">🔽</span> Semua</a>
-          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'pending', 'search' => $search]) }}" class="filter-btn {{ $status === 'pending' ? 'active' : '' }}"><span class="filter-icon">⏳</span> Menunggu</a>
-          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'approved', 'search' => $search]) }}" class="filter-btn {{ $status === 'approved' ? 'active' : '' }}"><span class="filter-icon">✅</span> Disetujui</a>
-          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'rejected', 'search' => $search]) }}" class="filter-btn {{ $status === 'rejected' ? 'active' : '' }}"><span class="filter-icon">❌</span> Ditolak</a>
-        </div>
-      </div>
+    <!-- Page Header (Luxury Bright Style) -->
+    <div class="relative overflow-hidden bg-brand-blue px-10 py-12 mx-6 mt-8 rounded-[32px] shadow-[0_20px_40px_-15px_rgba(15,76,129,0.3)] animate-fade-in-up border border-brand-blue z-10">
+      <!-- Decorative Orbs -->
+      <div class="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+      <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -3s;"></div>
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
       
-      <div class="table-wrapper">
-        <div class="table-scroll">
-          <table>
-            <thead>
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <h1 class="text-3xl md:text-[40px] font-extrabold text-white tracking-tight mb-4 leading-none">Verifikasi Pengajuan <span class="text-brand-yellow">Tutor</span></h1>
+          <p class="text-blue-100/90 text-[15px] max-w-xl leading-relaxed font-medium">
+            Tinjau berkas pendaftaran calon tutor. Evaluasi kompetensi berdasarkan dokumen dan deskripsi yang diajukan mahasiswa.
+          </p>
+        </div>
+        <div class="flex gap-4">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-[20px] px-8 py-6 text-center min-w-[140px] shadow-lg">
+              <div class="text-[12px] uppercase tracking-widest font-extrabold text-blue-200 mb-2">Total</div>
+              <div class="text-[40px] font-extrabold text-white leading-none">{{ $stats['total'] }}</div>
+          </div>
+          <div class="bg-brand-yellow/10 backdrop-blur-md border border-brand-yellow/30 rounded-[20px] px-8 py-6 text-center min-w-[140px] shadow-lg relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-yellow/10 to-transparent"></div>
+              <div class="relative z-10">
+                <div class="text-[12px] uppercase tracking-widest font-extrabold text-yellow-200/90 mb-2">Menunggu</div>
+                <div class="text-[40px] font-extrabold text-brand-yellow leading-none">{{ $stats['pending'] }}</div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="p-6 md:p-8 flex-1 relative z-10">
+      
+      <!-- Toolbar -->
+      <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-5 animate-fade-in-up stagger-1">
+        <form action="{{ route('kaprodi.acc-pengajuan') }}" method="GET" class="relative group w-full xl:max-w-md">
+          <span class="iconify absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-brand-blue transition-colors" data-icon="lucide:search"></span>
+          <input type="text" name="search" placeholder="Cari nama, NIM, atau topik..." value="{{ $search }}" 
+                 class="w-full pl-14 pr-4 py-4 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-[16px] text-[14px] font-bold focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all shadow-[0_8px_30px_rgb(15,76,129,0.04)] text-slate-800 placeholder:text-slate-400 placeholder:font-normal">
+        </form>
+
+        <div class="flex flex-wrap gap-2 p-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-[16px] shadow-[0_8px_30px_rgb(15,76,129,0.04)]">
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'all', 'search' => $search]) }}" 
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all {{ !$status || $status === 'all' ? 'bg-brand-blue text-white shadow-[0_4px_12px_rgba(15,76,129,0.2)]' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+             Semua
+          </a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'pending', 'search' => $search]) }}" 
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all {{ $status === 'pending' ? 'bg-brand-yellow/10 border border-brand-yellow/30 text-yellow-700 shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+             <span class="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span> Menunggu
+          </a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'approved', 'search' => $search]) }}" 
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all {{ $status === 'approved' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Disetujui
+          </a>
+          <a href="{{ route('kaprodi.acc-pengajuan', ['status' => 'rejected', 'search' => $search]) }}" 
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] text-[13px] font-extrabold transition-all {{ $status === 'rejected' ? 'bg-brand-red/10 border border-brand-red/20 text-brand-red shadow-sm' : 'text-slate-500 hover:text-brand-blue hover:bg-slate-50' }}">
+             <span class="w-1.5 h-1.5 rounded-full bg-brand-red"></span> Ditolak
+          </a>
+        </div>
+      </div>
+
+      <!-- Bento Table Card -->
+      <div class="bg-white/95 backdrop-blur-md border border-slate-200 rounded-[24px] shadow-[0_20px_50px_rgba(15,76,129,0.05)] overflow-hidden animate-fade-in-up stagger-2">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-brand-light/50 border-b border-slate-200">
               <tr>
-                <th class="col-no">No</th>
-                <th>Nama / NIM</th>
-                <th>Topik Pembahasan</th>
-                <th>Bukti</th>
-                <th>Deskripsi</th>
-                <th>Status</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center w-16">No</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Calon Tutor</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Keahlian (Topik)</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Deskripsi / Alasan</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center">Berkas</th>
+                <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center">Status / Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100/80">
               @forelse($applications as $index => $app)
-              <tr id="row-{{ $app->id }}">
-                <td class="col-no">{{ $index + 1 }}</td>
-                <td class="nama-cell">
-                  <div class="nama-text">{{ $app->nama }}</div>
-                  <div class="nim-text">{{ $app->nim }}</div>
-                </td>
-                <td class="topik-cell">
-                  <div class="topik-text">{{ $app->topik_pembahasan }}</div>
-                </td>
-                <td class="bukti-cell">
-                  <button class="btn-bukti" onclick="openPdf('{{ $app->nama }}', '{{ Storage::url($app->bukti_memenuhi) }}', '{{ $app->nim }}')">
-                    <span class="bukti-icon">📄</span> Lihat Berkas
-                  </button>
-                </td>
-                <td class="deskripsi-cell">
-                  <div class="deskripsi-text">{{ $app->deskripsi_job }}</div>
-                </td>
-                <td class="status-cell">
-                  @if($app->status === 'pending')
-                  <div class="status-approve-group">
-                    <form action="/acc-pengajuan/{{ $app->id }}/approve" method="POST" style="display:inline;">
-                      @csrf
-                      <button type="submit" class="btn-approve acc">✓ Setujui</button>
-                    </form>
-                    <button type="button" class="btn-approve rej" onclick="openReject({{ $app->id }}, '{{ addslashes($app->nama) }}')">✗ Tolak</button>
-                  </div>
-                  @elseif($app->status === 'approved')
-                  <span class="status-final approved">✓ Disetujui</span>
-                  @else
-                  <span class="status-final rejected">✗ Ditolak</span>
-                  @endif
-                </td>
-              </tr>
+                <tr class="hover:bg-brand-light/40 transition-colors group">
+                  <td class="py-5 px-6 text-center text-[14px] font-extrabold text-slate-400 align-top">{{ $index + 1 }}</td>
+                  <td class="py-5 px-6 align-top">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-[14px] bg-brand-blue flex items-center justify-center text-[13px] font-extrabold text-white shadow-sm">
+                            {{ strtoupper(substr($app->nama, 0, 2)) }}
+                        </div>
+                        <div>
+                            <div class="font-extrabold text-brand-blue text-[15px] leading-tight mb-1 group-hover:text-brand-yellow transition-colors">{{ $app->nama }}</div>
+                            <div class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">NIM: {{ $app->nim }}</div>
+                        </div>
+                    </div>
+                  </td>
+                  <td class="py-5 px-6 align-top">
+                      <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-light rounded-[12px] text-[13px] font-extrabold text-slate-700 border border-slate-200 shadow-sm w-fit">
+                          <span class="iconify text-brand-blue text-[16px]" data-icon="lucide:book-open"></span>
+                          {{ $app->topik_pembahasan }}
+                      </div>
+                  </td>
+                  <td class="py-5 px-6 align-top">
+                    <div class="text-[13px] font-medium text-slate-600 leading-relaxed max-w-xs line-clamp-3 group-hover:line-clamp-none transition-all bg-brand-light/50 p-3 rounded-[12px] border border-transparent group-hover:border-slate-200" title="{{ $app->deskripsi_job }}">
+                        {{ $app->deskripsi_job }}
+                    </div>
+                  </td>
+                  <td class="py-5 px-6 text-center align-top">
+                    <button class="inline-flex items-center justify-center w-12 h-12 rounded-[14px] border border-slate-200 bg-brand-light text-brand-blue hover:bg-brand-yellow hover:text-brand-blue hover:border-brand-yellow transition-all shadow-sm group/btn" 
+                            title="Lihat Berkas"
+                            onclick="openPdf('{{ addslashes($app->nama) }}', '{{ Storage::url($app->bukti_memenuhi) }}', '{{ $app->nim }}')">
+                      <span class="iconify text-[22px] group-hover/btn:scale-110 transition-transform" data-icon="lucide:file-search"></span>
+                    </button>
+                  </td>
+                  <td class="py-5 px-6 align-top text-center">
+                    @if($app->status === 'pending')
+                      <div class="flex justify-center gap-2">
+                        <form action="/acc-pengajuan/{{ $app->id }}/approve" method="POST" class="inline">
+                          @csrf
+                          <button type="submit" title="Setujui" class="inline-flex items-center justify-center w-10 h-10 rounded-[12px] bg-emerald-50 border border-emerald-200 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all shadow-sm hover:shadow-[0_4px_12px_rgba(16,185,129,0.3)] hover:-translate-y-0.5 group/btn">
+                            <span class="iconify text-[18px] group-hover/btn:scale-110 transition-transform" data-icon="lucide:check"></span>
+                          </button>
+                        </form>
+                        <button type="button" title="Tolak" class="inline-flex items-center justify-center w-10 h-10 rounded-[12px] bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white transition-all shadow-sm hover:shadow-[0_4px_12px_rgba(225,29,72,0.3)] hover:-translate-y-0.5 group/btn" 
+                                onclick="openReject({{ $app->id }}, '{{ addslashes($app->nama) }}')">
+                          <span class="iconify text-[18px] group-hover/btn:scale-110 transition-transform" data-icon="lucide:x"></span>
+                        </button>
+                      </div>
+                    @elseif($app->status === 'approved')
+                      <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-[12px] text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
+                        <span class="iconify" data-icon="lucide:check-circle-2"></span> Disetujui
+                      </span>
+                    @else
+                      <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-brand-red/10 text-brand-red border border-brand-red/20 rounded-[12px] text-[11px] font-extrabold uppercase tracking-widest shadow-sm">
+                        <span class="iconify" data-icon="lucide:x-circle"></span> Ditolak
+                      </span>
+                    @endif
+                  </td>
+                </tr>
               @empty
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada pengajuan tutor.</td>
-              </tr>
+                <tr>
+                  <td colspan="6" class="py-24 text-center">
+                    <div class="flex flex-col items-center justify-center text-slate-500">
+                        <div class="w-20 h-20 bg-brand-light rounded-full flex items-center justify-center mb-5 border border-slate-200 shadow-sm">
+                            <span class="iconify text-[36px] text-slate-300" data-icon="lucide:users"></span>
+                        </div>
+                        <p class="text-[18px] font-extrabold text-brand-blue">Belum ada pengajuan</p>
+                        <p class="text-[14px] font-medium mt-1">Data pengajuan calon tutor masih kosong.</p>
+                    </div>
+                  </td>
+                </tr>
               @endforelse
             </tbody>
           </table>
         </div>
-        <div class="table-footer">
-          <div class="table-footer-info">Menampilkan <strong>{{ $applications->count() }}</strong> pengajuan</div>
+        <div class="px-6 py-5 border-t border-slate-200 bg-brand-light/30 flex items-center justify-between">
+            <span class="text-[13px] font-bold text-slate-500">Menampilkan total <strong class="text-brand-blue font-extrabold">{{ $applications->count() }}</strong> pengajuan</span>
         </div>
       </div>
     </div>
-
   </main>
-</div>
 
-
-<!-- ==================== PDF MODAL ==================== -->
-<div class="pdf-overlay" id="pdfOverlay" onclick="closePdfOutside(event)">
-  <div class="pdf-modal">
-    <div class="pdf-modal-header">
-      <div class="pdf-modal-title">
-        <div class="pdf-icon">📄</div>
-        <div>
-          <div id="pdfTitle">Bukti Pengajuan</div>
-          <div class="pdf-modal-subtitle" id="pdfSubtitle">NIM: —</div>
+  <!-- PDF Preview Modal -->
+  <div id="pdfOverlay" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 bg-brand-blue/80 backdrop-blur-sm transition-opacity" onclick="closePdfOutside(event)">
+    <div class="bg-white rounded-[28px] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.3)] overflow-hidden border border-slate-200" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-8 py-5 border-b border-slate-200 bg-white">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-[16px] bg-brand-light text-brand-blue flex items-center justify-center text-[24px] border border-slate-200 shadow-sm">
+                <span class="iconify" data-icon="lucide:file-badge"></span>
+            </div>
+            <div>
+                <h3 id="pdfTitle" class="text-[16px] font-extrabold text-brand-blue leading-tight">Bukti Pengajuan</h3>
+                <p id="pdfSubtitle" class="text-[12px] font-bold text-slate-400 mt-1 uppercase tracking-widest">NIM: —</p>
+            </div>
         </div>
+        <button onclick="closePdf()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-brand-red hover:bg-brand-red/10 rounded-[12px] transition-colors border border-transparent hover:border-brand-red/20">
+          <span class="iconify text-[20px]" data-icon="lucide:x"></span>
+        </button>
       </div>
-      <button class="pdf-modal-close" onclick="closePdf()">✕</button>
-    </div>
-    <div class="pdf-modal-body" id="pdfModalBody">
-      <div class="pdf-placeholder" id="pdfPlaceholder">
-        <div class="pdf-placeholder-icon">📄</div>
-        <h3>Preview Berkas</h3>
-        <p>Sedang memuat berkas...</p>
+      <div id="pdfModalBody" class="flex-1 overflow-auto bg-brand-light/50 flex items-center justify-center min-h-[500px]">
+        <!-- Content -->
       </div>
-    </div>
-    <div class="pdf-modal-footer">
-      <div class="pdf-modal-info" id="pdfInfo">PDF — 2.4 MB</div>
-      <div class="pdf-modal-actions">
-        <button class="btn-pdf-action download" onclick="showToast('green','Download Dimulai','File sedang diunduh...')">⬇ Download</button>
-        <button class="btn-pdf-action close-modal" onclick="closePdf()">Tutup</button>
+      <div class="px-8 py-4 border-t border-slate-200 bg-white flex justify-end">
+          <button onclick="closePdf()" class="px-6 py-3 rounded-[14px] border border-slate-200 bg-brand-light text-slate-700 text-[14px] font-extrabold hover:bg-slate-100 transition-colors shadow-sm">
+              Tutup Preview
+          </button>
       </div>
     </div>
   </div>
-</div>
 
-
-<!-- ==================== REJECTION MODAL ==================== -->
-<div class="pdf-overlay" id="rejectOverlay" onclick="closeRejectOutside(event)">
-  <div class="pdf-modal" style="max-width: 520px;">
-    <div class="pdf-modal-header" style="border-bottom: 1px solid #f1f5f9; background: #fff;">
-      <div class="pdf-modal-title">
-        <div class="pdf-icon" style="background: #fee2e2; color: #dc2626;">❌</div>
-        <div>
-          <div style="font-weight: 800; color: #1e293b;">Tolak Pengajuan Tutor</div>
-          <div class="pdf-modal-subtitle" id="rejectSubtitle">Mahasiswa: —</div>
+  <!-- Rejection Modal -->
+  <div id="rejectOverlay" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 bg-brand-blue/80 backdrop-blur-sm transition-opacity" onclick="closeRejectOutside(event)">
+    <div class="bg-white rounded-[28px] w-full max-w-lg max-h-[90vh] flex flex-col shadow-[0_20px_60px_rgba(0,0,0,0.3)] overflow-hidden border border-slate-200" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-8 py-5 border-b border-slate-200 bg-white">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-[16px] bg-brand-red/10 text-brand-red flex items-center justify-center text-[24px] border border-brand-red/20 shadow-sm">
+                <span class="iconify" data-icon="lucide:user-x"></span>
+            </div>
+            <div>
+                <h3 class="text-[16px] font-extrabold text-brand-blue leading-tight">Tolak Pengajuan</h3>
+                <p id="rejectSubtitle" class="text-[12px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Mahasiswa: —</p>
+            </div>
         </div>
-      </div>
-      <button class="pdf-modal-close" onclick="closeReject()">✕</button>
-    </div>
-    
-    <form id="form-reject-tutor" method="POST">
-      @csrf
-      <div style="padding: 24px;">
-        <div style="margin-bottom: 16px;">
-          <label for="reject-alasan" style="display: block; font-size: 13px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
-            Alasan Penolakan <span style="color: #ef4444;">*</span>
-          </label>
-          <textarea id="reject-alasan" name="alasan" required placeholder="Contoh: Bukti kelulusan berkas tidak valid atau topik pembahasan tidak sesuai dengan keahlian akademik..." style="width: 100%; height: 120px; border-radius: 10px; border: 1px solid #cbd5e1; padding: 12px; font-family: inherit; font-size: 13.5px; color: #1e293b; outline: none; transition: border-color 0.2s, box-shadow 0.2s; resize: none;"></textarea>
-        </div>
-        
-        <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 12px; display: flex; gap: 8px; align-items: flex-start;">
-          <span style="font-size: 15px;">💡</span>
-          <p style="font-size: 12px; color: #b7791f; line-height: 1.4; margin: 0;">
-            Alasan penolakan ini akan <strong>tampil di notifikasi Tutor</strong> agar mahasiswa dapat memperbaiki pengajuannya di kemudian hari.
-          </p>
-        </div>
+        <button onclick="closeReject()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-brand-red hover:bg-brand-red/10 rounded-[12px] transition-colors border border-transparent hover:border-brand-red/20">
+          <span class="iconify text-[20px]" data-icon="lucide:x"></span>
+        </button>
       </div>
       
-      <div class="pdf-modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px;">
-        <button type="button" class="btn-pdf-action close-modal" onclick="closeReject()" style="background: #fff; border: 1px solid #cbd5e1; color: #475569; font-weight: 600; padding: 10px 18px; border-radius: 8px; cursor: pointer;">Batal</button>
-        <button type="submit" class="btn-pdf-action download" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-weight: 700; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">Tolak Pengajuan</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-
-<!-- ==================== CONFIRM DIALOG ==================== -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-dialog">
-    <div class="confirm-icon" id="confirmIcon">✓</div>
-    <h3 id="confirmTitle">Setujui Pengajuan?</h3>
-    <p id="confirmText">Apakah Anda yakin ingin <strong id="confirmAction">menyetujui</strong> pengajuan dari <strong id="confirmName">—</strong>?</p>
-    <div class="confirm-actions">
-      <button class="confirm-btn cancel" onclick="closeConfirm()">Batal</button>
-      <button class="confirm-btn" id="confirmYes" onclick="executeAction()">Ya, Lanjutkan</button>
+      <form id="form-reject-tutor" method="POST" class="flex flex-col">
+        @csrf
+        <div class="p-8">
+          <label for="reject-alasan" class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest mb-2">
+            Alasan Penolakan <span class="text-brand-red">*</span>
+          </label>
+          <textarea id="reject-alasan" name="alasan" required 
+                    placeholder="Contoh: Berkas yang dilampirkan tidak valid..." 
+                    class="w-full h-32 rounded-[16px] border border-slate-200 p-5 text-[14px] font-bold text-slate-800 focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue outline-none transition-all resize-none shadow-sm placeholder:text-slate-400 placeholder:font-normal"></textarea>
+          
+          <div class="mt-5 p-5 rounded-[16px] bg-brand-yellow/10 border border-brand-yellow/30 flex gap-3">
+              <span class="iconify text-brand-yellow text-[24px] shrink-0 mt-0.5" data-icon="lucide:info"></span>
+              <p class="text-[13px] font-medium text-yellow-800 leading-relaxed">
+                  Alasan penolakan akan <strong class="font-extrabold text-brand-blue">langsung muncul di notifikasi</strong> mahasiswa yang bersangkutan sebagai bahan perbaikan.
+              </p>
+          </div>
+        </div>
+        
+        <div class="px-8 py-5 border-t border-slate-200 bg-brand-light flex justify-end gap-3">
+            <button type="button" onclick="closeReject()" class="px-6 py-3.5 rounded-[14px] border border-slate-200 bg-white text-slate-600 text-[14px] font-extrabold hover:bg-slate-50 transition-colors shadow-sm">
+                Batal
+            </button>
+            <button type="submit" class="px-6 py-3.5 rounded-[14px] bg-brand-red text-white text-[14px] font-extrabold shadow-[0_8px_20px_rgba(225,29,72,0.3)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.4)] hover:-translate-y-0.5 transition-all">
+                Tolak Pengajuan
+            </button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
 
+  <script>
+    function openReject(id, name) {
+      const overlay = document.getElementById('rejectOverlay');
+      const form = document.getElementById('form-reject-tutor');
+      const subtitle = document.getElementById('rejectSubtitle');
+      const textarea = document.getElementById('reject-alasan');
 
-<!-- ==================== TOAST CONTAINER ==================== -->
-<div class="toast-container" id="toastContainer"></div>
+      form.setAttribute('action', '/acc-pengajuan/' + id + '/reject');
+      subtitle.textContent = 'Mahasiswa: ' + name;
+      textarea.value = '';
 
-
-<script>
-  let currentAction = '';
-  let currentRow = '';
-
-  // ========== REJECT MODAL ==========
-  function openReject(id, name) {
-    const overlay = document.getElementById('rejectOverlay');
-    const form = document.getElementById('form-reject-tutor');
-    const subtitle = document.getElementById('rejectSubtitle');
-    const textarea = document.getElementById('reject-alasan');
-
-    form.setAttribute('action', '/acc-pengajuan/' + id + '/reject');
-    subtitle.textContent = 'Mahasiswa: ' + name;
-    textarea.value = '';
-
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeReject() {
-    document.getElementById('rejectOverlay').classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  function closeRejectOutside(e) {
-    if (e.target === document.getElementById('rejectOverlay')) closeReject();
-  }
-
-  // ========== PDF MODAL ==========
-  function openPdf(name, url, nim) {
-    const title = document.getElementById('pdfTitle');
-    const subtitle = document.getElementById('pdfSubtitle');
-    const body = document.getElementById('pdfModalBody');
-    const overlay = document.getElementById('pdfOverlay');
-
-    title.textContent = 'Bukti Pengajuan — ' + name;
-    subtitle.textContent = 'NIM: ' + nim;
-
-    const extension = url.split('.').pop().toLowerCase();
-    if (extension === 'pdf') {
-      body.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
-    } else {
-      body.innerHTML = `<div style="padding:20px; text-align:center;"><img src="${url}" style="max-width:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>`;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
     }
 
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closePdf() {
-    document.getElementById('pdfOverlay').classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  function closePdfOutside(e) {
-    if (e.target === document.getElementById('pdfOverlay')) closePdf();
-  }
-
-  // ========== CONFIRM DIALOG ==========
-  function openConfirm(type, row, name) {
-    currentAction = type;
-    currentRow = row;
-    const overlay = document.getElementById('confirmOverlay');
-    const icon = document.getElementById('confirmIcon');
-    const title = document.getElementById('confirmTitle');
-    const text = document.getElementById('confirmText');
-    const action = document.getElementById('confirmAction');
-    const nameEl = document.getElementById('confirmName');
-    const yesBtn = document.getElementById('confirmYes');
-
-    if (type === 'acc') {
-      icon.className = 'confirm-icon green';
-      icon.textContent = '✓';
-      title.textContent = 'Setujui Pengajuan?';
-      action.textContent = 'menyetujui';
-      yesBtn.className = 'confirm-btn yes-green';
-      yesBtn.textContent = 'Ya, Setujui';
-    } else {
-      icon.className = 'confirm-icon red';
-      icon.textContent = '✗';
-      title.textContent = 'Tolak Pengajuan?';
-      action.textContent = 'menolak';
-      yesBtn.className = 'confirm-btn yes-red';
-      yesBtn.textContent = 'Ya, Tolak';
+    function closeReject() {
+      const overlay = document.getElementById('rejectOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
     }
-    nameEl.textContent = name;
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
 
-  function closeConfirm() {
-    document.getElementById('confirmOverlay').classList.remove('show');
-    document.body.style.overflow = '';
-  }
-
-  function executeAction() {
-    const row = document.getElementById('row-' + currentRow);
-    const statusCell = row.querySelector('.status-cell');
-    const name = row.querySelector('.nama-text').textContent;
-
-    if (currentAction === 'acc') {
-      statusCell.innerHTML = '<span class="status-final approved">✓ Disetujui</span>';
-      row.style.opacity = '0';
-      setTimeout(() => { row.style.opacity = '1'; row.style.transition = 'opacity 0.4s'; }, 0);
-      showToast('green', 'Pengajuan Disetujui', name + ' telah disetujui sebagai E-Tutor');
-    } else {
-      statusCell.innerHTML = '<span class="status-final rejected">✗ Ditolak</span>';
-      row.style.opacity = '0';
-      setTimeout(() => { row.style.opacity = '1'; row.style.transition = 'opacity 0.4'; }, 0);
-      showToast('red', 'Pengajuan Ditolak', 'Pengajuan dari ' + name + ' telah ditolak');
+    function closeRejectOutside(e) {
+      if (e.target === document.getElementById('rejectOverlay')) closeReject();
     }
-    closeConfirm();
-  }
 
-  // ========== TOAST ==========
-  function showToast(type, title, sub) {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML =
-      '<div class="toast-icon ' + type + '">' + (type === 'green' ? '✓' : '✗') + '</div>' +
-      '<div><div class="toast-text">' + title + '</div><div class="toast-sub">' + sub + '</div></div>';
-    container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(40px)'; toast.style.transition = 'all 0.3s'; }, 3000);
-    setTimeout(() => { toast.remove(); }, 3400);
-  }
+    function openPdf(name, url, nim) {
+      const title = document.getElementById('pdfTitle');
+      const subtitle = document.getElementById('pdfSubtitle');
+      const body = document.getElementById('pdfModalBody');
+      const overlay = document.getElementById('pdfOverlay');
 
-  // ========== KEYBOARD ==========
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') { closePdf(); closeConfirm(); closeReject(); }
-  });
+      title.textContent = 'Bukti Pengajuan — ' + name;
+      subtitle.textContent = 'NIM: ' + nim;
 
-  // ========== FILTER BUTTONS ==========
-  document.querySelectorAll('.filter-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
+      const extension = url.split('.').pop().toLowerCase();
+      if (extension === 'pdf') {
+        body.innerHTML = `<iframe src="${url}" class="w-full h-full min-h-[500px] border-0"></iframe>`;
+        body.classList.remove('p-8');
+      } else {
+        body.innerHTML = `<img src="${url}" alt="Berkas" class="max-w-full rounded-[20px] shadow-lg border border-slate-200 object-contain max-h-[70vh]">`;
+        body.classList.add('p-8');
+      }
+
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+
+    function closePdf() {
+      const overlay = document.getElementById('pdfOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }
+
+    function closePdfOutside(e) {
+      if (e.target === document.getElementById('pdfOverlay')) closePdf();
+    }
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closePdf(); closeReject(); }
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>

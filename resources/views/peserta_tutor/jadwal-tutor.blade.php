@@ -3,900 +3,520 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Tutor - Jadwal Tutor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Jadwal Tutor</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { 
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'] 
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
+    /* Handling CSS routing */
+    .page-wrapper { display: none; }
+    #page-jadwal { display: flex; } /* Default visible */
+    
+    body:has(#page-jadwal-add:target) #page-jadwal { display: none; }
+    body:has(#page-jadwal-add:target) #page-jadwal-add { display: flex; }
+    
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    /* ================================================================
-       SIDEBAR
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .sidebar-brand {
-      padding: 22px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .sidebar-brand .brand-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 17px; color: #fff;
-    }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav {
-      flex: 1; padding: 12px 10px;
-      display: flex; flex-direction: column; gap: 2px; overflow-y: auto;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      text-decoration: none; transition: all 0.2s; cursor: pointer;
-    }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary {
-      display: flex; align-items: center; gap: 11px;
-      padding: 10px 14px; border-radius: 9px;
-      font-size: 13.5px; font-weight: 500; color: #94a3b8;
-      cursor: pointer; transition: all 0.2s; user-select: none; list-style: none;
-    }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary::marker { content: ''; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s ease; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-    .nav-children { padding: 4px 0 6px 0; display: flex; flex-direction: column; gap: 1px; }
-    .nav-child {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px 8px 46px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: #64748b;
-      text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative;
-    }
-    .nav-child::before {
-      content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%);
-      width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s;
-    }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-
-
-    /* ================================================================
-       CSS ROUTING
-       ================================================================ */
-    .page-wrapper { display: none; flex-direction: column; min-height: 100vh; }
-    #page-jadwal { display: flex; }
-    .page-wrapper:target { display: flex !important; }
-    body:has(.page-wrapper:target) #page-jadwal { display: none; }
-
-    /* Default active: nav-jadwal */
-    .nav-jadwal { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    .nav-jadwal::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-    body:has(.page-wrapper:target) .nav-child { color: #64748b !important; background: transparent !important; font-weight: 500 !important; }
-    body:has(.page-wrapper:target) .nav-child::before { background: #334155 !important; box-shadow: none !important; width: 5px !important; height: 5px !important; }
-
-    body:has(#page-home:target) .nav-home,
-    body:has(#page-template:target) .nav-template { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: #fff !important; box-shadow: 0 3px 12px rgba(59,130,246,0.3) !important; font-weight: 600 !important; }
-
-    body:has(#page-info:target) .nav-info,
-    body:has(#page-daftar:target) .nav-daftar { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    body:has(#page-info:target) .nav-info::before,
-    body:has(#page-daftar:target) .nav-daftar::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-    body:has(#page-pengajuan:target) .nav-pengajuan,
-    body:has(#page-status:target) .nav-status,
-    body:has(#page-jadwal:target) .nav-jadwal,
-    body:has(#page-jadwal-add:target) .nav-jadwal,
-    body:has(#page-list:target) .nav-list,
-    body:has(#page-achievement:target) .nav-achievement { color: #fff !important; background: rgba(59,130,246,0.15) !important; font-weight: 600 !important; }
-    body:has(#page-pengajuan:target) .nav-pengajuan::before,
-    body:has(#page-status:target) .nav-status::before,
-    body:has(#page-jadwal:target) .nav-jadwal::before,
-    body:has(#page-jadwal-add:target) .nav-jadwal::before,
-    body:has(#page-list:target) .nav-list::before,
-    body:has(#page-achievement:target) .nav-achievement::before { background: #3b82f6 !important; box-shadow: 0 0 6px rgba(59,130,246,0.5) !important; width: 6px !important; height: 6px !important; }
-
-
-    /* ================================================================
-       MAIN
-       ================================================================ */
-    .main-content { margin-left: 270px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar {
-      background: #fff; padding: 16px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50;
-    }
-    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
-    .breadcrumb a { color: #3b82f6; text-decoration: none; font-weight: 500; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb .sep { color: #cbd5e1; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .topbar-btn {
-      width: 38px; height: 38px; border-radius: 10px;
-      border: 1px solid #e2e8f0; background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #64748b; font-size: 18px;
-      transition: all 0.2s; position: relative;
-    }
-    .topbar-btn:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
-    .topbar-btn .notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: #ef4444; border-radius: 50%; border: 1.5px solid #fff; }
-
-
-    /* ================================================================
-       EMPTY STATE
-       ================================================================ */
-    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 32px; }
-    .empty-icon-wrap { width: 100px; height: 100px; border-radius: 28px; background: linear-gradient(135deg, #f0f4ff, #e8eeff); border: 1px solid #dce4f8; display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 24px; }
-    .empty-state h2 { font-size: 22px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em; margin-bottom: 8px; }
-    .empty-state p { font-size: 14px; color: #94a3b8; font-weight: 500; max-width: 340px; text-align: center; line-height: 1.6; }
-    .empty-badge { margin-top: 20px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; background: #fef9c3; color: #a16207; font-size: 12px; font-weight: 600; }
-
-
-    /* ================================================================
-       JADWAL PAGE — Blue Card Container
-       ================================================================ */
-    .jadwal-page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
-
-    .jadwal-card {
-      width: 100%; max-width: 860px;
-      background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 45%, #2563eb 100%);
-      border-radius: 20px; padding: 40px 36px 32px;
-      position: relative; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(30,64,175,0.25), 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .jadwal-card::before { content: ''; position: absolute; top: -80px; right: -60px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%); border-radius: 50%; }
-    .jadwal-card::after { content: ''; position: absolute; bottom: -50px; left: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
-    .jadwal-inner { position: relative; z-index: 2; }
-
-    .jadwal-header { text-align: center; margin-bottom: 28px; }
-    .jadwal-header .jadwal-icon {
-      width: 52px; height: 52px;
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px; font-size: 24px;
-    }
-    .jadwal-header h1 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 5px; }
-    .jadwal-header p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5; }
-
-    /* Add Button */
-    .btn-add {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 10px 20px; border-radius: 11px; border: none;
-      background: #fff; color: #1e40af;
-      font-size: 13px; font-weight: 700; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.25s ease;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      text-decoration: none; margin-bottom: 22px;
-    }
-    .btn-add:hover { background: #f0f9ff; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
-    .btn-add:active { transform: translateY(0); }
-    .btn-add .add-icon { font-size: 16px; display: flex; align-items: center; }
-
-    /* Table inside blue card */
-    .jadwal-table-wrap {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px; overflow: hidden;
-    }
-    .jadwal-table-scroll { overflow-x: auto; }
-
-    .jadwal-table {
-      width: 100%; border-collapse: collapse; min-width: 640px;
-    }
-    .jadwal-table thead {
-      background: rgba(255,255,255,0.08);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .jadwal-table thead th {
-      padding: 13px 18px; font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.07em;
-      color: rgba(255,255,255,0.5); text-align: left; white-space: nowrap;
-    }
-    .jadwal-table tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      transition: background 0.15s;
-    }
-    .jadwal-table tbody tr:last-child { border-bottom: none; }
-    .jadwal-table tbody tr:hover { background: rgba(255,255,255,0.04); }
-    .jadwal-table tbody td {
-      padding: 14px 18px; font-size: 13.5px; color: rgba(255,255,255,0.85); vertical-align: middle;
-    }
-
-    .jt-day { font-weight: 700; color: #fff; font-size: 14px; }
-    .jt-date { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 500; margin-top: 2px; }
-    .jt-topic { font-weight: 600; color: #fff; font-size: 13.5px; }
-    .jt-time { font-weight: 600; color: rgba(255,255,255,0.9); font-size: 13.5px; }
-
-    .btn-detail {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 7px 14px; border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.8);
-      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s; text-decoration: none;
-    }
-    .btn-detail:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); color: #fff; }
-    .btn-detail .detail-icon { font-size: 14px; display: flex; align-items: center; }
-
-    .btn-edit {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 7px 14px; border-radius: 8px;
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      background: rgba(234, 179, 8, 0.1);
-      color: rgba(253, 224, 71, 0.9);
-      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-edit:hover { background: rgba(234, 179, 8, 0.2); border-color: rgba(234, 179, 8, 0.5); color: #fff; }
-    .btn-edit .edit-icon { font-size: 14px; display: flex; align-items: center; }
-
-    .btn-delete-tutor {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 7px 14px; border-radius: 8px;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      background: rgba(239, 68, 68, 0.1);
-      color: rgba(252, 165, 165, 0.9);
-      font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-delete-tutor:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #fff; }
-    .btn-delete-tutor .delete-icon { font-size: 14px; display: flex; align-items: center; }
-
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1000;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(8px);
-      align-items: center;
-      justify-content: center;
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       opacity: 0;
-      transition: opacity 0.3s ease;
     }
-    .modal.show {
-      display: flex;
-      opacity: 1;
-    }
-    .modal-content {
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
-    }
-    .modal.show .modal-content {
-      transform: scale(1);
-    }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
 
-    /* Empty row state */
-    .jadwal-empty {
-      text-align: center; padding: 40px 20px;
-    }
-    .jadwal-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
-    .jadwal-empty p { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 500; }
-
-    /* Footer inside card */
-    .jadwal-footer {
-      margin-top: 18px; text-align: center;
-      font-size: 11.5px; color: rgba(255,255,255,0.35); line-height: 1.6;
-    }
-    .jadwal-footer a { color: rgba(255,255,255,0.6); text-decoration: underline; text-underline-offset: 2px; }
-    .jadwal-footer a:hover { color: #fff; }
-
-
-    /* ================================================================
-       ADD JADWAL FORM
-       ================================================================ */
-    .page-content-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
-
-    .form-card {
-      width: 100%; max-width: 560px;
-      background: linear-gradient(160deg, #1e3a5f 0%, #1e40af 50%, #2563eb 100%);
-      border-radius: 20px; padding: 40px 36px 36px;
-      position: relative; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(30,64,175,0.25), 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .form-card::before { content: ''; position: absolute; top: -80px; right: -60px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
-    .form-card::after { content: ''; position: absolute; bottom: -50px; left: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
-    .form-inner { position: relative; z-index: 2; }
-
-    .form-header { text-align: center; margin-bottom: 32px; }
-    .form-header .form-icon { width: 56px; height: 56px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 26px; }
-    .form-header h1 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .form-header p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
-
-    .form-group { margin-bottom: 20px; }
-    .form-group:last-of-type { margin-bottom: 28px; }
-    .form-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
-    .form-label .label-icon { font-size: 14px; opacity: 0.8; }
-    .required-badge { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; border-radius: 5px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; margin-left: 2px; flex-shrink: 0; line-height: 1; }
-
-    .form-input, .form-select, .form-textarea {
-      width: 100%; padding: 13px 16px; border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(4px);
-      font-size: 14px; font-family: 'Inter', sans-serif; color: #fff;
-      transition: all 0.25s ease; outline: none;
-    }
-    .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.35); }
-    .form-input:hover, .form-select:hover, .form-textarea:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
-    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.12); box-shadow: 0 0 0 3px rgba(255,255,255,0.08); }
-    .form-input[type="number"]::-webkit-outer-spin-button,
-    .form-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    .form-input[type="number"] { -moz-appearance: textfield; }
-    .form-select {
-      cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px;
-    }
-    .form-select option { background: #1e293b; color: #fff; }
-    .form-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-
-    .input-wrapper { position: relative; }
-    .input-wrapper .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; color: rgba(255,255,255,0.4); pointer-events: none; transition: color 0.2s; }
-    .input-wrapper .form-input { padding-left: 44px; }
-    .input-wrapper .form-input:focus ~ .input-icon,
-    .input-wrapper .form-input:hover ~ .input-icon { color: rgba(255,255,255,0.65); }
-    .form-helper { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 5px; padding-left: 2px; }
-
-    /* Time range row */
-    .time-range-row {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .time-range-row .form-input { flex: 1; }
-    .time-range-sep {
-      font-size: 16px; font-weight: 700;
-      color: rgba(255,255,255,0.4);
-      flex-shrink: 0; padding-top: 22px;
-    }
-
-    .btn-submit {
-      width: 100%; padding: 15px 24px; border-radius: 13px; border: none;
-      background: #fff; color: #1e40af; font-size: 15px; font-weight: 800;
-      font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.3s ease;
-      letter-spacing: 0.02em; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
-    }
-    .btn-submit:hover { background: #f0f9ff; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-    .btn-submit:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .btn-submit .btn-arrow { font-size: 16px; transition: transform 0.2s; }
-    .btn-submit:hover .btn-arrow { transform: translateX(3px); }
-
-    .btn-back {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 11px 20px; border-radius: 12px;
-      border: 1.5px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.8); font-size: 13.5px; font-weight: 600;
-      font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.25s ease;
-      text-decoration: none; backdrop-filter: blur(4px);
-      margin-bottom: 20px;
-    }
-    .btn-back:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); color: #fff; }
-    .btn-back .back-icon { font-size: 14px; display: flex; align-items: center; }
-
-    .form-footer-note { text-align: center; margin-top: 20px; font-size: 11.5px; color: rgba(255,255,255,0.4); line-height: 1.6; }
-    .form-footer-note a { color: rgba(255,255,255,0.7); text-decoration: underline; text-underline-offset: 2px; }
-    .form-footer-note a:hover { color: #fff; }
-
-
-    /* ================================================================
-       RESPONSIVE
-       ================================================================ */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .main-content { margin-left: 0; }
-      .topbar { padding: 12px 16px; }
-      .jadwal-page { padding: 24px 16px; }
-      .jadwal-card { padding: 28px 20px 22px; border-radius: 16px; }
-      .jadwal-header h1 { font-size: 19px; }
-      .page-content-center { padding: 24px 16px; }
-      .form-card { padding: 28px 22px 24px; border-radius: 16px; }
-      .form-header h1 { font-size: 19px; }
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
   </style>
 </head>
-<body>
-<x-sidebar />
-  <!-- ==================== MAIN ==================== -->
-  <div class="main-content">
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
+
+  <x-sidebar />
+
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[5%] right-[5%] w-[400px] h-[400px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <div class="absolute top-[40%] right-[30%] w-[300px] h-[300px] bg-brand-red/5 rounded-full blur-[80px] floating-shape" style="animation-delay: -4s;"></div>
+      <!-- Elegant Grid Overlay -->
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
+    </div>
+    
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        Portal Tutor <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span> <span class="text-brand-blue">Jadwal Mengajar</span>
+      </div>
+      <div class="flex items-center gap-3 relative z-10">
+        <a href="{{ route('notifications.index') }}" class="relative w-10 h-10 rounded-[12px] border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-brand-blue hover:text-brand-yellow hover:border-brand-blue transition-all shadow-sm group">
+          <span class="iconify text-xl group-hover:scale-110 transition-transform" data-icon="lucide:bell"></span>
+          @if(Auth::user()->notifications()->where('is_read', false)->exists())
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-red rounded-full border-2 border-white animate-pulse shadow-sm"></span>
+          @endif
+        </a>
+      </div>
+    </header>
 
     <!-- ====================================================================
          ✅ HALAMAN JADWAL TUTOR — DEFAULT PAGE
          ==================================================================== -->
-         <div class="topbar">
-      <div class="topbar-left">
-        <div class="breadcrumb">
-          <a href="#">Home</a>
-          <span class="sep">/</span>
-          <a href="#">Layanan Tutor</a>
-          <span class="sep">/</span>
-          <span>Jadwal Tutor</span>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <a href="{{ route('notifications.index') }}" class="topbar-btn">
-          🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
-        </a>
-      </div>
-    </div>
-    
-      <div class="jadwal-page">
-        <div class="jadwal-card">
-          <div class="jadwal-inner">
+    <div id="page-jadwal" class="page-wrapper flex-col flex-1 p-6 md:p-8 items-center justify-center min-h-[calc(100vh-80px)] z-10 relative">
+      
+      <div class="w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-[32px] p-8 md:p-12 relative overflow-hidden shadow-[0_20px_50px_rgba(15,76,129,0.08)] border border-slate-200">
 
-            <div class="jadwal-header">
-              <div class="jadwal-icon">📅</div>
-              <h1>Halaman Jadwal Tutor</h1>
-              <p>Kelola jadwal mengajar Anda. Tambahkan jadwal baru atau lihat jadwal yang sudah dibuat.</p>
+        <div class="relative z-10">
+          <!-- Header -->
+          <div class="text-center mb-10 animate-fade-in-up">
+            <div class="w-20 h-20 bg-brand-blue border border-brand-blue/20 rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 shadow-[0_10px_25px_rgba(15,76,129,0.2)]">
+                <span class="iconify text-brand-yellow" data-icon="lucide:calendar-days"></span>
             </div>
+            <h1 class="text-3xl md:text-[40px] font-extrabold text-brand-blue tracking-tight mb-4 leading-none">Jadwal <span class="text-brand-yellow">Mengajar</span></h1>
+            <p class="text-[15px] text-slate-500 max-w-lg mx-auto leading-relaxed font-medium">
+              Kelola jadwal kelas premium Anda. Tambahkan jadwal baru atau perbarui jadwal yang sudah berjalan sesuai kapasitas Anda.
+            </p>
+          </div>
 
-            <!-- Tombol Add -->
+          <!-- Add Button & Validation -->
+          <div class="mb-10 flex flex-col items-center animate-fade-in-up stagger-1">
             @if($approvedCount > 0 && $scheduleCount < $approvedCount)
-                <a href="#page-jadwal-add" class="btn-add">
-                    <span class="add-icon">➕</span> Tambah Jadwal
+                <a href="#page-jadwal-add" class="inline-flex items-center gap-2 px-8 py-4 bg-brand-yellow hover:bg-yellow-400 text-brand-blue font-extrabold rounded-[16px] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_12px_25px_rgba(245,158,11,0.4)] hover:-translate-y-1 transition-all text-[15px] group">
+                    <span class="iconify text-xl group-hover:rotate-90 transition-transform duration-300" data-icon="lucide:plus"></span> Buat Jadwal Baru
                 </a>
             @else
-                <button type="button" class="btn-add" disabled>
-                    <span class="add-icon">➕</span> Tambah Jadwal
+                <button type="button" disabled class="inline-flex items-center gap-2 px-8 py-4 bg-slate-100 text-slate-400 border border-slate-200 font-extrabold rounded-[16px] shadow-sm cursor-not-allowed text-[15px]">
+                    <span class="iconify text-xl" data-icon="lucide:plus"></span> Buat Jadwal Baru
                 </button>
+                
                 @if($approvedCount == 0)
-                    <p style="color:#ef4444; margin-top:10px; font-size: 13px; font-weight: 600;">
-                        ⚠️ Anda belum memiliki pengajuan tutor yang disetujui.
-                    </p>
+                    <div class="mt-6 px-6 py-4 bg-brand-red/10 border border-brand-red/20 rounded-[16px] text-brand-red text-[13px] font-bold flex items-center gap-3 shadow-sm">
+                        <span class="iconify text-brand-red text-xl" data-icon="lucide:shield-alert"></span> Anda belum memiliki pengajuan tutor yang disetujui.
+                    </div>
                 @elseif($scheduleCount >= $approvedCount)
-                    <p style="color:rgba(255,255,255,0.7); margin-top:10px; font-size: 13px; font-weight: 500;">
-                        ⚠️ Kuota pembuatan jadwal habis. Sesuai ketentuan, satu pengajuan hanya untuk satu jadwal. Silakan <a href="/pengajuan-tutor" style="color:#fff; text-decoration:underline; font-weight: 600;">ajukan permohonan baru</a> untuk menambah kelas lain.
-                    </p>
+                    <div class="mt-6 px-6 py-5 bg-brand-blue/10 border border-brand-blue/20 rounded-[16px] text-brand-blue text-[13px] font-medium flex items-start gap-4 max-w-lg text-left shadow-sm">
+                        <span class="iconify text-brand-yellow text-2xl shrink-0 mt-0.5" data-icon="lucide:alert-circle"></span> 
+                        <p class="leading-relaxed">Kuota pembuatan jadwal habis (1 Pengajuan = 1 Jadwal). Silakan <a href="/pengajuan-tutor" class="font-extrabold text-blue-700 hover:text-brand-yellow transition-colors border-b border-brand-blue/30 hover:border-brand-yellow pb-0.5">ajukan permohonan baru</a> untuk menambah slot kelas lain.</p>
+                    </div>
                 @endif
             @endif
-            <!-- Tabel Jadwal -->
-            <div class="jadwal-table-wrap">
-              <div class="jadwal-table-scroll">
-                <table class="jadwal-table">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Hari</th>
-                      <th>Tanggal</th>
-                      <th>Topik Pembahasan</th>
-                      <th>Waktu</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse($schedules as $index => $schedule)
-                    <tr>
-                      <td style="color:rgba(255,255,255,0.45); font-weight:600;">{{ $index + 1 }}</td>
-                      <td><span class="jt-day">{{ ucfirst($schedule->hari) }}</span></td>
-                      <td><span class="jt-date">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d F Y') }}</span></td>
-                      <td><span class="jt-topic">{{ $schedule->topik_pembahasan }}</span></td>
-                      <td><span class="jt-time">{{ $schedule->waktu }}</span></td>
-                      <td>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                          <a href="/informasi-kelas" class="btn-detail" title="Detail Kelas"><span class="detail-icon">👁️</span> Detail</a>
-                          <button type="button" class="btn-edit" 
-                                  data-id="{{ $schedule->id }}"
-                                  data-hari="{{ $schedule->hari }}"
-                                  data-tanggal="{{ $schedule->tanggal->format('Y-m-d') }}"
-                                  data-topik="{{ $schedule->topik_pembahasan }}"
-                                  data-waktu-mulai="{{ explode(' - ', $schedule->waktu)[0] }}"
-                                  data-waktu-selesai="{{ explode(' - ', $schedule->waktu)[1] }}"
-                                  title="Edit Jadwal">
-                            <span class="edit-icon">✏️</span> Edit
-                          </button>
-                          <button type="button" class="btn-delete-tutor"
-                                  data-id="{{ $schedule->id }}"
-                                  data-topik="{{ $schedule->topik_pembahasan }}"
-                                  title="Hapus Jadwal">
-                            <span class="delete-icon">🗑️</span> Hapus
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    @empty
-                    <tr>
-                      <td colspan="6" style="text-align: center; padding: 20px;">Belum ada jadwal yang ditambahkan.</td>
-                    </tr>
-                    @endforelse
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="jadwal-footer">
-              Klik <a href="/informasi-kelas">Detail</a> untuk melihat kelas di halaman Informasi Kelas.
-            </div>
-
           </div>
+
+          <!-- Table -->
+          <div class="bg-white border border-slate-200 rounded-[24px] overflow-hidden shadow-[0_10px_30px_rgba(15,76,129,0.05)] animate-fade-in-up stagger-2">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left min-w-[800px]">
+                <thead class="bg-brand-light/50 border-b border-slate-200">
+                  <tr>
+                    <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center w-16">No</th>
+                    <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Hari & Tanggal</th>
+                    <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Topik Pembahasan</th>
+                    <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest">Waktu</th>
+                    <th class="py-5 px-6 text-[11px] font-extrabold text-brand-blue uppercase tracking-widest text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  @forelse($schedules as $index => $schedule)
+                  <tr class="hover:bg-brand-light/40 transition-colors group/row">
+                    <td class="py-5 px-6 text-center text-[14px] font-extrabold text-slate-400 align-top">{{ $index + 1 }}</td>
+                    <td class="py-5 px-6 align-top">
+                      <div class="flex flex-col gap-1">
+                        <span class="text-[15px] font-extrabold text-slate-800">{{ ucfirst($schedule->hari) }}</span>
+                        <span class="text-[13px] font-bold text-slate-500">{{ \Carbon\Carbon::parse($schedule->tanggal)->translatedFormat('d F Y') }}</span>
+                      </div>
+                    </td>
+                    <td class="py-5 px-6 align-top">
+                      <div class="text-[15px] font-extrabold text-brand-blue leading-snug max-w-xs group-hover/row:text-blue-700 transition-colors">{{ $schedule->topik_pembahasan }}</div>
+                    </td>
+                    <td class="py-5 px-6 align-top">
+                      <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 text-slate-700 text-[13px] font-extrabold border border-slate-200 shadow-sm">
+                          <span class="iconify text-brand-yellow" data-icon="lucide:clock"></span> {{ $schedule->waktu }}
+                      </span>
+                    </td>
+                    <td class="py-5 px-6 align-top text-center">
+                      <div class="flex flex-wrap items-center justify-center gap-2">
+                        <a href="/informasi-kelas" title="Lihat di Informasi Kelas" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:bg-brand-blue hover:text-white hover:border-brand-blue flex items-center justify-center transition-all shadow-sm">
+                            <span class="iconify text-lg" data-icon="lucide:external-link"></span>
+                        </a>
+                        <button type="button" class="btn-edit w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:bg-brand-yellow hover:text-brand-blue hover:border-brand-yellow flex items-center justify-center transition-all shadow-sm"
+                                data-id="{{ $schedule->id }}"
+                                data-hari="{{ $schedule->hari }}"
+                                data-tanggal="{{ $schedule->tanggal->format('Y-m-d') }}"
+                                data-topik="{{ $schedule->topik_pembahasan }}"
+                                data-waktu-mulai="{{ explode(' - ', $schedule->waktu)[0] }}"
+                                data-waktu-selesai="{{ explode(' - ', $schedule->waktu)[1] }}"
+                                title="Edit Jadwal">
+                            <span class="iconify text-lg" data-icon="lucide:edit-3"></span>
+                        </button>
+                        <button type="button" class="btn-delete-tutor w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:bg-brand-red hover:text-white hover:border-brand-red flex items-center justify-center transition-all shadow-sm"
+                                data-id="{{ $schedule->id }}"
+                                data-topik="{{ $schedule->topik_pembahasan }}"
+                                title="Hapus Jadwal">
+                            <span class="iconify text-lg" data-icon="lucide:trash-2"></span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  @empty
+                  <tr>
+                    <td colspan="5" class="py-24 text-center">
+                        <div class="flex flex-col items-center justify-center text-slate-500">
+                            <div class="w-20 h-20 bg-brand-light border border-slate-200 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                                <span class="iconify text-4xl text-slate-300" data-icon="lucide:calendar-off"></span>
+                            </div>
+                            <p class="text-[18px] font-extrabold text-brand-blue">Belum ada jadwal</p>
+                            <p class="text-[14px] mt-1 font-medium text-slate-500">Anda belum membuat jadwal kelas apapun.</p>
+                        </div>
+                    </td>
+                  </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Footer Info -->
+          <div class="text-center mt-8 text-[13px] text-slate-500 font-bold flex items-center justify-center gap-2 animate-fade-in-up stagger-3">
+            <span class="iconify text-brand-yellow text-xl" data-icon="lucide:info"></span> Jadwal yang dibuat akan otomatis muncul di halaman Pendaftaran Kelas.
+          </div>
+
         </div>
       </div>
     </div>
 
 
     <!-- ====================================================================
-         ✅ HALAMAN TAMBAH JADWAL
+         ✅ HALAMAN TAMBAH JADWAL (OVERLAY/SEPARATE PAGE)
          ==================================================================== -->
-    <div class="page-wrapper" id="page-jadwal-add">
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="breadcrumb">
-            <a href="#page-home">Home</a>
-            <span class="sep">/</span>
-            <span>Pengajuan Tutor</span>
-            <span class="sep">/</span>
-            <a href="#page-jadwal">Jadwal Tutor</a>
-            <span class="sep">/</span>
-            <span>Tambah Jadwal</span>
-          </div>
-        </div>
-        <div class="topbar-right">
-          <a href="{{ route('notifications.index') }}" class="topbar-btn">
-            🔔@if(Auth::user()->notifications()->where('is_read', false)->exists())<span class="notif-dot"></span>@endif
+    <div id="page-jadwal-add" class="page-wrapper flex-col flex-1 p-6 md:p-8 items-center justify-center min-h-[calc(100vh-80px)] z-10 relative">
+      
+      <div class="w-full max-w-4xl bg-brand-blue rounded-[32px] p-8 md:p-12 relative overflow-hidden shadow-[0_20px_50px_rgba(15,76,129,0.2)] border border-brand-blue">
+        <!-- Decor in add page -->
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-brand-yellow/20 rounded-full blur-[80px] pointer-events-none floating-shape"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-brand-red/20 rounded-full blur-[80px] pointer-events-none floating-shape" style="animation-delay: -2s;"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPg==')] opacity-20"></div>
+
+        <div class="relative z-10">
+          
+          <a href="#page-jadwal" class="inline-flex items-center gap-2 px-5 py-3 rounded-[12px] bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:text-brand-yellow transition-all text-[13px] font-extrabold mb-10 backdrop-blur-sm w-fit group">
+            <span class="iconify transition-transform group-hover:-translate-x-1" data-icon="lucide:arrow-left"></span> Kembali
           </a>
-        </div>
-      </div>
 
-      <div class="page-content-center">
-        <div class="form-card">
-          <div class="form-inner">
-
-            <a href="#page-jadwal" class="btn-back">
-              <span class="back-icon">←</span> Kembali ke Jadwal
-            </a>
-
-            <div class="form-header">
-              <div class="form-icon">➕</div>
-              <h1>Tambah Jadwal Mengajar</h1>
-              <p>Buat jadwal baru untuk kelas tutoring Anda. Jadwal akan ditampilkan di halaman Informasi Kelas.</p>
+          <div class="mb-10 animate-fade-in-up">
+            <div class="flex items-center gap-5 mb-3">
+                <div class="w-16 h-16 bg-white/10 border border-white/20 rounded-[20px] flex items-center justify-center text-brand-yellow backdrop-blur-md shadow-[0_8px_20px_rgba(0,0,0,0.1)]">
+                    <span class="iconify text-3xl" data-icon="lucide:calendar-plus"></span>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-[36px] font-extrabold text-white tracking-tight leading-tight">Tambah Jadwal <span class="text-brand-yellow">Baru</span></h1>
+                    <p class="text-[15px] text-blue-100/90 mt-1 font-medium">
+                      Atur topik dan waktu pelaksanaan kelas Anda.
+                    </p>
+                </div>
             </div>
+          </div>
 
-            @if(session('success'))
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;">
-                {{ session('success') }}
+          @if(session('success'))
+            <div class="animate-fade-in-up stagger-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-6 py-4 rounded-[16px] mb-8 text-[14px] font-extrabold flex items-start gap-3 backdrop-blur-md shadow-sm">
+                <span class="iconify text-emerald-400 text-xl shrink-0 mt-0.5" data-icon="lucide:check-circle-2"></span> {{ session('success') }}
             </div>
-            @endif
-
-            @if(session('error'))
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
-                {{ session('error') }}
+          @endif
+          @if(session('error'))
+            <div class="animate-fade-in-up stagger-1 bg-brand-red/10 border border-brand-red/30 text-red-200 px-6 py-4 rounded-[16px] mb-8 text-[14px] font-extrabold flex items-start gap-3 backdrop-blur-md shadow-sm">
+                <span class="iconify text-brand-red text-xl shrink-0 mt-0.5" data-icon="lucide:alert-circle"></span> {{ session('error') }}
             </div>
-            @endif
+          @endif
 
-            <form action="/jadwal-tutor" method="post">
+          <div class="bg-white rounded-[24px] p-8 md:p-10 shadow-2xl animate-fade-in-up stagger-1">
+            <form action="/jadwal-tutor" method="post" class="space-y-6">
               @csrf
-
-              <!-- Hari -->
-              <div class="form-group">
-                <label class="form-label" for="jd-hari">
-                  <span class="label-icon">📆</span> HARI
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <select class="form-select" id="jd-hari" name="hari" required>
-                    <option value="" disabled selected>— Pilih Hari —</option>
-                    <option value="senin">Senin</option>
-                    <option value="selasa">Selasa</option>
-                    <option value="rabu">Rabu</option>
-                    <option value="kamis">Kamis</option>
-                    <option value="jumat">Jumat</option>
-                    <option value="sabtu">Sabtu</option>
-                    <option value="minggu">Minggu</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Tanggal -->
-              <div class="form-group">
-                <label class="form-label" for="jd-tanggal">
-                  <span class="label-icon">📅</span> TANGGAL
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <input class="form-input" type="date" id="jd-tanggal" name="tanggal" required>
-                  <span class="input-icon">🗓️</span>
-                </div>
-              </div>
-
-              <!-- Topik Pembahasan -->
-              <div class="form-group">
-                <label class="form-label" for="jd-topik">
-                  <span class="label-icon">📖</span> TOPIK PEMBAHASAN
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="input-wrapper">
-                  <input class="form-input" type="text" id="jd-topik" name="topik" placeholder="Contoh: Algoritma & Struktur Data" required>
-                  <span class="input-icon">📚</span>
-                </div>
-                <div class="form-helper">Topik yang akan Anda ajarkan pada jadwal ini</div>
-              </div>
-
-              <!-- Waktu Mulai - Selesai -->
-              <div class="form-group">
-                <label class="form-label">
-                  <span class="label-icon">🕐</span> WAKTU
-                  <span class="required-badge">R</span>
-                </label>
-                <div class="time-range-row">
-                  <div class="input-wrapper" style="flex:1">
-                    <input class="form-input" type="time" id="jd-mulai" name="waktu_mulai" required value="08:00">
-                    <span class="input-icon">▶️</span>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <!-- Hari -->
+                  <div class="space-y-2">
+                      <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                          Hari <span class="text-brand-red">*</span>
+                      </label>
+                      <div class="relative group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-blue transition-colors pointer-events-none z-10" data-icon="lucide:calendar-days"></span>
+                          <select name="hari" required class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all appearance-none cursor-pointer relative z-0">
+                              <option value="" disabled selected class="text-slate-400">— Pilih Hari —</option>
+                              <option value="senin">Senin</option>
+                              <option value="selasa">Selasa</option>
+                              <option value="rabu">Rabu</option>
+                              <option value="kamis">Kamis</option>
+                              <option value="jumat">Jumat</option>
+                              <option value="sabtu">Sabtu</option>
+                              <option value="minggu">Minggu</option>
+                          </select>
+                          <span class="iconify absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" data-icon="lucide:chevron-down"></span>
+                      </div>
                   </div>
-                  <span class="time-range-sep">—</span>
-                  <div class="input-wrapper" style="flex:1">
-                    <input class="form-input" type="time" id="jd-selesai" name="waktu_selesai" required value="10:00">
-                    <span class="input-icon">⏹️</span>
+
+                  <!-- Tanggal -->
+                  <div class="space-y-2">
+                      <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                          Tanggal <span class="text-brand-red">*</span>
+                      </label>
+                      <div class="relative group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:calendar"></span>
+                          <input type="date" name="tanggal" required class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                      </div>
                   </div>
-                </div>
-                <div class="form-helper">Isi jam mulai dan jam selesai mengajar</div>
               </div>
 
-              <!-- Deskripsi (opsional) -->
-              <div class="form-group">
-                <label class="form-label" for="jd-deskripsi">
-                  <span class="label-icon">📝</span> DESKRIPSI (Opsional)
-                </label>
-                <textarea class="form-textarea" id="jd-deskripsi" name="deskripsi" placeholder="Catatan tambahan mengenai jadwal ini (opsional)..."></textarea>
+              <!-- Topik -->
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Topik Pembahasan <span class="text-brand-red">*</span>
+                  </label>
+                  <div class="relative group">
+                      <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:book-open"></span>
+                      <input type="text" name="topik" placeholder="Contoh: Algoritma & Struktur Data (Pertemuan 1)" required class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400">
+                  </div>
               </div>
 
-              <!-- Submit -->
-              <button type="submit" class="btn-submit">
-                SIMPAN JADWAL
-                <span class="btn-arrow">→</span>
-              </button>
+              <!-- Waktu -->
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Waktu Pelaksanaan <span class="text-brand-red">*</span>
+                  </label>
+                  <div class="flex items-center gap-4">
+                      <div class="relative flex-1 group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:play-circle"></span>
+                          <input type="time" name="waktu_mulai" required value="08:00" class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                      </div>
+                      <span class="text-slate-400 font-extrabold">—</span>
+                      <div class="relative flex-1 group">
+                          <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-brand-blue transition-colors pointer-events-none" data-icon="lucide:stop-circle"></span>
+                          <input type="time" name="waktu_selesai" required value="10:00" class="w-full pl-12 pr-4 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                      </div>
+                  </div>
+              </div>
 
+              <!-- Deskripsi -->
+              <div class="space-y-2">
+                  <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">
+                      Catatan Khusus <span class="text-[10px] text-slate-400 font-bold normal-case ml-1">(Opsional)</span>
+                  </label>
+                  <textarea name="deskripsi" rows="3" placeholder="Tambahkan informasi seperti link Zoom, peralatan yang perlu dibawa, dll..." class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all placeholder:text-slate-400 resize-none"></textarea>
+              </div>
+
+              <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-brand-yellow hover:bg-yellow-400 text-brand-blue font-extrabold rounded-[16px] shadow-[0_8px_20px_rgba(245,158,11,0.3)] hover:shadow-[0_12px_25px_rgba(245,158,11,0.4)] transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-[15px] group">
+                    Simpan & Publish Jadwal <span class="iconify text-xl group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right"></span>
+                </button>
+              </div>
             </form>
-
-            <div class="form-footer-note">
-              Jadwal yang dibuat akan otomatis muncul di halaman <a href="/jadwal-tutor">Jadwal Tutor</a><br>
-              dan dapat dilihat oleh peserta di <a href="/informasi-kelas">Informasi Kelas</a>.
-            </div>
-
           </div>
+
         </div>
       </div>
     </div>
 
-  </div>
+
+  </main>
+
 
   <!-- ====================================================================
-       ✅ MODAL EDIT JADWAL (PREMIUM GLASSMORPHISM)
+       ✅ MODAL EDIT JADWAL (Luxury Theme)
        ==================================================================== -->
-  <div id="modal-edit" class="modal">
-    <div class="form-card modal-content" style="max-width: 560px; width: 90%; position: relative;">
-      <button type="button" class="btn-close-modal" id="btn-close-edit" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 36px; height: 36px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; transition: all 0.2s;">✕</button>
-      <div class="form-inner">
-        <div class="form-header" style="margin-bottom: 24px;">
-          <div class="form-icon">✏️</div>
-          <h1>Edit Jadwal Mengajar</h1>
-          <p>Perbarui detail jadwal tutoring Anda. Perubahan akan otomatis ter-update untuk peserta dan admin.</p>
-        </div>
-
-        <form id="form-edit-jadwal" method="post">
-          @csrf
-          @method('PUT')
-
-          <!-- Hari -->
-          <div class="form-group">
-            <label class="form-label" for="edit-hari">
-              <span class="label-icon">📆</span> HARI
-              <span class="required-badge">R</span>
-            </label>
-            <div class="input-wrapper">
-              <select class="form-select" id="edit-hari" name="hari" required>
-                <option value="senin">Senin</option>
-                <option value="selasa">Selasa</option>
-                <option value="rabu">Rabu</option>
-                <option value="kamis">Kamis</option>
-                <option value="jumat">Jumat</option>
-                <option value="sabtu">Sabtu</option>
-                <option value="minggu">Minggu</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Tanggal -->
-          <div class="form-group">
-            <label class="form-label" for="edit-tanggal">
-              <span class="label-icon">📅</span> TANGGAL
-              <span class="required-badge">R</span>
-            </label>
-            <div class="input-wrapper">
-              <input class="form-input" type="date" id="edit-tanggal" name="tanggal" required>
-              <span class="input-icon">🗓️</span>
-            </div>
-          </div>
-
-          <!-- Topik Pembahasan -->
-          <div class="form-group">
-            <label class="form-label" for="edit-topik">
-              <span class="label-icon">📖</span> TOPIK PEMBAHASAN
-              <span class="required-badge">R</span>
-            </label>
-            <div class="input-wrapper">
-              <input class="form-input" type="text" id="edit-topik" name="topik" placeholder="Contoh: Algoritma & Struktur Data" required>
-              <span class="input-icon">📚</span>
-            </div>
-          </div>
-
-          <!-- Waktu Mulai - Selesai -->
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-icon">🕐</span> WAKTU
-              <span class="required-badge">R</span>
-            </label>
-            <div class="time-range-row">
-              <div class="input-wrapper" style="flex:1">
-                <input class="form-input" type="time" id="edit-mulai" name="waktu_mulai" required>
-                <span class="input-icon">▶️</span>
-              </div>
-              <span class="time-range-sep">—</span>
-              <div class="input-wrapper" style="flex:1">
-                <input class="form-input" type="time" id="edit-selesai" name="waktu_selesai" required>
-                <span class="input-icon">⏹️</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Submit -->
-          <button type="submit" class="btn-submit" style="margin-top: 10px;">
-            SIMPAN PERUBAHAN
-            <span class="btn-arrow">→</span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====================================================================
-       ✅ MODAL HAPUS JADWAL (PREMIUM GLASSMORPHISM)
-       ==================================================================== -->
-  <div id="modal-delete" class="modal">
-    <div class="form-card modal-content" style="max-width: 480px; width: 90%; position: relative; padding: 32px 30px;">
-      <button type="button" class="btn-close-modal" id="btn-close-delete" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 32px; height: 32px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; transition: all 0.2s;">✕</button>
-      <div class="form-inner" style="text-align: center;">
-        <div class="form-header" style="margin-bottom: 20px;">
-          <div class="form-icon" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.25); color: #f87171;">🗑️</div>
-          <h1 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px;">Hapus Jadwal?</h1>
-          <p style="font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5;">Apakah Anda yakin ingin menghapus jadwal <strong id="delete-topik-name" style="color: #fff;"></strong>?</p>
-        </div>
+  <div id="modal-edit" class="fixed inset-0 z-[100] bg-brand-blue/60 backdrop-blur-sm hidden items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[32px] p-8 md:p-10 w-full max-w-2xl shadow-[0_20px_60px_rgba(15,76,129,0.3)] border border-slate-200 relative transform scale-95 transition-transform duration-300">
+        <button type="button" class="btn-close-modal absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-brand-red/10 hover:text-brand-red text-slate-500 transition-colors">
+            <span class="iconify text-xl" data-icon="lucide:x"></span>
+        </button>
         
-        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 12px 14px; text-align: left; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start;">
-          <span style="font-size: 16px; margin-top: 2px;">💡</span>
-          <p style="font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.4; margin: 0;">
-            Penghapusan ini <strong>hanya khusus untuk membersihkan tampilan jadwal Anda sendiri</strong>. Informasi kelas ini <strong>TIDAK AKAN</strong> terhapus dari halaman Informasi Kelas peserta maupun Manage Class admin.
-          </p>
+        <div class="flex items-center gap-5 mb-8">
+            <div class="w-14 h-14 bg-brand-yellow/10 border border-brand-yellow/20 rounded-[16px] flex items-center justify-center text-brand-yellow shadow-sm">
+                <span class="iconify text-2xl" data-icon="lucide:edit-3"></span>
+            </div>
+            <div>
+                <h2 class="text-2xl font-extrabold text-brand-blue">Edit Jadwal</h2>
+                <p class="text-[14px] font-medium text-slate-500 mt-1">Perbarui informasi jadwal kelas.</p>
+            </div>
         </div>
 
-        <form id="form-delete-jadwal" method="post">
-          @csrf
-          @method('DELETE')
-          <div style="display: flex; gap: 12px;">
-            <button type="button" class="btn-back" id="btn-cancel-delete" style="flex: 1; margin-bottom: 0; justify-content: center; padding: 12px;">Batal</button>
-            <button type="submit" class="btn-submit" style="flex: 1; background: #ef4444; color: #fff; border: none; padding: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);">
-              YA, HAPUS
-            </button>
-          </div>
+        <form id="form-edit-jadwal" method="post" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">Hari</label>
+                    <select id="edit-hari" name="hari" required class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all appearance-none">
+                        <option value="senin">Senin</option>
+                        <option value="selasa">Selasa</option>
+                        <option value="rabu">Rabu</option>
+                        <option value="kamis">Kamis</option>
+                        <option value="jumat">Jumat</option>
+                        <option value="sabtu">Sabtu</option>
+                        <option value="minggu">Minggu</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">Tanggal</label>
+                    <input type="date" id="edit-tanggal" name="tanggal" required class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">Topik Pembahasan</label>
+                <input type="text" id="edit-topik" name="topik" required class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[12px] font-extrabold text-brand-blue uppercase tracking-widest">Waktu</label>
+                <div class="flex items-center gap-4">
+                    <input type="time" id="edit-mulai" name="waktu_mulai" required class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                    <span class="text-slate-400 font-extrabold">—</span>
+                    <input type="time" id="edit-selesai" name="waktu_selesai" required class="w-full px-5 py-4 bg-brand-light border border-slate-200 rounded-[16px] text-[14px] font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-blue/10 focus:border-brand-blue transition-all">
+                </div>
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <button type="button" class="btn-close-modal flex-1 py-4 bg-slate-100 text-slate-600 font-extrabold rounded-[16px] hover:bg-slate-200 transition-colors text-[14px]">
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 py-4 bg-brand-blue text-white font-extrabold rounded-[16px] hover:bg-blue-800 shadow-[0_8px_20px_rgba(15,76,129,0.3)] transition-all transform hover:-translate-y-1 text-[14px]">
+                    Simpan Perubahan
+                </button>
+            </div>
         </form>
-      </div>
+    </div>
+  </div>
+
+
+  <!-- ====================================================================
+       ✅ MODAL HAPUS JADWAL (Luxury Theme)
+       ==================================================================== -->
+  <div id="modal-delete" class="fixed inset-0 z-[100] bg-brand-blue/60 backdrop-blur-sm hidden items-center justify-center opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-[32px] p-8 md:p-10 w-full max-w-md shadow-[0_20px_60px_rgba(15,76,129,0.3)] border border-slate-200 relative transform scale-95 transition-transform duration-300">
+        <button type="button" class="btn-close-modal absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-brand-red/10 hover:text-brand-red text-slate-500 transition-colors">
+            <span class="iconify text-xl" data-icon="lucide:x"></span>
+        </button>
+        
+        <div class="text-center mb-8 mt-2">
+            <div class="w-20 h-20 bg-brand-red/10 border border-brand-red/20 rounded-[24px] mx-auto flex items-center justify-center text-4xl mb-6 text-brand-red shadow-sm">
+                <span class="iconify" data-icon="lucide:trash-2"></span>
+            </div>
+            <h2 class="text-2xl font-extrabold text-brand-blue mb-3">Hapus Jadwal Ini?</h2>
+            <p class="text-[14px] text-slate-500 font-medium">Anda akan menghapus kelas <br><strong id="delete-topik-name" class="text-slate-800 mt-2 block font-extrabold text-[15px]"></strong></p>
+        </div>
+
+        <div class="bg-brand-blue/5 border border-brand-blue/10 rounded-[16px] p-5 flex gap-4 items-start mb-8 shadow-sm">
+            <span class="iconify text-brand-blue text-xl shrink-0 mt-0.5" data-icon="lucide:info"></span>
+            <p class="text-[13px] text-brand-blue leading-relaxed font-bold">
+                Penghapusan ini hanya membersihkan tampilan. Informasi kelas tidak akan hilang dari riwayat sistem.
+            </p>
+        </div>
+
+        <form id="form-delete-jadwal" method="post" class="flex flex-col gap-3">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="w-full py-4 bg-brand-red text-white font-extrabold rounded-[16px] hover:bg-red-700 shadow-[0_8px_20px_rgba(225,29,72,0.3)] transform hover:-translate-y-1 transition-all text-[14px]">
+                Ya, Hapus Jadwal
+            </button>
+            <button type="button" id="btn-cancel-delete" class="w-full py-4 bg-slate-100 text-slate-600 font-extrabold rounded-[16px] hover:bg-slate-200 transition-colors text-[14px]">
+                Batal
+            </button>
+        </form>
     </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Close modal when close button is clicked
-        const closeBtns = document.querySelectorAll('.btn-close-modal');
+        // Modal Handlers
+        const closeBtns = document.querySelectorAll('.btn-close-modal, #btn-cancel-delete');
+        
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // small delay for transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal(modal) {
+            modal.classList.add('opacity-0');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
         closeBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                const modal = btn.closest('.modal');
-                modal.classList.remove('show');
-                setTimeout(() => { modal.style.display = 'none'; }, 300);
+                closeModal(btn.closest('.fixed.inset-0'));
             });
         });
 
-        // Close modal when clicking outside modal content
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                    setTimeout(() => { modal.style.display = 'none'; }, 300);
-                }
-            });
-        });
-
-        // Edit Modal Trigger
-        const editBtns = document.querySelectorAll('.btn-edit');
-        const modalEdit = document.getElementById('modal-edit');
-        const formEdit = document.getElementById('form-edit-jadwal');
-        const editHari = document.getElementById('edit-hari');
-        const editTanggal = document.getElementById('edit-tanggal');
-        const editTopik = document.getElementById('edit-topik');
-        const editMulai = document.getElementById('edit-mulai');
-        const editSelesai = document.getElementById('edit-selesai');
-
-        editBtns.forEach(btn => {
+        // Edit Data Binding
+        document.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', function() {
-                const id = btn.getAttribute('data-id');
-                const hari = btn.getAttribute('data-hari');
-                const tanggal = btn.getAttribute('data-tanggal');
-                const topik = btn.getAttribute('data-topik');
-                const mulai = btn.getAttribute('data-waktu-mulai');
-                const selesai = btn.getAttribute('data-waktu-selesai');
-
-                formEdit.setAttribute('action', `/jadwal-tutor/${id}`);
-                editHari.value = hari.toLowerCase();
-                editTanggal.value = tanggal;
-                editTopik.value = topik;
-                editMulai.value = mulai;
-                editSelesai.value = selesai;
-
-                modalEdit.style.display = 'flex';
-                setTimeout(() => { modalEdit.classList.add('show'); }, 10);
+                document.getElementById('form-edit-jadwal').setAttribute('action', `/jadwal-tutor/${this.dataset.id}`);
+                document.getElementById('edit-hari').value = this.dataset.hari.toLowerCase();
+                document.getElementById('edit-tanggal').value = this.dataset.tanggal;
+                document.getElementById('edit-topik').value = this.dataset.topik;
+                document.getElementById('edit-mulai').value = this.dataset.waktuMulai;
+                document.getElementById('edit-selesai').value = this.dataset.waktuSelesai;
+                openModal('modal-edit');
             });
         });
 
-        // Delete Modal Trigger
-        const deleteBtns = document.querySelectorAll('.btn-delete-tutor');
-        const modalDelete = document.getElementById('modal-delete');
-        const formDelete = document.getElementById('form-delete-jadwal');
-        const deleteTopikName = document.getElementById('delete-topik-name');
-        const cancelDeleteBtn = document.getElementById('btn-cancel-delete');
-
-        deleteBtns.forEach(btn => {
+        // Delete Data Binding
+        document.querySelectorAll('.btn-delete-tutor').forEach(btn => {
             btn.addEventListener('click', function() {
-                const id = btn.getAttribute('data-id');
-                const topik = btn.getAttribute('data-topik');
-
-                formDelete.setAttribute('action', `/jadwal-tutor/${id}`);
-                deleteTopikName.textContent = topicsSnippet(topik);
-
-                modalDelete.style.display = 'flex';
-                setTimeout(() => { modalDelete.classList.add('show'); }, 10);
+                document.getElementById('form-delete-jadwal').setAttribute('action', `/jadwal-tutor/${this.dataset.id}`);
+                const topik = this.dataset.topik;
+                document.getElementById('delete-topik-name').textContent = topik.length > 40 ? topik.substring(0, 37) + '...' : topik;
+                openModal('modal-delete');
             });
         });
-
-        if (cancelDeleteBtn) {
-            cancelDeleteBtn.addEventListener('click', function() {
-                modalDelete.classList.remove('show');
-                setTimeout(() => { modalDelete.style.display = 'none'; }, 300);
-            });
-        }
-
-        function topicsSnippet(text) {
-            return text.length > 40 ? text.substring(0, 37) + '...' : text;
-        }
     });
   </script>
 </body>

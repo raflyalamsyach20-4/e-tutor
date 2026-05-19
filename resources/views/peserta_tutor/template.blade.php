@@ -3,415 +3,268 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Tutor - Surat Rekomendasi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>E-Tutor Premium - Surat Rekomendasi</title>
+  
+  <!-- Premium Font: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
+    /* Luxury Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    /* ================================================================
-       SIDEBAR (copied from pengajuan-tutor for consistency)
-       ================================================================ */
-    .sidebar {
-      width: 270px; min-height: 100vh;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-      color: #fff; position: fixed; top: 0; left: 0; z-index: 100;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255,0.06);
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
     }
-    .sidebar-brand { padding: 22px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
-    .sidebar-brand .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; }
-    .sidebar-brand .brand-text { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-    .sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 1px; }
-    .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
-    .nav-item { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; text-decoration: none; transition: all 0.2s; cursor: pointer; }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-item.active { background: linear-gradient(135deg, #3b82f6, #2563eb) !important; color: #fff !important; box-shadow: 0 3px 12px rgba(59,130,246,0.3); font-weight: 600; }
-    .nav-item .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent { margin: 4px 0 2px; }
-    .nav-parent > summary { display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; color: #94a3b8; cursor: pointer; transition: all 0.2s; user-select: none; list-style: none; }
-    .nav-parent > summary::-webkit-details-marker { display: none; }
-    .nav-parent > summary:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .nav-parent > summary .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-    .nav-parent > summary .chevron { margin-left: auto; font-size: 11px; color: #475569; transition: transform 0.25s ease; }
-    .nav-parent[open] > summary .chevron { transform: rotate(90deg); }
-    .nav-parent[open] > summary { color: #cbd5e1; }
-    .nav-children { padding: 4px 0 6px 0; display: flex; flex-direction: column; gap: 1px; }
-    .nav-child { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 46px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #64748b; text-decoration: none; transition: all 0.2s; cursor: pointer; position: relative; }
-    .nav-child::before { content: ''; position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 5px; height: 5px; border-radius: 50%; background: #334155; transition: all 0.2s; }
-    .nav-child:hover { color: #cbd5e1; background: rgba(255,255,255,0.04); }
-    .nav-child:hover::before { background: #64748b; }
-    .nav-separator { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 14px; }
-    .sidebar-footer { padding: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .user-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
-    .user-info .user-name { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
-    .user-info .user-role { font-size: 10.5px; color: #64748b; }
-    .btn-logout { width: 100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(239,68,68,0.1); color: #f87171; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
-    .btn-logout:hover { background: rgba(239,68,68,0.2); }
-
-    /* ================================================================
-       MAIN LAYOUT
-       ================================================================ */
-    .main-content { margin-left: 270px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
-
-    .topbar { background: #fff; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 50; }
-    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; }
-    .breadcrumb a { color: #3b82f6; text-decoration: none; font-weight: 500; }
-    .breadcrumb .sep { color: #cbd5e1; }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-
-    /* ================================================================
-       ACTION BUTTONS TOPBAR
-       ================================================================ */
-    .action-btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 18px; border-radius: 10px; font-size: 13px;
-      font-weight: 600; cursor: pointer; transition: all 0.2s;
-      border: none; font-family: 'Inter', sans-serif; text-decoration: none;
-    }
-    .btn-save { background: #3b82f6; color: #fff; }
-    .btn-save:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
-    .btn-preview { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
-    .btn-preview:hover { background: #f1f5f9; color: #1e293b; }
-    .btn-download { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-    .btn-download:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-
-    /* ================================================================
-       LETTER AREA
-       ================================================================ */
-    .letter-outer { flex: 1; padding: 32px; display: flex; justify-content: center; }
-    .letter-wrapper { width: 100%; max-width: 780px; }
-
-    /* Alert messages */
-    .alert-success { padding: 12px 16px; background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 10px; color: #16a34a; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-    .alert-error { padding: 12px 16px; background: #fee2e2; border: 1px solid #fecaca; border-radius: 10px; color: #dc2626; font-size: 13px; margin-bottom: 20px; }
-
-    /* The letter paper */
-    .letter-paper {
-      background: #ffffff;
-      border-radius: 4px;
-      box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05);
-      padding: 60px 72px;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt;
-      line-height: 1.7;
-      color: #000;
-      min-height: 1100px;
-      position: relative;
-    }
-
-    /* Letter title */
-    .letter-title {
-      text-align: center;
-      font-weight: bold;
-      font-size: 13pt;
-      text-decoration: underline;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-      letter-spacing: 0.03em;
-    }
-
-    /* Data rows */
-    .data-row {
-      display: flex;
-      align-items: baseline;
-      margin-bottom: 4px;
-      gap: 0;
-    }
-    .data-label {
-      min-width: 130px;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt;
-    }
-    .data-colon {
-      min-width: 20px;
-      font-family: 'Times New Roman', Times, serif;
-    }
-
-    /* Editable inline fields */
-    .field-inline {
-      flex: 1;
-      border: none;
-      border-bottom: 1.5px dashed #94a3b8;
-      outline: none;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt;
-      color: #000;
-      background: transparent;
-      padding: 0 4px 1px;
-      min-width: 0;
-      transition: border-color 0.2s;
-    }
-    .field-inline:focus { border-bottom-color: #3b82f6; background: rgba(59,130,246,0.04); }
-    .field-inline::placeholder { color: #94a3b8; font-style: italic; font-size: 11pt; }
-
-    .letter-separator { margin: 18px 0 14px; }
-
-    .letter-body { text-align: justify; margin-bottom: 10px; }
-
-    /* Closing / date area */
-    .letter-closing { display: flex; justify-content: flex-end; margin-top: 28px; }
-    .closing-inner { text-align: center; }
-    .closing-place-date { display: flex; align-items: baseline; gap: 4px; justify-content: flex-end; }
-
-    .field-place {
-      border: none; border-bottom: 1.5px dashed #94a3b8;
-      outline: none; font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt; color: #000; background: transparent;
-      padding: 0 4px 1px; width: 120px; text-align: center;
-      transition: border-color 0.2s;
-    }
-    .field-place:focus { border-bottom-color: #3b82f6; background: rgba(59,130,246,0.04); }
-
-    .field-date {
-      border: none; border-bottom: 1.5px dashed #94a3b8;
-      outline: none; font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt; color: #000; background: rgba(59,130,246,0.02);
-      padding: 0 6px 1px; width: 170px;
-      transition: border-color 0.2s; cursor: pointer;
-    }
-    .field-date:focus { border-bottom-color: #3b82f6; }
-
-    /* Signature section */
-    .sig-row-top { display: flex; justify-content: flex-end; margin-top: 32px; }
-    .sig-block-right { text-align: center; min-width: 200px; }
-    .sig-name-box { margin-top: 70px; border-bottom: 2px solid #000; padding-bottom: 2px; }
-    .field-sig-name {
-      border: none; outline: none;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 12pt; font-weight: bold;
-      color: #000; background: transparent;
-      text-align: center; width: 100%;
-      border-bottom: 1.5px dashed #94a3b8;
-      padding-bottom: 2px; transition: border-color 0.2s;
-    }
-    .field-sig-name:focus { border-bottom-color: #3b82f6; background: rgba(59,130,246,0.04); }
-    .field-sig-nip {
-      border: none; outline: none;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 11pt; color: #000; background: transparent;
-      text-align: center; width: 100%;
-      border-bottom: 1.5px dashed #94a3b8;
-      padding-bottom: 2px; margin-top: 4px; transition: border-color 0.2s;
-    }
-    .field-sig-nip:focus { border-bottom-color: #3b82f6; background: rgba(59,130,246,0.04); }
-
-    .menyetujui { text-align: center; font-weight: bold; margin-top: 36px; margin-bottom: 4px; font-size: 12pt; }
-    .sig-approvers { display: flex; justify-content: space-between; margin-top: 4px; }
-    .sig-approver { text-align: center; min-width: 200px; }
-    .sig-approver-label { font-size: 12pt; }
-
-    /* Edit hint banner */
-    .edit-hint {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 16px; background: linear-gradient(135deg, #eff6ff, #dbeafe);
-      border: 1px solid #bfdbfe; border-radius: 10px;
-      font-size: 12px; color: #1d4ed8; font-weight: 500;
-      margin-bottom: 20px; font-family: 'Inter', sans-serif;
-    }
-
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .main-content { margin-left: 0; }
-      .letter-outer { padding: 16px; }
-      .letter-paper { padding: 32px 28px; }
-      .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
-      .topbar-right { flex-wrap: wrap; }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    
+    .floating-shape {
+      animation: floatSlow 8s ease-in-out infinite;
     }
   </style>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['Times New Roman', 'Times', 'serif'],
+          },
+          colors: {
+            brand: {
+              blue: '#0F4C81',    /* Royal Blue */
+              yellow: '#F59E0B',  /* Amber/Gold */
+              red: '#E11D48',     /* Crimson Red */
+              white: '#FFFFFF',
+              light: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="bg-brand-light font-sans min-h-screen text-slate-800 flex overflow-x-hidden selection:bg-brand-yellow selection:text-brand-blue">
 
-<x-sidebar />
+  <x-sidebar />
 
-
-  <!-- MAIN -->
-  <div class="main-content">
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="breadcrumb">
-        <a href="/pengajuan-tutor">Home</a>
-        <span class="sep">/</span>
-        <span>Surat Rekomendasi</span>
-      </div>
-      <div class="topbar-right">
-        @if($letter)
-          <a href="{{ route('surat-rekomendasi.preview') }}" class="action-btn btn-preview">👁️ Preview</a>
-          <a href="{{ route('surat-rekomendasi.download') }}" class="action-btn btn-download">⬇️ Download PDF</a>
-        @endif
-        <button type="submit" form="form-surat" class="action-btn btn-save">💾 Simpan</button>
-      </div>
+  <!-- Main Content -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col relative">
+    
+    <!-- Abstract Geometric Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden ml-[280px]">
+      <div class="absolute top-[10%] right-[10%] w-[400px] h-[400px] bg-brand-yellow/10 rounded-full blur-[100px] floating-shape" style="animation-delay: 0s;"></div>
+      <div class="absolute bottom-[20%] left-[5%] w-[500px] h-[500px] bg-brand-blue/5 rounded-full blur-[120px] floating-shape" style="animation-delay: -2s;"></div>
+      <!-- Elegant Grid Overlay -->
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTUsIDc2LCAxMjksIDAuMDUpIi8+PC9zdmc+')] opacity-60"></div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="letter-outer">
-      <div class="letter-wrapper">
-
-        {{-- Alert Success --}}
-        @if(session('success'))
-          <div class="alert-success">✅ {{ session('success') }}</div>
+    <!-- Topbar -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 px-8 py-4 flex items-center justify-between shadow-[0_4px_24px_rgba(15,76,129,0.02)]">
+      <div class="flex items-center gap-2 text-[13px] font-extrabold text-slate-400 tracking-widest uppercase">
+        <a href="/pengajuan-tutor" class="hover:text-brand-blue transition-colors">Home</a>
+        <span class="iconify text-slate-300" data-icon="lucide:chevron-right"></span>
+        <span class="text-brand-blue">Surat Rekomendasi</span>
+      </div>
+      <div class="flex items-center gap-3 relative z-10">
+        @if($letter)
+          <a href="{{ route('surat-rekomendasi.preview') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-50 hover:bg-brand-blue hover:text-white text-slate-600 text-[13px] font-extrabold rounded-[12px] transition-all border border-slate-200 shadow-sm group">
+            <span class="iconify text-[18px] group-hover:scale-110 transition-transform" data-icon="lucide:eye"></span> Preview
+          </a>
+          <a href="{{ route('surat-rekomendasi.download') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-yellow hover:bg-yellow-400 text-brand-blue text-[13px] font-extrabold rounded-[12px] transition-all shadow-sm group">
+            <span class="iconify text-[18px] group-hover:scale-110 transition-transform" data-icon="lucide:download"></span> Download PDF
+          </a>
         @endif
+        <button type="submit" form="form-surat" class="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-blue hover:bg-blue-900 text-white text-[13px] font-extrabold rounded-[12px] shadow-[0_4px_14px_0_rgba(15,76,129,0.39)] transition-all group">
+          <span class="iconify text-[18px] group-hover:scale-110 transition-transform" data-icon="lucide:save"></span> Simpan
+        </button>
+      </div>
+    </header>
 
-        {{-- Alert Error --}}
-        @if($errors->any())
-          <div class="alert-error">
-            <ul style="margin-left:18px">
-              @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
+    <div class="p-8 flex-1 flex flex-col items-center relative z-10">
+      
+      <div class="w-full max-w-4xl animate-fade-in-up">
+
+        @if(session('success'))
+          <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-[16px] mb-8 text-[14px] font-extrabold flex items-center gap-3 shadow-sm">
+              <span class="iconify text-emerald-500 text-[20px]" data-icon="lucide:check-circle"></span> {{ session('success') }}
           </div>
         @endif
 
-        <div class="edit-hint">
-          ✏️ Klik pada kolom yang bergaris putus-putus untuk mengedit. Tekan <strong>Simpan</strong> untuk menyimpan data.
+        @if($errors->any())
+          <div class="bg-brand-red/10 border border-brand-red/20 text-brand-red px-6 py-4 rounded-[16px] mb-8 text-[14px] font-medium shadow-sm">
+              <div class="flex items-center gap-2 mb-2 font-extrabold">
+                  <span class="iconify text-brand-red text-[20px]" data-icon="lucide:alert-circle"></span> Terdapat Kesalahan:
+              </div>
+              <ul class="list-disc list-inside space-y-1 ml-2 text-brand-red/90 font-bold">
+                  @foreach($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+        @endif
+
+        <div class="flex items-start md:items-center gap-4 px-6 py-5 bg-brand-blue/5 border border-brand-blue/20 rounded-[16px] text-[13px] text-brand-blue font-bold mb-8 shadow-sm">
+          <span class="iconify text-[24px] text-brand-yellow flex-shrink-0" data-icon="lucide:info"></span>
+          <span>Klik pada kolom yang bergaris putus-putus untuk mengedit isi surat. Tekan tombol <strong class="font-extrabold text-brand-blue bg-white px-2 py-1 rounded-[6px] border border-brand-blue/10">Simpan</strong> di sudut kanan atas untuk menyimpan perubahan.</span>
         </div>
 
-        <!-- LETTER PAPER -->
         <form id="form-surat" action="{{ route('surat-rekomendasi.store') }}" method="POST">
           @csrf
-          <div class="letter-paper">
+          <!-- Letter Paper -->
+          <div class="bg-white rounded-[8px] shadow-[0_20px_60px_rgba(15,76,129,0.15)] border border-slate-200 px-10 py-16 md:px-20 md:py-24 font-serif text-[12pt] leading-relaxed text-black min-h-[1100px] mx-auto relative group">
+            
+            <div class="absolute inset-0 ring-1 ring-inset ring-slate-100 rounded-[8px] pointer-events-none"></div>
 
-            <!-- JUDUL -->
-            <div class="letter-title">Surat Rekomendasi Calon Tutor</div>
+            <!-- TITLE -->
+            <h1 class="text-center font-bold text-[13pt] uppercase tracking-wide mb-10 underline underline-offset-4 decoration-2">
+              Surat Rekomendasi Calon Tutor
+            </h1>
 
             <!-- DATA DOSEN -->
-            <div class="data-row">
-              <span class="data-label">Nama</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="lecturer_name" id="lecturer_name"
-                placeholder="Nama dosen..."
-                value="{{ old('lecturer_name', $letter->lecturer_name ?? '') }}">
-            </div>
-            <div class="data-row">
-              <span class="data-label">NIP</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="lecturer_nip"
-                placeholder="NIP dosen..."
-                value="{{ old('lecturer_nip', $letter->lecturer_nip ?? '') }}">
-            </div>
-            <div class="data-row">
-              <span class="data-label">Jabatan Dosen</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="lecturer_position"
-                placeholder="Jabatan dosen..."
-                value="{{ old('lecturer_position', $letter->lecturer_position ?? '') }}">
-            </div>
-
-            <!-- KALIMAT PEMBUKA -->
-            <p class="letter-body" style="margin-top:20px;">Dengan ini menerangkan bahwa:</p>
-
-            <!-- DATA MAHASISWA -->
-            <div class="data-row" style="margin-top:8px;">
-              <span class="data-label">Nama</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="student_name" id="student_name"
-                placeholder="Nama mahasiswa..."
-                value="{{ old('student_name', $letter->student_name ?? ($pengajuan->nama ?? $user->name ?? '')) }}">
-            </div>
-            <div class="data-row">
-              <span class="data-label">NIM</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="student_nim"
-                placeholder="NIM mahasiswa..."
-                value="{{ old('student_nim', $letter->student_nim ?? ($pengajuan->nim ?? '')) }}">
-            </div>
-            <div class="data-row">
-              <span class="data-label">Program Studi</span>
-              <span class="data-colon">&nbsp;:&nbsp;</span>
-              <input class="field-inline" type="text" name="student_prodi"
-                placeholder="Program studi..."
-                value="{{ old('student_prodi', $letter->student_prodi ?? '') }}">
-            </div>
-
-            <!-- ISI SURAT -->
-            <p class="letter-body" style="margin-top:20px;">
-              Merupakan mahasiswa yang memiliki kemampuan akademik, pemahaman materi, serta kemampuan komunikasi yang baik selama mengikuti proses perkuliahan. Berdasarkan hasil pengamatan dan penilaian selama kegiatan pembelajaran berlangsung, mahasiswa tersebut dinilai mampu untuk membantu proses pembelajaran dan layak menjadi tutor mahasiswa.
-            </p>
-            <p class="letter-body" style="margin-top:10px;">
-              Surat rekomendasi ini dibuat sebagai salah satu persyaratan pengajuan diri sebagai tutor pada program bimbingan belajar mahasiswa. Demikian surat ini dibuat dengan sebenar-benarnya agar dapat dipergunakan sebagaimana mestinya.
-            </p>
-
-            <!-- PENUTUP / TANGGAL -->
-            <div class="letter-closing" style="margin-top:32px;">
-              <div class="closing-inner">
-                <div class="closing-place-date">
-                  <input class="field-place" type="text" name="place"
-                    placeholder="Kota..."
-                    value="{{ old('place', $letter->place ?? 'Palembang') }}">,&nbsp;
-                  <input class="field-date" type="date" name="date"
-                    value="{{ old('date', optional($letter)->date ? $letter->date->format('Y-m-d') : now()->format('Y-m-d')) }}">
-                </div>
+            <div class="space-y-1.5 mb-8">
+              <div class="flex items-baseline">
+                <span class="w-36">Nama</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="lecturer_name" id="lecturer_name" placeholder="Nama dosen..." 
+                       value="{{ old('lecturer_name', $letter->lecturer_name ?? '') }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
+              </div>
+              <div class="flex items-baseline">
+                <span class="w-36">NIP</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="lecturer_nip" placeholder="NIP dosen..." 
+                       value="{{ old('lecturer_nip', $letter->lecturer_nip ?? '') }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
+              </div>
+              <div class="flex items-baseline">
+                <span class="w-36">Jabatan Dosen</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="lecturer_position" placeholder="Jabatan dosen..." 
+                       value="{{ old('lecturer_position', $letter->lecturer_position ?? '') }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
               </div>
             </div>
 
-            <!-- TANDA TANGAN CALON TUTOR -->
-            <div class="sig-row-top">
-              <div class="sig-block-right">
-                <div>Nama Tutor</div>
-                <div class="sig-name-box">
-                  <input class="field-sig-name" type="text" name="student_name_sig" disabled
-                    id="sig-student-name"
-                    value="{{ old('student_name', $letter->student_name ?? ($pengajuan->nama ?? $user->name ?? '')) }}">
+            <!-- PEMBUKA -->
+            <p class="text-justify mb-2">Dengan ini menerangkan bahwa:</p>
+
+            <!-- DATA MAHASISWA -->
+            <div class="space-y-1.5 mb-8">
+              <div class="flex items-baseline">
+                <span class="w-36">Nama</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="student_name" id="student_name" placeholder="Nama mahasiswa..." 
+                       value="{{ old('student_name', $letter->student_name ?? ($pengajuan->nama ?? $user->name ?? '')) }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
+              </div>
+              <div class="flex items-baseline">
+                <span class="w-36">NIM</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="student_nim" placeholder="NIM mahasiswa..." 
+                       value="{{ old('student_nim', $letter->student_nim ?? ($pengajuan->nim ?? '')) }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
+              </div>
+              <div class="flex items-baseline">
+                <span class="w-36">Program Studi</span>
+                <span class="w-6 text-center">:</span>
+                <input type="text" name="student_prodi" placeholder="Program studi..." 
+                       value="{{ old('student_prodi', $letter->student_prodi ?? '') }}"
+                       class="flex-1 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
+              </div>
+            </div>
+
+            <!-- ISI SURAT -->
+            <p class="text-justify mb-4 indent-10">
+              Merupakan mahasiswa yang memiliki kemampuan akademik, pemahaman materi, serta kemampuan komunikasi yang baik selama mengikuti proses perkuliahan. Berdasarkan hasil pengamatan dan penilaian selama kegiatan pembelajaran berlangsung, mahasiswa tersebut dinilai mampu untuk membantu proses pembelajaran dan layak menjadi tutor mahasiswa.
+            </p>
+            <p class="text-justify mb-10 indent-10">
+              Surat rekomendasi ini dibuat sebagai salah satu persyaratan pengajuan diri sebagai tutor pada program bimbingan belajar mahasiswa. Demikian surat ini dibuat dengan sebenar-benarnya agar dapat dipergunakan sebagaimana mestinya.
+            </p>
+
+            <!-- TANGGAL & TANDA TANGAN -->
+            <div class="flex justify-end mb-16">
+              <div class="text-center">
+                <div class="flex items-baseline justify-center mb-8">
+                  <input type="text" name="place" placeholder="Kota..." 
+                         value="{{ old('place', $letter->place ?? 'Palembang') }}"
+                         class="w-32 bg-transparent border-b-2 border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 outline-none px-1 py-0.5 text-center transition-colors font-serif">, 
+                  <input type="date" name="date" 
+                         value="{{ old('date', optional($letter)->date ? $letter->date->format('Y-m-d') : now()->format('Y-m-d')) }}"
+                         class="w-40 bg-slate-50 border-b-2 border-dashed border-slate-300 focus:border-brand-blue outline-none px-2 py-0.5 ml-2 transition-colors cursor-pointer font-sans text-[11pt]">
                 </div>
-                <div style="margin-top:6px;">
-                  <input class="field-sig-nip" type="text" name="student_nim_sig" disabled
-                    id="sig-student-nim"
-                    value="{{ old('student_nim', $letter->student_nim ?? ($pengajuan->nim ?? '')) }}">
+                
+                <div class="mb-24">Nama Tutor</div>
+                <div class="border-b-2 border-black inline-block px-4 min-w-[200px]">
+                  <input type="text" name="student_name_sig" id="sig-student-name" disabled 
+                         value="{{ old('student_name', $letter->student_name ?? ($pengajuan->nama ?? $user->name ?? '')) }}"
+                         class="w-full text-center font-bold bg-transparent outline-none border-b border-dashed border-transparent focus:border-slate-300">
+                </div>
+                <div class="mt-1">
+                  <input type="text" name="student_nim_sig" id="sig-student-nim" disabled 
+                         value="{{ old('student_nim', $letter->student_nim ?? ($pengajuan->nim ?? '')) }}"
+                         class="w-full text-center text-[11pt] bg-transparent outline-none border-b border-dashed border-transparent focus:border-slate-300">
                 </div>
               </div>
             </div>
 
             <!-- MENYETUJUI -->
-            <div class="menyetujui">Menyetujui</div>
+            <div class="text-center font-bold mb-8">Menyetujui</div>
 
-            <div class="sig-approvers">
+            <div class="flex justify-between items-start gap-8">
               <!-- Dosen PA -->
-              <div class="sig-approver">
-                <div class="sig-approver-label">Dosen Pembimbing Akademik,</div>
-                <div style="margin-top: 70px; border-bottom: 2px solid #000; padding-bottom: 2px;">
-                  <input class="field-sig-name" type="text" name="pa_lecturer_name"
-                    placeholder="Nama Dosen PA..."
-                    value="{{ old('pa_lecturer_name', $letter->pa_lecturer_name ?? '') }}">
+              <div class="text-center flex-1">
+                <div class="mb-24">Dosen Pembimbing Akademik,</div>
+                <div class="border-b-2 border-black inline-block w-full max-w-[240px]">
+                  <input type="text" name="pa_lecturer_name" placeholder="Nama Dosen PA..." 
+                         value="{{ old('pa_lecturer_name', $letter->pa_lecturer_name ?? '') }}"
+                         class="w-full text-center font-bold bg-transparent outline-none border-b border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 px-1 py-0.5 transition-colors placeholder:font-normal placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
                 </div>
-                <div style="margin-top:4px;">
-                  <input class="field-sig-nip" type="text" name="pa_lecturer_nip"
-                    placeholder="NIP..."
-                    value="{{ old('pa_lecturer_nip', $letter->pa_lecturer_nip ?? '') }}">
+                <div class="mt-1">
+                  <input type="text" name="pa_lecturer_nip" placeholder="NIP..." 
+                         value="{{ old('pa_lecturer_nip', $letter->pa_lecturer_nip ?? '') }}"
+                         class="w-full max-w-[240px] text-center text-[11pt] bg-transparent outline-none border-b border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
                 </div>
               </div>
 
               <!-- Dosen Pengampu -->
-              <div class="sig-approver">
-                <div class="sig-approver-label">Dosen Pengampu Akademik,</div>
-                <div style="margin-top: 70px; border-bottom: 2px solid #000; padding-bottom: 2px;">
-                  <input class="field-sig-name" type="text" name="course_lecturer_name"
-                    placeholder="Nama Dosen Pengampu..."
-                    value="{{ old('course_lecturer_name', $letter->course_lecturer_name ?? '') }}">
+              <div class="text-center flex-1">
+                <div class="mb-24">Dosen Pengampu Akademik,</div>
+                <div class="border-b-2 border-black inline-block w-full max-w-[240px]">
+                  <input type="text" name="course_lecturer_name" placeholder="Nama Dosen Pengampu..." 
+                         value="{{ old('course_lecturer_name', $letter->course_lecturer_name ?? '') }}"
+                         class="w-full text-center font-bold bg-transparent outline-none border-b border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 px-1 py-0.5 transition-colors placeholder:font-normal placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
                 </div>
-                <div style="margin-top:4px;">
-                  <input class="field-sig-nip" type="text" name="course_lecturer_nip"
-                    placeholder="NIP..."
-                    value="{{ old('course_lecturer_nip', $letter->course_lecturer_nip ?? '') }}">
+                <div class="mt-1">
+                  <input type="text" name="course_lecturer_nip" placeholder="NIP..." 
+                         value="{{ old('course_lecturer_nip', $letter->course_lecturer_nip ?? '') }}"
+                         class="w-full max-w-[240px] text-center text-[11pt] bg-transparent outline-none border-b border-dashed border-slate-300 focus:border-brand-blue focus:bg-brand-blue/5 px-1 py-0.5 transition-colors placeholder:text-slate-300 placeholder:italic placeholder:font-sans placeholder:text-sm">
                 </div>
               </div>
             </div>
 
-          </div><!-- end letter-paper -->
+          </div>
         </form>
 
       </div>
-    </div><!-- end letter-outer -->
-  </div>
+    </div>
+  </main>
 
   <script>
     // Sync student name & nim ke signature box (read-only)
